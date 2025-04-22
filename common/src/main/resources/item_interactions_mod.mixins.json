@@ -6,6 +6,10 @@
   "client": [
   ],
   "mixins": [
+    "GuiGraphicsMixin",
+    "InventoryGuiMixin",
+    "IsCarriedConditionalFixMixin",
+    "SettingsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
