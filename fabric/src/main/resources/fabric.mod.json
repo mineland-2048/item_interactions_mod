@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "item_interactions_mod",
+  "version": "${version}",
+  "name": "Item interactions mod",
+  "description": "Item interactions in your inventory!",
+  "authors": [
+    "mineland"
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/item_interactions_mod/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.mineland.item_interactions_mod.fabric.Item_interactions_modFabric"
+    ],
+    "client": [
+      "dev.mineland.item_interactions_mod.fabric.client.Item_interactions_modFabricClient"
+    ]
+  },
+  "mixins": [
+    "item_interactions_mod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.5",
+    "java": ">=21"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

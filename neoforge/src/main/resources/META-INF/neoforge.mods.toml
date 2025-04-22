@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "GNU LGPL 3.0"
+
+[[mods]]
+modId = "item_interactions_mod"
+version = "${version}"
+displayName = "Item interactions mod"
+authors = "mineland"
+description = '''
+Item interactions in your inventory!
+'''
+#logoFile = ""
+
+[[dependencies.item_interactions_mod]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.item_interactions_mod]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+
+[[mixins]]
+config = "item_interactions_mod.mixins.json"
