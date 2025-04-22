@@ -11,7 +11,7 @@ authors = "mineland"
 description = '''
 Item interactions in your inventory!
 '''
-#logoFile = ""
+logoFile = "assets/item_interactions_mod/icon.png"
 
 [[dependencies.item_interactions_mod]]
 modId = "neoforge"
@@ -25,7 +25,7 @@ modId = "minecraft"
 type = "required"
 versionRange = "[1.21.5,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 
 [[mixins]]
