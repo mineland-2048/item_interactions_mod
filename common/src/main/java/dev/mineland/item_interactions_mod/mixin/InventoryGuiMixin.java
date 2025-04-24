@@ -57,7 +57,9 @@ public abstract class InventoryGuiMixin {
         GlobalDirt.tailUpdateTimer();
         GlobalDirt.updateMousePositions();
 
-//        if (!GlobalDirt.shouldTickParticles) return;
+        if (ItemInteractionsConfig.debugDraws) {
+            guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+        }
 
         if (carriedItem == null || carriedItem.isEmpty() || ItemInteractionsResources.getFromItem(carriedItem) == null) carriedSpawner = null;
         else if (carriedItem != null && !carriedItem.isEmpty()) {
@@ -83,11 +85,20 @@ public abstract class InventoryGuiMixin {
 
 
         List<BaseParticle> shouldDelete = new ArrayList<>();
-        for (BaseParticle particle : GlobalDirt.particleList) {
-            particle.tick();
-            particle.render();
-            if (particle.shouldDelete) shouldDelete.add(particle);
+        if (GlobalDirt.shouldTickParticles) {
+            for (BaseParticle particle : GlobalDirt.particleList) {
+                particle.tick();
+                particle.render();
+                if (particle.shouldDelete) shouldDelete.add(particle);
+            }
+        } else {
+            for (BaseParticle particle : GlobalDirt.particleList) {
+                particle.render();
+//                if (particle.shouldDelete) shouldDelete.add(particle);
+            }
+
         }
+
 
 //        for (BaseParticle particle : shouldDelete) { ; }
         GlobalDirt.particleList.removeAll(shouldDelete);

@@ -89,6 +89,7 @@ public class GlobalDirt {
 //        System.out.println("Updating Mouse Position");
     }
 
+    public static int tickCounter;
 
     public static void updateTimer() {
 //        System.out.println("Updating Timer");
@@ -115,7 +116,13 @@ public class GlobalDirt {
         speedY = Math.clamp((speedY + (mouseDeltaY * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
 
 
-        shouldTickParticles = msCounter % 50 * tickScale < 2;
+
+        double tickTime = Math.floor((msCounter * tickScale * 30));
+        if (tickTime != tickCounter) {
+            tickCounter = (int) tickTime;
+            shouldTickParticles = true;
+        } else shouldTickParticles = false;
+
 
 
 

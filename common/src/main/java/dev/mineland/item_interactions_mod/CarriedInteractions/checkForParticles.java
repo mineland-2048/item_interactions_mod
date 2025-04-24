@@ -15,12 +15,11 @@ public class checkForParticles {
     public static boolean check(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int slotCount) {
 //        if (dead) return true;
         try {
-
-            int slotIndex = slotCount;
+            if (!GlobalDirt.shouldTickParticles) return false;
             ItemStack slotItem = slot.getItem();
             Spawner itemSpawner = ItemInteractionsResources.ParticleList.get(slotItem.getItem().toString());
-            if (GlobalDirt.slotSpawners.size() <= slotIndex) GlobalDirt.slotSpawners.add(null);
-            Spawner currentSpawner = GlobalDirt.slotSpawners.get(slotIndex);
+            if (GlobalDirt.slotSpawners.size() <= slotCount) GlobalDirt.slotSpawners.add(null);
+            Spawner currentSpawner = GlobalDirt.slotSpawners.get(slotCount);
 
             if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
             if (itemSpawner == null && currentSpawner == null) {
@@ -29,7 +28,7 @@ public class checkForParticles {
             }
 
             if (itemSpawner == null) {
-                GlobalDirt.slotSpawners.set(slotIndex, null);
+                GlobalDirt.slotSpawners.set(slotCount, null);
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFFFF0000);
                 return false;
             }
@@ -40,8 +39,8 @@ public class checkForParticles {
 
             if ((currentSpawner == null)) {
 
-                itemSpawner = itemSpawner.newInstance(slotIndex);
-                GlobalDirt.slotSpawners.set(slotIndex, itemSpawner);
+                itemSpawner = itemSpawner.newInstance(slotCount);
+                GlobalDirt.slotSpawners.set(slotCount, itemSpawner);
 
                 itemSpawner.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
                 itemSpawner.tick(guiGraphics, globalX, globalY, 0, 0, 0, 0);
@@ -53,8 +52,8 @@ public class checkForParticles {
 
 
             if ((!currentSpawner.getName().equals(itemSpawner.getName()))) {
-                itemSpawner = itemSpawner.newInstance(slotIndex);
-                GlobalDirt.slotSpawners.set(slotIndex, itemSpawner);
+                itemSpawner = itemSpawner.newInstance(slotCount);
+                GlobalDirt.slotSpawners.set(slotCount, itemSpawner);
 
                 itemSpawner.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
                 itemSpawner.tick(guiGraphics, globalX, globalY, 0, 0, 0, 0);
