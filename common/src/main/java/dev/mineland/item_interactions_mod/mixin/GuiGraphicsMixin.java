@@ -1,7 +1,9 @@
 package dev.mineland.item_interactions_mod.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
 import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.ItemInteractionsResources;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
@@ -96,6 +98,10 @@ public abstract class GuiGraphicsMixin{
                     this.pose.mulPose(AnimScale.rollback(this.pose, i, j, 0).last().pose() );
                     break;
             }
+
+
+
+            
         }
     }
 

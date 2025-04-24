@@ -1,15 +1,23 @@
 package dev.mineland.item_interactions_mod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GlobalDirt {
     public static boolean isCurrentItem3d;
     public static ItemStack carriedItem;
+
+    public static List<BaseParticle> particleList = new ArrayList<>();
 
     public static long lastMilis = 0;
 
@@ -43,6 +51,15 @@ public class GlobalDirt {
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
+    public static List<Spawner> slotSpawners = new ArrayList<>(90);
+
+    public static int slotCount = 0;
+
+    public static Spawner carriedSpawner = null;
+
+    public static boolean shouldTickParticles;
+
+
     public static void restore() {
 //        System.out.println("Restoring global dirt");
         lastMouseX = 0;
@@ -58,17 +75,24 @@ public class GlobalDirt {
         topPos = 0;
         leftPos = 0;
 
+        particleList.clear();
+        slotSpawners.clear();
+
+        carriedSpawner = null;
+
     }
 
     public static void updateMousePositions() {
-        GlobalDirt.lastMouseX = Minecraft.getInstance().mouseHandler.xpos();
-        GlobalDirt.lastMouseY = Minecraft.getInstance().mouseHandler.ypos();
+        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+        GlobalDirt.lastMouseX = Minecraft.getInstance().mouseHandler.xpos() / guiScale;
+        GlobalDirt.lastMouseY = Minecraft.getInstance().mouseHandler.ypos() / guiScale;
 //        System.out.println("Updating Mouse Position");
     }
 
 
     public static void updateTimer() {
 //        System.out.println("Updating Timer");
+        double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
         currentMilis = Util.getMillis();
 
@@ -85,12 +109,13 @@ public class GlobalDirt {
                     tickDelta * tickScale * ItemInteractionsConfig.mouseDeceleration * 2
         );
 
-        mouseDeltaX = Minecraft.getInstance().mouseHandler.xpos() - lastMouseX;
-        mouseDeltaY = Minecraft.getInstance().mouseHandler.ypos() - lastMouseY;
+        mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
+        mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
         speedX = Math.clamp((speedX + (mouseDeltaX * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
         speedY = Math.clamp((speedY + (mouseDeltaY * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
 
 
+        shouldTickParticles = msCounter % 50 * tickScale < 2;
 
 
 
