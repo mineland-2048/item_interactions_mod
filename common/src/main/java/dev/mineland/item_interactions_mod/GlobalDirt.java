@@ -17,6 +17,7 @@ public class GlobalDirt {
     public static boolean isCurrentItem3d;
     public static ItemStack carriedItem;
 
+    public static boolean devenv = true;
     public static List<BaseParticle> particleList = new ArrayList<>();
 
     public static long lastMilis = 0;
@@ -122,6 +123,8 @@ public class GlobalDirt {
             tickCounter = (int) tickTime;
             shouldTickParticles = true;
         } else shouldTickParticles = false;
+
+
 
 
 

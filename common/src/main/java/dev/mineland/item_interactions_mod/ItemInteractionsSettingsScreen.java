@@ -279,7 +279,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         leftColumnLayout.addChild(scaleAnimLayout);
 
 
-        if (ItemInteractionsConfig.debugDraws) {
+        if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
             Component debugButtonInitialText = Component.literal("debug: ")
                     .append(Component.literal(""+ItemInteractionsConfig.debugDraws)
                             .withStyle(ItemInteractionsConfig.debugDraws ? ChatFormatting.GREEN : ChatFormatting.RED)

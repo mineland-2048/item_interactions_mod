@@ -78,10 +78,6 @@ public abstract class InventoryGuiMixin {
 
 
 
-        if (carriedSpawner != null) {
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
-            carriedSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
-        }
 
 
         List<BaseParticle> shouldDelete = new ArrayList<>();
@@ -91,6 +87,12 @@ public abstract class InventoryGuiMixin {
                 particle.render();
                 if (particle.shouldDelete) shouldDelete.add(particle);
             }
+
+            if (carriedSpawner != null) {
+                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
+                carriedSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
+            }
+
         } else {
             for (BaseParticle particle : GlobalDirt.particleList) {
                 particle.render();

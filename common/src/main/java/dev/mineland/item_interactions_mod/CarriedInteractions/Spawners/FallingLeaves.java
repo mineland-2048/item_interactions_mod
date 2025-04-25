@@ -37,10 +37,10 @@ public class FallingLeaves extends Spawner {
 
 
 //        for (int i = 0; i < 4; i++) {
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.5), (speedY*0.5)-0.1, accelerationX, accelerationY+0.001, 100, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.5), (speedY*0.5)+0.1, accelerationX, accelerationY+0.001, 100, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.5), (speedY*0.5)-0.1, accelerationX, accelerationY+0.001, 100, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.5), (speedY*0.5)+0.1, accelerationX, accelerationY+0.001, 100, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
 //        }
 
 
@@ -58,13 +58,20 @@ public class FallingLeaves extends Spawner {
 
     double oldSpeedX = 0;
     double oldSpeedY = 0;
+
+    int nextSpawn = 0;
     public void tick(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY) {
         super.tick(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY);
-        if ((this.ticks % (100 - (int) (Math.random() * 20))) < 1) {
+        nextSpawn--;
+        if (nextSpawn <= 0) {
 //            Item_interactions_mod.infoMessage("Spawned " + GlobalDirt.particleList.size() + "! " + GlobalDirt.msCounter);
-            double rx = Math.random() - 1, ry = Math.random(), rsx = (Math.random() - 0.5) * 0.5, rsy = Math.abs(Math.random()*0.5);
-
+            nextSpawn = (int) (Math.random() * 100);
+            double  rx = Math.random() - 1,
+                    ry = Math.random(),
+                    rsx = (Math.random() - 0.5) * 0.5,
+                    rsy = Math.abs(Math.random()*0.3);
             spawn(guiGraphics, x +rx, y+ry, speedX+rsx, speedY+rsy, 0, 0);
+
         }
 
 
@@ -74,8 +81,8 @@ public class FallingLeaves extends Spawner {
             guiGraphics.drawString(Minecraft.getInstance().font, "sX: " + speedX, 0, 20, 0xFFFFFFFF);
             guiGraphics.drawString(Minecraft.getInstance().font, "sY: " + speedY, 0, 30, 0xFFFFFFFF);
         }
-        this.oldSpeedX = (this.oldSpeedX + speedX) *0.5;
-        this.oldSpeedY = (this.oldSpeedY + speedY) *0.5;
+        this.oldSpeedX = (this.oldSpeedX + speedX) *0.75;
+        this.oldSpeedY = (this.oldSpeedY + speedY) *0.75;
 
 
 
