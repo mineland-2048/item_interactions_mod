@@ -33,8 +33,8 @@ public class checkForParticles {
                 return false;
             }
 
-            int globalX = slot.x + leftPos;
-            int globalY = slot.y + topPos;
+            int globalX = slot.x + leftPos + 8;
+            int globalY = slot.y + topPos + 8;
 
 
             if ((currentSpawner == null)) {

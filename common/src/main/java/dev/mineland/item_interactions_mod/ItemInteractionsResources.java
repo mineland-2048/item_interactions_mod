@@ -1,6 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
 
+import com.mojang.serialization.Codec;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.OakLeavesParticleSpawner;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
 import net.minecraft.world.item.Item;

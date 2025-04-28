@@ -1,7 +1,6 @@
 package dev.mineland.item_interactions_mod;
 
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,11 @@ public final class Item_interactions_mod {
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
         ItemInteractionsResources.onReload();
+
+
+        ReloadListenerHelper.registerReloadListener(new GuiParticlesReloadListener());
+
+
 
 
 

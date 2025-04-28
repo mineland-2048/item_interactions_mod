@@ -37,10 +37,10 @@ public class FallingLeaves extends Spawner {
 
 
 //        for (int i = 0; i < 4; i++) {
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 8), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
-            new LeafParticle(guiGraphics, x-8+((Math.random() - 0.5) * 4), y-8+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-0+((Math.random() - 0.5) * 8), y-0+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-0+((Math.random() - 0.5) * 8), y-0+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-0+((Math.random() - 0.5) * 4), y-0+(((Math.random() - 0.5)*4)), (speedX * 0.5)-(Math.random() * 0.75), (speedY*0.5)-0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
+            new LeafParticle(guiGraphics, x-0+((Math.random() - 0.5) * 4), y-0+(((Math.random() - 0.5)*4)), (speedX * 0.5)+(Math.random() * 0.75), (speedY*0.5)+0.1, accelerationX, accelerationY+0.01, 50, particleTexture, this.color);
 //        }
 
 

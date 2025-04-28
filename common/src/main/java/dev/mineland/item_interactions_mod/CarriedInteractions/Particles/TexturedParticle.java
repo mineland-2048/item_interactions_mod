@@ -30,6 +30,8 @@ public class TexturedParticle extends BaseParticle {
     boolean interpolate;
     int length;
 
+    int xOffset = 0;
+    int yOffset = 0;
     public enum TextureType {
         STATIC(0),
         FRAMETIME(1),
@@ -72,6 +74,9 @@ public class TexturedParticle extends BaseParticle {
                             textureMcMeta.get("height").getAsInt() :
                             this.width;
 
+
+                    this.xOffset = -this.width / 2;
+                    this.yOffset = -this.height / 2;
 
                     this.length =Minecraft.getInstance().getTextureManager().getTexture(textureLocation).getTexture().getHeight(0) /  Minecraft.getInstance().getTextureManager().getTexture(textureLocation).getTexture().getWidth(0);
 
@@ -131,8 +136,9 @@ public class TexturedParticle extends BaseParticle {
             }
         }
 
+
         this.guiGraphics.blit(RenderType::guiTextured, this.textureLocation,
-                (int) this.x, (int) this.y,
+                (int) this.x + xOffset, (int) this.y + yOffset,
                 0f, yStart,
                 totalTextureWidth, uvHeight,
                 totalTextureWidth, totalTextureHeight,
