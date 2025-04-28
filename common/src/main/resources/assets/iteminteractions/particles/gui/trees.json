@@ -1,12 +1,5 @@
 {
   "parent": "iteminteractions:particles/gui/falling_leaves",
-  "tint": "FF108000",
+  "tint": "FF108000"
 
-  "targets": [
-    "minecraft:oak_leaves",
-    "minecraft:dark_oak_leaves",
-    "minecraft:jungle_leaves",
-    "minecraft:acacia_leaves",
-    "minecraft:mangrove_leaves"
-  ]
 }

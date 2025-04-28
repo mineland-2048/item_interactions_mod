@@ -19,13 +19,12 @@ import java.util.concurrent.Executor;
 
 public class GuiParticlesReloadListener implements ResourceManagerReloadListener {
 
-    private void loadStuff(ResourceManager resourceManager) {
-        Item_interactions_mod.infoMessage("Reloading all the things!");
-        GuiParticleRegistry.clear();
-        GuiSpawnerRegistry.clear();
 
+    private void parseParticle(JsonObject GuiParticleJson) {
 
-        Item_interactions_mod.infoMessage("Reloading gui particles");
+    }
+
+    private void loadParticles(ResourceManager resourceManager) {
         for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("particles/gui", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
 
             ResourceLocation id = entry.getKey();
@@ -35,6 +34,8 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
                 JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
 //                TODO: add logic
+                parseParticle(json);
+
 
 
                 Item_interactions_mod.infoMessage("Parsed particle: " + id);
@@ -44,6 +45,16 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
             }
         }
 
+    }
+
+    private void loadStuff(ResourceManager resourceManager) {
+        Item_interactions_mod.infoMessage("Reloading all the things!");
+        GuiParticleRegistry.clear();
+        GuiSpawnerRegistry.clear();
+
+
+        Item_interactions_mod.infoMessage("Reloading gui particles");
+        loadParticles(resourceManager);
         Item_interactions_mod.infoMessage("Reloading gui spawners");
         for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("particles/gui_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
 

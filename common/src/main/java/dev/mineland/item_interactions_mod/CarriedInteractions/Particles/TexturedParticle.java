@@ -2,16 +2,11 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureContents;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -43,12 +38,58 @@ public class TexturedParticle extends BaseParticle {
         }
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double lifeTime, ResourceLocation textureLocation,  int tint) {
-        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, lifeTime, textureLocation, TextureType.STATIC, tint);
+
+    public TexturedParticle(GuiGraphics guiGraphics,
+                            double x,               double y,
+                            double speedX,          double speedY,
+                            double accelerationX,   double accelerationY,
+                            double frictionX,       double frictionY,
+                            double lifeDuration,
+                            ResourceLocation textureLocation)
+    {
+        this(guiGraphics, x,y,speedX,speedY,accelerationX,accelerationY,frictionX,frictionY, lifeDuration, textureLocation, TextureType.LIFETIME, 0xFFFFFFFF);
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double lifeTime, ResourceLocation textureLocation, TextureType textureType,  int tint) {
-        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, lifeTime);
+//    Constructor without tint
+//    and with texture type.
+    public TexturedParticle(GuiGraphics guiGraphics,
+                            double x,               double y,
+                            double speedX,          double speedY,
+                            double accelerationX,   double accelerationY,
+                            double frictionX,       double frictionY,
+                            double lifeDuration,
+                            ResourceLocation textureLocation,
+                            TextureType textureType)
+    {
+        this(guiGraphics, x,y,speedX,speedY,accelerationX,accelerationY,frictionX,frictionY, lifeDuration, textureLocation, textureType, 0xFFFFFFFF);
+    }
+
+//    Constructor without texture type
+//    and with tint
+    public TexturedParticle(GuiGraphics guiGraphics,
+                            double x,               double y,
+                            double speedX,          double speedY,
+                            double accelerationX,   double accelerationY,
+                            double frictionX,       double frictionY,
+                            double lifeDuration,
+                            ResourceLocation textureLocation,
+                            int tint)
+    {
+        this(guiGraphics, x,y,speedX,speedY,accelerationX,accelerationY,frictionX,frictionY, lifeDuration, textureLocation, TextureType.LIFETIME, tint);
+    }
+
+
+//    Main constructor.
+    public TexturedParticle(GuiGraphics guiGraphics,
+                            double x,               double y,
+                            double speedX,          double speedY,
+                            double accelerationX,   double accelerationY,
+                            double frictionX,       double frictionY,
+                            double lifeDuration,
+                            ResourceLocation textureLocation,
+                            TextureType textureType,
+                            int tint) {
+        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeDuration);
 
         this.tint = tint;
         this.textureLocation = textureLocation;
@@ -97,6 +138,7 @@ public class TexturedParticle extends BaseParticle {
 
 
 
+//    TODO: add interpolation.
     public void render() {
         super.render();
 
@@ -115,7 +157,7 @@ public class TexturedParticle extends BaseParticle {
             }
 
             case LIFETIME -> {
-                int index = (int) Math.floor((lifeTime / maxTick) * length);
+                int index = (int) Math.floor((lifeTime / lifeDuration) * length);
                 textureIndex = index % length;
 
                 uvHeight = height;

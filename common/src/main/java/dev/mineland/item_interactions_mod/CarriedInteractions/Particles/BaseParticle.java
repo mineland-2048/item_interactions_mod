@@ -2,28 +2,72 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 
 public class BaseParticle {
     GuiGraphics guiGraphics;
+
     double x;
     double y;
+
     double speedX;
     double speedY;
+
     double accelerationX;
     double accelerationY;
 
-    double lifeTime;
+    double frictionX;
+    double frictionY;
 
-    double maxTick;
+//    Define in spawner:
+//    double rX;
+//    double rY;
+//
+//    double rSpeedX;
+//    double rSpeedY;
+//
+//    double rLifeDuration;
+    
+    double lifeDuration;
 
 
     int id;
+    double lifeTime;
 
 
-    public BaseParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double lifeTime) {
+    public BaseParticle(GuiGraphics guiGraphics,
+                        double x, double y,
+                        double speedX, double speedY,
+                        double accelerationX, double accelerationY,
+                        double lifeDuration) {
+
+        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, 0, 0, lifeDuration);
+
+    }
+
+//    public BaseParticle(GuiGraphics guiGraphics,
+//                        double x, double y,
+//                        double speedX, double speedY,
+//                        double accelerationX, double accelerationY,
+//                        double frictionX, double frictionY,
+//                        double lifeDuration) {
+//
+//        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeDuration);
+//
+//    }
+
+    public BaseParticle (GuiGraphics guiGraphics,
+                         double x, double y,
+                         double speedX, double speedY,
+                         double accelerationX, double accelerationY,
+                         double frictionX, double frictionY,
+                         double lifeDuration
+//                         double rLifeDuration
+//                         double rX, double rY,
+//                         double rSpeedX, double rSpeedY
+)
+    {
+
         this.guiGraphics = guiGraphics;
         this.x = x;
         this.y = y;
@@ -31,7 +75,18 @@ public class BaseParticle {
         this.speedY = speedY;
         this.accelerationX = accelerationX;
         this.accelerationY = accelerationY;
-        this.maxTick = lifeTime;
+        this.frictionX = frictionX;
+        this.frictionY = frictionY;
+
+        this.lifeDuration = lifeDuration;
+
+//        this.rLifeDuration = rLifeDuration;
+//        this.rX = rX;
+//        this.rY = rY;
+//        this.rSpeedX = rSpeedX;
+//        this.rSpeedY = rSpeedY;
+
+
 
         this.id = GlobalDirt.particleList.size();
 
@@ -58,7 +113,7 @@ public class BaseParticle {
 
         lifeTime ++;
 
-        if (lifeTime > maxTick) {
+        if (lifeTime > lifeDuration) {
             shouldDelete = true;
         }
     }

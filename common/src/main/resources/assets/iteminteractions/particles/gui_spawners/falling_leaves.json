@@ -1,0 +1,75 @@
+{
+  "xOffset": 0,
+  "yOffset": 0,
+
+  "speedX": 0,
+  "speedY": 0,
+
+  "accelerationX": 0,
+  "accelerationY": 0,
+
+  "rX": 2,
+  "rY": 2,
+  "rSpeedX": 2,
+  "rSpeedY": 2,
+
+  "interval": 2,
+  "rInterval": 1,
+
+  "count": 2,
+  "rCount": 2,
+
+  "onSpawn": [
+    {"id":  "iteminteractions:particles/gui/falling_leaves.json"}
+  ],
+
+  "onCarried": [
+    {
+      "id":  "iteminteractions:particles/gui/falling_leaves.json",
+      "xOffset": -2,
+      "yOffset": -2,
+
+      "speedX": -1,
+      "speedY": -1,
+
+      "rSpeedX": 0.5,
+      "rSpeedY": 0.5
+    },
+    {
+      "id":  "iteminteractions:particles/gui/falling_leaves.json",
+      "xOffset": 2,
+      "yOffset": -2,
+
+      "speedX": 1,
+      "speedY": -1,
+
+      "rSpeedX": 0.5,
+      "rSpeedY": 0.5
+    },
+    {
+      "id":  "iteminteractions:particles/gui/falling_leaves.json",
+      "xOffset": -2,
+      "yOffset": 2,
+
+      "speedX": -1,
+      "speedY": 1,
+
+      "rSpeedX": 0.5,
+      "rSpeedY": 0.5
+    },
+    {
+      "id":  "iteminteractions:particles/gui/falling_leaves.json",
+      "xOffset": 2,
+      "yOffset": 2,
+
+      "speedX": 1,
+      "speedY": 1,
+
+      "rSpeedX": 0.5,
+      "rSpeedY": 0.5
+    }
+  ]
+
+
+
+}

@@ -1,9 +1,5 @@
 {
   "textures": [
     "iteminteractions:textures/particle/gui/falling_leaf.png"
-  ],
-
-  "speedX":
-
-
+  ]
 }

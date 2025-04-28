@@ -28,8 +28,6 @@ public class ReloadListenerHelperImpl {
             @Override
             public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
                 return mainListener.reload(preparationBarrier, resourceManager, executor, executor2);
-//                return a.thenCompose(preparationBarrier::wait);
-//                return CompletableFuture.completedFuture(null);
             }
         };
 

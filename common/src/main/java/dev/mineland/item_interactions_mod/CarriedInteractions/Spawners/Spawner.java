@@ -7,7 +7,27 @@ public class Spawner {
     protected int id;
     protected String name;
 
-    protected double x, y, speedX, speedY, accelerationX, accelerationY;
+
+    protected double x;
+    protected double y;
+
+    protected double speedX;
+    protected double speedY;
+
+    protected double accelerationX;
+    protected double accelerationY;
+
+    protected double frictionX;
+    protected double frictionY;
+
+    protected double rX;
+    protected double rY;
+
+    protected double rSpeedX;
+    protected double rSpeedY;
+
+    protected double lifeDuration;
+    protected double rLifeDuration;
 
     protected int ticks;
     public Spawner(String name) {
@@ -23,6 +43,7 @@ public class Spawner {
 
 
     }
+
     public void tick(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY) {
         this.ticks++;
     }
