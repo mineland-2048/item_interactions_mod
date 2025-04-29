@@ -52,11 +52,12 @@ public class GlobalDirt {
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
-    public static List<Spawner> slotSpawners = new ArrayList<>(90);
+    public static List<List<Spawner>> slotSpawners = new ArrayList<>(90);
 
     public static int slotCount = 0;
 
     public static Spawner carriedSpawner = null;
+    public static List<Spawner> carriedSpawners = new ArrayList<>();
 
     public static boolean shouldTickParticles;
 
