@@ -31,20 +31,20 @@ public class Spawner {
 
     public float timer = 0;
 
-    Codec<Either<Event, String>> eventOrStringCodec = Codec.either(Event.CODEC, Codec.STRING);
-    Codec<Map<String, Either<Event, String>>> a = Codec.unboundedMap(Codec.STRING, eventOrStringCodec);
+    static Codec<Either<Event, String>> eventOrStringCodec = Codec.either(Event.CODEC, Codec.STRING);
+    static Codec<Map<String, Either<Event, String>>> eventsCodec = Codec.unboundedMap(Codec.STRING, eventOrStringCodec);
 
     public List<ItemStack> appliedItems = new ArrayList<>();
 
 
-    public Codec<Spawner> CODEC = RecordCodecBuilder.create(
+    public static Codec<Spawner> CODEC = RecordCodecBuilder.create(
             spawnerInstance -> spawnerInstance.group(
                     ResourceLocation.CODEC.optionalFieldOf("parent", null).forGetter(s -> s.parent),
                     ResourceLocation.CODEC.listOf().optionalFieldOf("children", null).forGetter(s -> s.childrenLocations),
                     ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes", new ParticleInstance()).forGetter(s -> s.attributes),
                     ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes_variance", ParticleInstance.defaultVariance()).forGetter(s -> s.attributes_variance),
 
-                    a.fieldOf("events").forGetter((spawner -> spawner.events)),
+                    eventsCodec.fieldOf("events").forGetter((spawner -> spawner.events)),
 
                     ItemStack.CODEC.listOf().optionalFieldOf("applies", null).forGetter(s -> s.appliedItems)
 

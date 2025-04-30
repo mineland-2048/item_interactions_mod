@@ -16,24 +16,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record SpawnerRegistry {
-    public static final Registry<SpawnerRegistry> SPAWNER_REGISTRIES = new MappedRegistry<>(
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "spawners")), Lifecycle.stable()
-    );
+public record SpawnerRegistry() {
+//    public static Registry<SpawnerRegistry> SPAWNER_REGISTRIES = new MappedRegistry<>(
+//            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "spawners")), Lifecycle.stable()
+//    );
 //
 //    public static final Registry<ItemStack> MAPPED_ITEMS_REGISTRY = new MappedRegistry<>(
 //            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "mapped")), Lifecycle.stable()
 //    );
 
-    public static final Registry<ResourceLocation> WILDCARD_ITEMS_REGISTRY = new MappedRegistry<>(
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "*")), Lifecycle.stable()
-    );
+//    public static Registry<ResourceLocation> WILDCARD_ITEMS_REGISTRY = new MappedRegistry<>(
+//            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "*")), Lifecycle.stable()
+//    );
 
 
-    public static final Map<Item, List<ResourceLocation>> MAPPED_ITEMS_LIST = new HashMap<>();
+    public static Map<Item, List<ResourceLocation>> MAPPED_ITEMS_LIST = new HashMap<>();
+
+    public static Map<ResourceLocation, Spawner> SPAWNER_MAP;
 
 
+    public static void clear() {
+//        SPAWNER_REGISTRIES = new MappedRegistry<>(
+//                ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "spawners")), Lifecycle.stable()
+//        );
+//
+//        WILDCARD_ITEMS_REGISTRY = new MappedRegistry<>(
+//                ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "*")), Lifecycle.stable()
+//        );
 
+        MAPPED_ITEMS_LIST.clear();
+        SPAWNER_MAP.clear();
+
+    }
 
     public static List<Spawner> get(ItemStack item) {
         List<ResourceLocation> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
@@ -41,7 +55,8 @@ public record SpawnerRegistry {
 
         for (ResourceLocation id : spawnerIds) {
             Spawner spawner = getSpawnerFromId(id);
-            if (spawner.matches(item)) result.add(spawner);
+
+            if (spawner != null && spawner.matches(item)) result.add(spawner);
         }
         return result;
     };
@@ -53,24 +68,28 @@ public record SpawnerRegistry {
 
         for (ResourceLocation id : spawnerIds) {
             Spawner spawner = getSpawnerFromId(id);
-            if (spawner.matches(item)) result.add(id);
+            if (spawner != null && spawner.matches(item)) result.add(id);
         }
         return result;
 
     }
     public static Spawner getSpawnerFromId(ResourceLocation id) {
-        SPAWNER_REGISTRIES.get(id);
+//        if (SPAWNER_REGISTRIES.containsKey(id)) return SPAWNER_REGISTRIES.getValueOrThrow(ResourceKey.createid));
+        return SPAWNER_MAP.getOrDefault(id, null);
     }
 
-    public static Spawner register(Spawner spawner, ResourceLocation id) {
+    public static void register(Spawner spawner, ResourceLocation id) {
         List<ItemStack> items = spawner.appliedItems;
+        SPAWNER_MAP.put(id, spawner);
         for (ItemStack item : items) {
             if (!MAPPED_ITEMS_LIST.containsKey(item.getItem())) {
                 MAPPED_ITEMS_LIST.put(item.getItem(), new ArrayList<>());
             }
 
+            if (MAPPED_ITEMS_LIST.get(item.getItem()).contains(id)) continue;
             MAPPED_ITEMS_LIST.get(item.getItem()).add(id);
 
         }
+
     }
 }
