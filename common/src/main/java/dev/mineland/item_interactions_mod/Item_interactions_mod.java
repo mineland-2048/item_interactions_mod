@@ -33,7 +33,7 @@ public final class Item_interactions_mod {
 
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
-        ItemInteractionsResources.onReload();
+//        ItemInteractionsResources.onReload();
 
 
 

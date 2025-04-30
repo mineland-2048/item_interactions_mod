@@ -4,6 +4,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 // TODO: Transition item to make picking up an item be smooth.
+//       Compatibility with smooth-swapping
 public class TransitionItem {
     private ItemStack itemStack;
     private Slot targetSlot;

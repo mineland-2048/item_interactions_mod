@@ -8,12 +8,16 @@ import net.minecraft.resources.ResourceLocation;
 
 public class BaseParticle {
     GuiGraphics guiGraphics;
-    double x;
-    double y;
-    double speedX;
-    double speedY;
-    double accelerationX;
-    double accelerationY;
+    double x, y;
+    double speedX, speedY;
+    double accelerationX, accelerationY;
+    double frictionX, frictionY;
+
+    int r, g, b;
+    float a;
+
+    int rEnd, gEnd, bEnd;
+    float aEnd;
 
     double lifeTime;
 

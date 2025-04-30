@@ -5,19 +5,74 @@ import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BasePart
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class GlobalDirt {
+    public static class slotSpawners{
+        private static final List<List<Spawner>> SPAWNERS = new ArrayList<>(90);
+
+        public static List<Spawner> get(int id) {
+            return SPAWNERS.get(id);
+        }
+
+        public static void set(int id, Spawner spawner){
+            SPAWNERS.get(id).clear();
+            SPAWNERS.get(id).add(spawner);
+        }
+
+        public static void set(int id, List<Spawner> spawners) {
+            SPAWNERS.set(id, spawners);
+        }
+
+        public static int size() {
+            return SPAWNERS.size();
+        }
+
+        public static void clear() {
+            SPAWNERS.clear();
+        }
+
+        public static void add(List<Spawner> spawner) {
+            SPAWNERS.add(spawner);
+        }
+
+        public static void add(int id, Spawner spawner) {
+            SPAWNERS.get(id).add(spawner);
+        }
+
+        public static List<ResourceLocation> getIdList(int id) {
+            List<ResourceLocation> result = new ArrayList<>();
+            for(Spawner s : get(id)) {
+                result.add(s.getName());
+            }
+            return result;
+        }
+
+
+        public static void tick(int id, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+            tickSpawners(SPAWNERS.get(id), time, guiGraphics, globalX, globalY, speedX, speedY);
+        }
+        public static void tickSpawners(List<Spawner> spawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+            for (Spawner spawner : spawners) {
+                spawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY);
+            }
+
+        }
+
+
+    }
     public static boolean isCurrentItem3d;
     public static ItemStack carriedItem;
 
+    public static boolean devenv = true;
     public static List<BaseParticle> particleList = new ArrayList<>();
+
 
     public static long lastMilis = 0;
 
@@ -51,7 +106,6 @@ public class GlobalDirt {
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
-    public static List<Spawner> slotSpawners = new ArrayList<>(90);
 
     public static int slotCount = 0;
 
@@ -89,6 +143,7 @@ public class GlobalDirt {
 //        System.out.println("Updating Mouse Position");
     }
 
+    public static int tickCounter;
 
     public static void updateTimer() {
 //        System.out.println("Updating Timer");
@@ -115,7 +170,15 @@ public class GlobalDirt {
         speedY = Math.clamp((speedY + (mouseDeltaY * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
 
 
-        shouldTickParticles = msCounter % 50 * tickScale < 2;
+
+        double tickTime = Math.floor((msCounter * tickScale * 30));
+        if (tickTime != tickCounter) {
+            tickCounter = (int) tickTime;
+            shouldTickParticles = true;
+        } else shouldTickParticles = false;
+
+
+
 
 
 
