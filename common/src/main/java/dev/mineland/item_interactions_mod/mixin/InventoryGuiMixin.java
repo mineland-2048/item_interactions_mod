@@ -1,11 +1,11 @@
 package dev.mineland.item_interactions_mod.mixin;
 
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import dev.mineland.item_interactions_mod.CarriedInteractions.checkForParticles;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
-import dev.mineland.item_interactions_mod.ItemInteractionsResources;
+import dev.mineland.item_interactions_mod.SpawnerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -61,18 +61,18 @@ public abstract class InventoryGuiMixin {
             guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
         }
 
-        if (carriedItem == null || carriedItem.isEmpty() || ItemInteractionsResources.getFromItem(carriedItem) == null) carriedSpawner = null;
+        if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner = null;
         else if (carriedItem != null && !carriedItem.isEmpty()) {
-            if (!ItemInteractionsResources.compareSpawner(carriedSpawner, carriedItem)) {
-                Spawner newSpawner = ItemInteractionsResources.getFromItem(carriedItem);
+            if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem)) {
+                List<GuiParticleSpawner> newGuiParticleSpawner = SpawnerRegistry.get(carriedItem);
 
-                if (newSpawner != null) {
-                    carriedSpawner = newSpawner.newInstance(-1);
-                    carriedSpawner.onCarried(guiGraphics, lastMouseX, lastMouseY, speedX*0.1, speedY*0.1, 0, 0);
+                if (!newGuiParticleSpawner.isEmpty()) {
+                    carriedGuiParticleSpawner = newGuiParticleSpawner;
+                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.fireEvent("onCarried", frameTime, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) speedX*0.1f, (float) speedY*0.1f));
 
 
                 }
-                else GlobalDirt.carriedSpawner = null;
+                else GlobalDirt.carriedGuiParticleSpawner = null;
             }
         }
 
@@ -88,9 +88,11 @@ public abstract class InventoryGuiMixin {
                 if (particle.shouldDelete) shouldDelete.add(particle);
             }
 
-            if (carriedSpawner != null) {
+            if (carriedGuiParticleSpawner != null) {
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
-                carriedSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
+//                carriedGuiParticleSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
+                carriedGuiParticleSpawner.forEach((spawner) -> spawner.fireEvent("onCarried", frameTime, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY));
+
             }
 
         } else {

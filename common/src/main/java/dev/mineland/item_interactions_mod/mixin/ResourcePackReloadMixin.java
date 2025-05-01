@@ -1,6 +1,5 @@
 package dev.mineland.item_interactions_mod.mixin;
 
-import dev.mineland.item_interactions_mod.ItemInteractionsResources;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

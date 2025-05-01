@@ -7,24 +7,16 @@ import com.google.gson.JsonParser;
 //import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
-import net.minecraft.client.renderer.item.properties.conditional.ComponentMatches;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -62,7 +54,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     }
 
 
-    private Spawner parseSpawner(JsonObject SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
+    private GuiParticleSpawner parseSpawner(JsonElement SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
 //        SpawnerJsonObject parsed;
 //        String parentId = SpawnerJson.get("parent").getAsString();
 //        ResourceLocation parentLocation = ResourceLocation.parse(parentId);
@@ -138,7 +130,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 //                };
 //            }
 //
-//            Spawner spawner = new Spawner(id.toString());
+//            GuiParticleSpawner spawner = new GuiParticleSpawner(id.toString());
 //
 //            double speedX =         trySet(SpawnerJson, "speedX", 0.0);
 //            double speedY =         trySet(SpawnerJson, "speedY", 0.0);
@@ -162,11 +154,11 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 //
 //        }
 
-        Spawner result;
+        GuiParticleSpawner result;
 
-        DataResult<Spawner> dataResult;
+        DataResult<GuiParticleSpawner> dataResult;
 
-        dataResult = Spawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
+        dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
 
         result = dataResult.resultOrPartial(Item_interactions_mod::warnMessage).orElseThrow();
 
@@ -192,18 +184,20 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
             ResourceLocation id = entry.getKey();
             Resource resource = entry.getValue();
 
-            try (InputStream stream = resource.open()) {
+             try (InputStream stream = resource.open()) {
                 JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
 
-                Spawner a = parseSpawner(json, id, resourceManager);
+                Item_interactions_mod.infoMessage("Parsing spawner: " + id);
+                GuiParticleSpawner a = parseSpawner(json, id, resourceManager);
 
                 SpawnerRegistry.register(a, id);
 
-                Item_interactions_mod.infoMessage("Parsed spawner: " + id);
+                Item_interactions_mod.infoMessage("Parsed");
 
-            } catch (IOException | JsonParseException e) {
-                Item_interactions_mod.warnMessage("Failed to load spawner '" + id + "'\n" + e);
+            } catch (Exception e) {
+                Item_interactions_mod.warnMessage("Failed to load spawner '" + id + "'" +
+                        "\n" + e);
 
             }
         }

@@ -2,7 +2,7 @@
 //
 //
 //import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.OakLeavesParticleSpawner;
-//import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
+//import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 //import net.minecraft.world.item.Item;
 //import net.minecraft.world.item.ItemStack;
 //import net.minecraft.world.item.Items;
@@ -11,7 +11,7 @@
 //import java.util.Map;
 //
 //public class ItemInteractionsResources {
-//    public static Map<String, Spawner> ParticleList = new HashMap<>();
+//    public static Map<String, GuiParticleSpawner> ParticleList = new HashMap<>();
 //
 //    public static void onReload() {
 //        ParticleList.clear();
@@ -20,19 +20,19 @@
 //    }
 //
 //
-//    public static Spawner getFromItem(ItemStack item) {
+//    public static GuiParticleSpawner getFromItem(ItemStack item) {
 //        return getFromItem(item.getItem());
 //    }
 //
-//    public static Spawner getFromItem(Item item) {
+//    public static GuiParticleSpawner getFromItem(Item item) {
 //        return ParticleList.get(item.toString());
 //    }
 //
-//    public static boolean compareSpawner(Spawner one, Spawner other) {
+//    public static boolean compareSpawner(GuiParticleSpawner one, GuiParticleSpawner other) {
 //        return (one != null && other != null) && one.getName().equals(other.getName());
 //    }
 //
-//    public static boolean compareSpawner(Spawner one, ItemStack item) {
+//    public static boolean compareSpawner(GuiParticleSpawner one, ItemStack item) {
 //        return compareSpawner(one, getFromItem(item));
 //    }
 //    public static boolean compareSpawner(ItemStack one, ItemStack other) {
@@ -46,7 +46,7 @@
 //    public static boolean compareSpawner(Item one, Item other) {
 //        return compareSpawner(getFromItem(one), getFromItem(other));
 //    }
-//    public static boolean compareSpawner(Spawner one, Item other) {
+//    public static boolean compareSpawner(GuiParticleSpawner one, Item other) {
 //        return compareSpawner(one, getFromItem(other));
 //    }
 //

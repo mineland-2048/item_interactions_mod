@@ -32,8 +32,8 @@ public class ParticleInstance {
             Codec.FLOAT.optionalFieldOf("frictionX", 0f).forGetter(p -> p.frictionX),
             Codec.FLOAT.optionalFieldOf("frictionY", 0f).forGetter(p -> p.frictionY),
             Codec.FLOAT.optionalFieldOf("duration", 1f).forGetter(p -> p.duration),
-            ColorRGBA.CODEC.optionalFieldOf("color_start", null).forGetter(p -> p.colorStart),
-            ColorRGBA.CODEC.optionalFieldOf("color_end", null).forGetter(p -> p.colorEnd),
+            ColorRGBA.CODEC.optionalFieldOf("color_start", new ColorRGBA(0xFFFFFFFF)).forGetter(p -> p.colorStart),
+            ColorRGBA.CODEC.optionalFieldOf("color_end", new ColorRGBA(0xFFFFFFFF)).forGetter(p -> p.colorEnd),
             Codec.INT.optionalFieldOf("count", 1).forGetter(p -> p.count)
 
             ).apply(particleInstanceInstance, ParticleInstance::new));
@@ -48,13 +48,14 @@ public class ParticleInstance {
             Codec.FLOAT.optionalFieldOf("frictionX", 0f).forGetter(p -> p.frictionX),
             Codec.FLOAT.optionalFieldOf("frictionY", 0f).forGetter(p -> p.frictionY),
             Codec.FLOAT.optionalFieldOf("duration", 1f).forGetter(p -> p.duration),
-            ColorRGBA.CODEC.optionalFieldOf("color_start", null).forGetter(p -> p.colorStart),
-            ColorRGBA.CODEC.optionalFieldOf("color_end", null).forGetter(p -> p.colorEnd),
+            ColorRGBA.CODEC.optionalFieldOf("color_start", new ColorRGBA(0xFFFFFFFF)).forGetter(p -> p.colorStart),
+            ColorRGBA.CODEC.optionalFieldOf("color_end", new ColorRGBA(0xFFFFFFFF)).forGetter(p -> p.colorEnd),
             Codec.INT.optionalFieldOf("count", 1).forGetter(p -> p.count)
 
             ).apply(particleInstanceInstance, ParticleInstance::new));
 
     public ParticleInstance() {
+        this(0f,0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0);
 
     }
 

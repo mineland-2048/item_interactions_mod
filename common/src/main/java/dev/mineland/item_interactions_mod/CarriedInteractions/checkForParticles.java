@@ -1,7 +1,7 @@
 package dev.mineland.item_interactions_mod.CarriedInteractions;
 
 import dev.mineland.item_interactions_mod.*;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -16,19 +16,19 @@ public class checkForParticles {
         try {
             if (!GlobalDirt.shouldTickParticles) return false;
             ItemStack slotItem = slot.getItem();
-            List<Spawner> itemSpawnerList = SpawnerRegistry.get(slotItem);
+            List<GuiParticleSpawner> itemGuiParticleSpawnerList = SpawnerRegistry.get(slotItem);
             while (GlobalDirt.slotSpawners.size() <= slotCount) GlobalDirt.slotSpawners.add(null);
             List<ResourceLocation> currentSpawnersList = GlobalDirt.slotSpawners.getIdList(slotCount);
             List<ResourceLocation> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
 
             if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
-            if (itemSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
+            if (itemGuiParticleSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
 //                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, 16, 16, 0xFF);
                 return false;
             }
 
-            if (itemSpawnerList.isEmpty()) {
-                GlobalDirt.slotSpawners.set(slotCount, (Spawner) null);
+            if (itemGuiParticleSpawnerList.isEmpty()) {
+                GlobalDirt.slotSpawners.set(slotCount, (GuiParticleSpawner) null);
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFFFF0000);
                 return false;
             }
@@ -39,9 +39,9 @@ public class checkForParticles {
 
             if ((currentSpawnersList.isEmpty())) {
 
-                GlobalDirt.slotSpawners.set(slotCount, itemSpawnerList);
+                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList);
 
-//                itemSpawnerList.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
+//                itemGuiParticleSpawnerList.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
                 GlobalDirt.slotSpawners.tick(slotCount, GlobalDirt.tickCounter, guiGraphics, globalX, globalY, 0f, 0f);
 
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFF00FF00);
@@ -51,10 +51,10 @@ public class checkForParticles {
 
 
             if (! new HashSet<>(currentSpawnersList).containsAll(itemSpawnersIdList)) {
-//                itemSpawnerList = itemSpawnerList.newInstance(slotCount);
-                GlobalDirt.slotSpawners.set(slotCount, itemSpawnerList);
+//                itemGuiParticleSpawnerList = itemGuiParticleSpawnerList.newInstance(slotCount);
+                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList);
 
-//                itemSpawnerList.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
+//                itemGuiParticleSpawnerList.init(guiGraphics, globalX, globalY, 0, 0, 0, 0);
                 GlobalDirt.slotSpawners.tick(slotCount, GlobalDirt.tickCounter, guiGraphics, globalX, globalY, 0f, 0f);
 
 

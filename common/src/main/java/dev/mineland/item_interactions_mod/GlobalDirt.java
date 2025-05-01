@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,19 +15,19 @@ import java.util.List;
 
 public class GlobalDirt {
     public static class slotSpawners{
-        private static final List<List<Spawner>> SPAWNERS = new ArrayList<>(90);
+        private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
 
-        public static List<Spawner> get(int id) {
+        public static List<GuiParticleSpawner> get(int id) {
             return SPAWNERS.get(id);
         }
 
-        public static void set(int id, Spawner spawner){
+        public static void set(int id, GuiParticleSpawner guiParticleSpawner){
             SPAWNERS.get(id).clear();
-            SPAWNERS.get(id).add(spawner);
+            SPAWNERS.get(id).add(guiParticleSpawner);
         }
 
-        public static void set(int id, List<Spawner> spawners) {
-            SPAWNERS.set(id, spawners);
+        public static void set(int id, List<GuiParticleSpawner> guiParticleSpawners) {
+            SPAWNERS.set(id, guiParticleSpawners);
         }
 
         public static int size() {
@@ -38,17 +38,17 @@ public class GlobalDirt {
             SPAWNERS.clear();
         }
 
-        public static void add(List<Spawner> spawner) {
-            SPAWNERS.add(spawner);
+        public static void add(List<GuiParticleSpawner> guiParticleSpawner) {
+            SPAWNERS.add(guiParticleSpawner);
         }
 
-        public static void add(int id, Spawner spawner) {
-            SPAWNERS.get(id).add(spawner);
+        public static void add(int id, GuiParticleSpawner guiParticleSpawner) {
+            SPAWNERS.get(id).add(guiParticleSpawner);
         }
 
         public static List<ResourceLocation> getIdList(int id) {
             List<ResourceLocation> result = new ArrayList<>();
-            for(Spawner s : get(id)) {
+            for(GuiParticleSpawner s : get(id)) {
                 result.add(s.getName());
             }
             return result;
@@ -58,9 +58,9 @@ public class GlobalDirt {
         public static void tick(int id, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
             tickSpawners(SPAWNERS.get(id), time, guiGraphics, globalX, globalY, speedX, speedY);
         }
-        public static void tickSpawners(List<Spawner> spawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
-            for (Spawner spawner : spawners) {
-                spawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY);
+        public static void tickSpawners(List<GuiParticleSpawner> guiParticleSpawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+            for (GuiParticleSpawner guiParticleSpawner : guiParticleSpawners) {
+                guiParticleSpawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY);
             }
 
         }
@@ -109,7 +109,7 @@ public class GlobalDirt {
 
     public static int slotCount = 0;
 
-    public static Spawner carriedSpawner = null;
+    public static List<GuiParticleSpawner> carriedGuiParticleSpawner = new ArrayList<>();
 
     public static boolean shouldTickParticles;
 
@@ -132,7 +132,7 @@ public class GlobalDirt {
         particleList.clear();
         slotSpawners.clear();
 
-        carriedSpawner = null;
+        carriedGuiParticleSpawner = null;
 
     }
 

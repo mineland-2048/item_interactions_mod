@@ -14,7 +14,7 @@
 //
 //import java.util.List;
 //
-//public class FallingLeaves extends Spawner {
+//public class FallingLeaves extends GuiParticleSpawner {
 //
 //    protected int color;
 //    ResourceLocation particleTexture = ResourceLocation.fromNamespaceAndPath("iteminteractions", "textures/particle/gui/falling_leaf.png");
@@ -75,7 +75,7 @@
 //        }
 //
 //
-//        if (this == GlobalDirt.carriedSpawner && ItemInteractionsConfig.debugDraws) {
+//        if (this == GlobalDirt.carriedGuiParticleSpawner && ItemInteractionsConfig.debugDraws) {
 //            guiGraphics.drawString(Minecraft.getInstance().font, "oX: " + oldSpeedX, 0, 0, 0xFFFFFFFF);
 //            guiGraphics.drawString(Minecraft.getInstance().font, "oY: " + oldSpeedY, 0, 10, 0xFFFFFFFF);
 //            guiGraphics.drawString(Minecraft.getInstance().font, "sX: " + speedX, 0, 20, 0xFFFFFFFF);

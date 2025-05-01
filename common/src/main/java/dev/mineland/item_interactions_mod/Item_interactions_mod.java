@@ -35,6 +35,8 @@ public final class Item_interactions_mod {
         ItemInteractionsConfig.refreshConfig();
 //        ItemInteractionsResources.onReload();
 
+        ReloadListenerHelper.registerReloadListener(new GuiParticlesReloadListener());
+
 
 
 //        animationSetting = ItemInteractionsConfig.animationConfig;
@@ -53,7 +55,6 @@ public final class Item_interactions_mod {
     public static void refreshConfig() {
         logger.info("Refreshing config");
         ItemInteractionsConfig.refreshConfig();
-        ItemInteractionsResources.onReload();
 
 
     }

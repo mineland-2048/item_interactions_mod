@@ -1,20 +1,11 @@
 package dev.mineland.item_interactions_mod;
 
-import com.mojang.serialization.Lifecycle;
-import com.mojang.serialization.MapCodec;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
-import net.minecraft.core.MappedRegistry;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
+import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public record SpawnerRegistry() {
 //    public static Registry<SpawnerRegistry> SPAWNER_REGISTRIES = new MappedRegistry<>(
@@ -32,7 +23,7 @@ public record SpawnerRegistry() {
 
     public static Map<Item, List<ResourceLocation>> MAPPED_ITEMS_LIST = new HashMap<>();
 
-    public static Map<ResourceLocation, Spawner> SPAWNER_MAP;
+    public static Map<ResourceLocation, GuiParticleSpawner> SPAWNER_MAP = new HashMap<>();
 
 
     public static void clear() {
@@ -49,14 +40,14 @@ public record SpawnerRegistry() {
 
     }
 
-    public static List<Spawner> get(ItemStack item) {
+    public static List<GuiParticleSpawner> get(ItemStack item) {
         List<ResourceLocation> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
-        List<Spawner> result = new ArrayList<>();
+        List<GuiParticleSpawner> result = new ArrayList<>();
 
         for (ResourceLocation id : spawnerIds) {
-            Spawner spawner = getSpawnerFromId(id);
+            GuiParticleSpawner guiParticleSpawner = getSpawnerFromId(id);
 
-            if (spawner != null && spawner.matches(item)) result.add(spawner);
+            if (guiParticleSpawner != null && guiParticleSpawner.matches(item)) result.add(guiParticleSpawner);
         }
         return result;
     };
@@ -67,20 +58,20 @@ public record SpawnerRegistry() {
         List<ResourceLocation> result = new ArrayList<>();
 
         for (ResourceLocation id : spawnerIds) {
-            Spawner spawner = getSpawnerFromId(id);
-            if (spawner != null && spawner.matches(item)) result.add(id);
+            GuiParticleSpawner guiParticleSpawner = getSpawnerFromId(id);
+            if (guiParticleSpawner != null && guiParticleSpawner.matches(item)) result.add(id);
         }
         return result;
 
     }
-    public static Spawner getSpawnerFromId(ResourceLocation id) {
+    public static GuiParticleSpawner getSpawnerFromId(ResourceLocation id) {
 //        if (SPAWNER_REGISTRIES.containsKey(id)) return SPAWNER_REGISTRIES.getValueOrThrow(ResourceKey.createid));
         return SPAWNER_MAP.getOrDefault(id, null);
     }
 
-    public static void register(Spawner spawner, ResourceLocation id) {
-        List<ItemStack> items = spawner.appliedItems;
-        SPAWNER_MAP.put(id, spawner);
+    public static void register(GuiParticleSpawner guiParticleSpawner, ResourceLocation id) {
+        List<ItemStack> items = guiParticleSpawner.appliedItems;
+        SPAWNER_MAP.put(id, guiParticleSpawner);
         for (ItemStack item : items) {
             if (!MAPPED_ITEMS_LIST.containsKey(item.getItem())) {
                 MAPPED_ITEMS_LIST.put(item.getItem(), new ArrayList<>());
@@ -90,6 +81,18 @@ public record SpawnerRegistry() {
             MAPPED_ITEMS_LIST.get(item.getItem()).add(id);
 
         }
+
+    }
+
+    public static boolean compareSpawner(List<GuiParticleSpawner> carriedGuiParticleSpawner, ItemStack carriedItem) {
+        List<ResourceLocation> carriedList = new ArrayList<>();
+        List<ResourceLocation> itemList = SpawnerRegistry.getList(carriedItem);
+
+        for (GuiParticleSpawner s : carriedGuiParticleSpawner) {
+            carriedList.add(s.getName());
+        }
+
+        return new HashSet<>(itemList).containsAll(carriedList);
 
     }
 }

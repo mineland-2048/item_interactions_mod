@@ -1,6 +1,6 @@
 //package dev.mineland.item_interactions_mod.CarriedInteractions.Spawners;
 //
-//public class LoopingEvent extends Event {
+//public class LoopingEvent extends ParticleEvent {
 //    float defaultInterval;
 //    float nextInterval;
 //

@@ -1,0 +1,59 @@
+{
+
+  "attributes": {
+    "x": 0,
+    "y": 0,
+
+    "speedX": 0.0,
+    "speedY": 0.0,
+
+    "accelerationX": 0.0,
+    "accelerationY": 0.0,
+
+    "frictionX": 0.0,
+    "frictionY": 0.0,
+
+    "color_start": "#FFFFFFFF",
+    "color_end": "#00FFFFFF"
+  },
+
+  "attributes_variance": {
+    "x": 2,
+    "y": 2,
+
+    "speedX": 1.0,
+    "speedY": 1.0,
+
+    "accelerationX": 1.0,
+    "accelerationY": 1.0,
+
+    "frictionX": 0.5,
+    "frictionY": 0.5,
+
+    "color_start": "#00202020"
+  },
+
+  "events": {
+    "onIdle": {
+      "particles": [
+        {"id":  "falling_leaf"}
+      ],
+
+      "interval": 5
+    },
+
+    "onPut": {
+
+      "particles": [
+        {"id":  "falling_leaf"},
+        {"id":  "falling_leaf"},
+        {"id":  "falling_leaf"},
+        {"id":  "falling_leaf"}
+      ]
+    },
+
+    "onCarried": "onPut",
+    "onShake": {"use":  "onPut", "interval":  2}
+
+  }
+}
