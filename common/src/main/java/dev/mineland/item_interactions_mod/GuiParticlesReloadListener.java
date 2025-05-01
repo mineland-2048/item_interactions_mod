@@ -54,7 +54,22 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     }
 
 
-    private GuiParticleSpawner parseSpawner(JsonElement SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
+    private GuiParticleSpawner parseSpawner(ResourceLocation id,ResourceManager resourceManager) {
+        if (resourceManager.getResource(id).isEmpty()) {
+            Item_interactions_mod.warnMessage("Parent '" + id + "' is empty!");
+            return null;
+        };
+
+        try (InputStream stream = resourceManager.getResource(id).get().open()) {
+            JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
+            return parseSpawner(json, id, resourceManager);
+        } catch (JsonParseException | IOException e) {
+            Item_interactions_mod.warnMessage("Couldnt parse parent '" + id + "'!\n" + e);
+            return null;
+        }
+    }
+
+    private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
 //        SpawnerJsonObject parsed;
 //        String parentId = SpawnerJson.get("parent").getAsString();
 //        ResourceLocation parentLocation = ResourceLocation.parse(parentId);
@@ -155,15 +170,20 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 //        }
 
         GuiParticleSpawner result;
-
         DataResult<GuiParticleSpawner> dataResult;
 
+//        if (SpawnerJson.has("parent") && SpawnerJson.get("parent").getAsString() != null) {
+//
+//            ResourceLocation parentId = ResourceLocation.parse(SpawnerJson.get("parent").getAsString());
+//            GuiParticleSpawner parent = parseSpawner(parentId, resourceManager);
+//
+//
+//
+//        }
+
+
         dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
-
         result = dataResult.resultOrPartial(Item_interactions_mod::warnMessage).orElseThrow();
-
-//        if SpawnerJson.get("parent")
-
         result.setName(id);
         return result;
 
@@ -180,25 +200,28 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
     private void loadSpawners(ResourceManager resourceManager) {
         for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("particles/gui_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
-
-            ResourceLocation id = entry.getKey();
-            Resource resource = entry.getValue();
-
-             try (InputStream stream = resource.open()) {
-                JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
+            {
 
 
-                Item_interactions_mod.infoMessage("Parsing spawner: " + id);
-                GuiParticleSpawner a = parseSpawner(json, id, resourceManager);
+                ResourceLocation id = entry.getKey();
+                Resource resource = entry.getValue();
 
-                SpawnerRegistry.register(a, id);
+                try (InputStream stream = resource.open()) {
+                    JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
-                Item_interactions_mod.infoMessage("Parsed");
 
-            } catch (Exception e) {
-                Item_interactions_mod.warnMessage("Failed to load spawner '" + id + "'" +
-                        "\n" + e);
+                    Item_interactions_mod.infoMessage("Parsing spawner: " + id);
+                    GuiParticleSpawner a = parseSpawner(json, id, resourceManager);
 
+                    SpawnerRegistry.register(a, id);
+
+                    Item_interactions_mod.infoMessage("Parsed");
+
+                } catch (Exception e) {
+                    Item_interactions_mod.warnMessage("Failed to load spawner '" + id + "'" +
+                            "\n" + e);
+
+                }
             }
         }
 

@@ -70,7 +70,7 @@ public record SpawnerRegistry() {
     }
 
     public static void register(GuiParticleSpawner guiParticleSpawner, ResourceLocation id) {
-        List<ItemStack> items = guiParticleSpawner.appliedItems;
+        List<ItemStack> items = guiParticleSpawner.getAppliedItems();
         SPAWNER_MAP.put(id, guiParticleSpawner);
         for (ItemStack item : items) {
             if (!MAPPED_ITEMS_LIST.containsKey(item.getItem())) {
