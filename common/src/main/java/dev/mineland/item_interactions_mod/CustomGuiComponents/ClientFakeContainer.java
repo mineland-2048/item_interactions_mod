@@ -1,5 +1,6 @@
 package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
+import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
@@ -86,10 +87,8 @@ public class ClientFakeContainer implements Container {
     }
 
     public void renderSlots(GuiGraphics guiGraphics) {
-
+        GlobalDirt.slotCount = 0;
         for (Slot slot : slots) {
-
-
             if (ItemInteractionsConfig.debugDraws) {
                 int slotX = (int) ((slot.x - this.x) * 2);
                 int slotY = (int) 40 + ((slot.y - this.y) * 2);
@@ -116,6 +115,7 @@ public class ClientFakeContainer implements Container {
             guiGraphics.renderItem(slot.getItem(), itemX, itemY);
             guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
 
+            GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, this.x, this.y, this.slots.size());
 
         }
 

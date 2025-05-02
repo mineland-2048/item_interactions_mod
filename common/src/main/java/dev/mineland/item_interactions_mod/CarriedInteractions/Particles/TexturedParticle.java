@@ -2,23 +2,20 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureContents;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.ColorRGBA;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 public class TexturedParticle extends BaseParticle {
 
-    int tint;
+    int tintStart, tintEnd;
     TextureType textureType;
 
     JsonObject textureMcMeta;
@@ -29,6 +26,9 @@ public class TexturedParticle extends BaseParticle {
     int textureIndex;
     boolean interpolate;
     int length;
+
+    double totalLifeTime;
+
 
     public enum TextureType {
         STATIC(0),
@@ -41,17 +41,19 @@ public class TexturedParticle extends BaseParticle {
         }
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double lifeTime, ResourceLocation textureLocation,  int tint) {
-        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, lifeTime, textureLocation, TextureType.STATIC, tint);
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, ResourceLocation textureLocation,  int tintStart, int tintEnd) {
+        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeTime, textureLocation, TextureType.LIFETIME, tintStart, tintEnd);
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double lifeTime, ResourceLocation textureLocation, TextureType textureType,  int tint) {
-        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, lifeTime);
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, ResourceLocation textureLocation, TextureType textureType,  int tintStart, int tintEnd) {
+        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeTime);
 
-        this.tint = tint;
+        this.tintStart = tintStart;
+        this.tintEnd = tintEnd;
         this.textureLocation = textureLocation;
         this.textureType = textureType;
 
+        this.totalLifeTime = lifeTime;
 
         try {
             Resource resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation.withSuffix(".mcmeta" )).orElse(null);
@@ -110,6 +112,7 @@ public class TexturedParticle extends BaseParticle {
             }
 
             case LIFETIME -> {
+                if (length == 0) break;
                 int index = (int) Math.floor((lifeTime / maxTick) * length);
                 textureIndex = index % length;
 
@@ -131,15 +134,26 @@ public class TexturedParticle extends BaseParticle {
             }
         }
 
+        int finalColor = MiscUtils.colorLerp((float) ((lifeTime / maxTick)), this.tintStart, this.tintEnd);
+
         this.guiGraphics.blit(RenderType::guiTextured, this.textureLocation,
                 (int) this.x, (int) this.y,
                 0f, yStart,
                 totalTextureWidth, uvHeight,
                 totalTextureWidth, totalTextureHeight,
-                this.tint);
+                finalColor);
 
 
 
 //        this.guiGraphics.blit();
+    }
+
+    public void tick() {
+        super.tick();
+        this.x += speedX;
+        this.y += speedY;
+        this.speedX = (speedX + accelerationX) * frictionX;
+        this.speedY = (speedY + accelerationY) * frictionY;
+
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemStack;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -145,6 +146,8 @@ public class GuiParticleSpawner {
 
 
 
+
+
         children.ifPresent(childrenList -> {
             for (ResourceLocation childId : childrenList) {
                 GuiParticleSpawner c = parseSpawner(childId);
@@ -187,10 +190,12 @@ public class GuiParticleSpawner {
         eventStringEither.ifLeft(e -> {
             e.nextInterval -= timeDuration;
             if (e.nextInterval <= 0) {
-                e.fire(this, x, y, speedX, speedY);
-
                 e.nextInterval = e.interval;
+                e.fire(guiGraphics, x, y, speedX, speedY);
             }
+
+//            this.getEvents().put(eventName, Either.left(e));
+
         });
 
 
@@ -200,6 +205,7 @@ public class GuiParticleSpawner {
 
     public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
 
+        for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY);
         Either<ParticleEvent, String> event = this.getEvents().get(this.state);
         if (event == null) return;
 
@@ -210,7 +216,7 @@ public class GuiParticleSpawner {
 
     public boolean matches(ItemStack itemStack) {
 
-//        Do matching logic;
+//        TODO: Do matching logic;
         return true;
     }
 
@@ -236,16 +242,16 @@ public class GuiParticleSpawner {
 
             attributes.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
             attributes.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
-            attributes.speedX.ifPresent(attr -> attributes.speedX = Optional.of(attr));
-            attributes.speedY.ifPresent(attr -> attributes.speedY = Optional.of(attr));
-            attributes.accelerationX.ifPresent(attr -> attributes.accelerationX = Optional.of(attr));
-            attributes.accelerationY.ifPresent(attr -> attributes.accelerationY = Optional.of(attr));
-            attributes.frictionX.ifPresent(attr -> attributes.frictionX = Optional.of(attr));
-            attributes.frictionY.ifPresent(attr -> attributes.frictionY = Optional.of(attr));
-            attributes.colorStart.ifPresent(attr -> attributes.colorStart = Optional.of(attr));
-            attributes.colorEnd.ifPresent(attr -> attributes.colorEnd = Optional.of(attr));
-            attributes.duration.ifPresent(attr -> attributes.duration = Optional.of(attr));
-            attributes.count.ifPresent(attr -> attributes.count = Optional.of(attr));
+            attributes.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
+            attributes.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
+            attributes.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
+            attributes.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
+            attributes.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
+            attributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
+            attributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
+            attributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+            attributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
+            attributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
             this.attributes = Optional.of(newAttributes);
         } else this.attributes = Optional.of(attributes);
@@ -261,16 +267,16 @@ public class GuiParticleSpawner {
 
             attributes.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
             attributes.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
-            attributes.speedX.ifPresent(attr -> attributes.speedX = Optional.of(attr));
-            attributes.speedY.ifPresent(attr -> attributes.speedY = Optional.of(attr));
-            attributes.accelerationX.ifPresent(attr -> attributes.accelerationX = Optional.of(attr));
-            attributes.accelerationY.ifPresent(attr -> attributes.accelerationY = Optional.of(attr));
-            attributes.frictionX.ifPresent(attr -> attributes.frictionX = Optional.of(attr));
-            attributes.frictionY.ifPresent(attr -> attributes.frictionY = Optional.of(attr));
-            attributes.colorStart.ifPresent(attr -> attributes.colorStart = Optional.of(attr));
-            attributes.colorEnd.ifPresent(attr -> attributes.colorEnd = Optional.of(attr));
-            attributes.duration.ifPresent(attr -> attributes.duration = Optional.of(attr));
-            attributes.count.ifPresent(attr -> attributes.count = Optional.of(attr));
+            attributes.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
+            attributes.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
+            attributes.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
+            attributes.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
+            attributes.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
+            attributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
+            attributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
+            attributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+            attributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
+            attributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
             this.attributes_variance = Optional.of(newAttributes);
         } else this.attributes_variance = Optional.of(attributes);
@@ -290,14 +296,73 @@ public class GuiParticleSpawner {
         return this.events.orElseGet(HashMap::new);
     }
 
-    public void setEvents(Map<String, Either<ParticleEvent, String>> events) {
+    public void setEvents(Map<String, Either<ParticleEvent, String>> newEvents) {
 
-        this.events.ifPresent(eventsMap -> {
-            Map<String, Either<ParticleEvent, String>> currentEvents = this.events.get();
-            currentEvents.putAll(events);
-        });
-        this.events = Optional.of(events);
+//        this.events.ifPresent(eventsMap -> {
+//            Map<String, Either<ParticleEvent, String>> eventsMap = this.events.orElse(new HashMap<>())
+            Map<String, Either<ParticleEvent, String>> newEventsMap = this.events.orElse(new HashMap<>());
+
+            System.out.println("Parsing events: " + newEvents);
+
+
+            newEvents.forEach((String k, Either<ParticleEvent, String> newEvent) -> {
+                Either<ParticleEvent, String> eitherCurrentEvent = newEventsMap.getOrDefault(k, newEvent);
+                ParticleEvent finalEvent = new ParticleEvent();
+
+                if (eitherCurrentEvent.left().isPresent()) finalEvent = eitherCurrentEvent.left().get();
+                else if (eitherCurrentEvent.right().isPresent()) finalEvent.use = eitherCurrentEvent.right().get();
+
+
+                if (this.attributes.isPresent()) {
+                    finalEvent.attributes.x = finalEvent.attributes.x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.x;
+                    finalEvent.attributes.y = finalEvent.attributes.y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.y;
+
+                    finalEvent.attributes.speedX = finalEvent.attributes.speedX.isEmpty() ? this.attributes.get().speedX : finalEvent.attributes.speedX;
+                    finalEvent.attributes.speedY = finalEvent.attributes.speedY.isEmpty() ? this.attributes.get().speedY : finalEvent.attributes.speedY;
+
+                    finalEvent.attributes.accelerationX = finalEvent.attributes.accelerationX.isEmpty() ? this.attributes.get().accelerationX : finalEvent.attributes.accelerationX;
+                    finalEvent.attributes.accelerationY = finalEvent.attributes.accelerationY.isEmpty() ? this.attributes.get().accelerationY : finalEvent.attributes.accelerationY;
+
+                    finalEvent.attributes.frictionX = finalEvent.attributes.frictionX.isEmpty() ? this.attributes.get().frictionX : finalEvent.attributes.frictionX;
+                    finalEvent.attributes.frictionY = finalEvent.attributes.frictionY.isEmpty() ? this.attributes.get().frictionY : finalEvent.attributes.frictionY;
+
+                    finalEvent.attributes.colorStart = finalEvent.attributes.colorStart.isEmpty() ? this.attributes.get().colorStart : finalEvent.attributes.colorStart;
+                    finalEvent.attributes.colorEnd = finalEvent.attributes.colorEnd.isEmpty() ? this.attributes.get().colorEnd : finalEvent.attributes.colorEnd;
+
+                    finalEvent.attributes.duration = finalEvent.attributes.duration.isEmpty() ? this.attributes.get().duration : finalEvent.attributes.duration;
+                    finalEvent.attributes.count = finalEvent.attributes.count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.count;
+
+                }
+                if (attributes_variance.isPresent()) {
+                    finalEvent.attributes_variance.x = finalEvent.attributes_variance.x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.x;
+                    finalEvent.attributes_variance.y = finalEvent.attributes_variance.y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.y;
+
+                    finalEvent.attributes_variance.speedX = finalEvent.attributes_variance.speedX.isEmpty() ? this.attributes_variance.get().speedX : finalEvent.attributes_variance.speedX;
+                    finalEvent.attributes_variance.speedY = finalEvent.attributes_variance.speedY.isEmpty() ? this.attributes_variance.get().speedY : finalEvent.attributes_variance.speedY;
+
+                    finalEvent.attributes_variance.accelerationX = finalEvent.attributes_variance.accelerationX.isEmpty() ? this.attributes_variance.get().accelerationX : finalEvent.attributes_variance.accelerationX;
+                    finalEvent.attributes_variance.accelerationY = finalEvent.attributes_variance.accelerationY.isEmpty() ? this.attributes_variance.get().accelerationY : finalEvent.attributes_variance.accelerationY;
+
+                    finalEvent.attributes_variance.frictionX = finalEvent.attributes_variance.frictionX.isEmpty() ? this.attributes_variance.get().frictionX : finalEvent.attributes_variance.frictionX;
+                    finalEvent.attributes_variance.frictionY = finalEvent.attributes_variance.frictionY.isEmpty() ? this.attributes_variance.get().frictionY : finalEvent.attributes_variance.frictionY;
+
+                    finalEvent.attributes_variance.colorStart = finalEvent.attributes_variance.colorStart.isEmpty() ? this.attributes_variance.get().colorStart : finalEvent.attributes_variance.colorStart;
+                    finalEvent.attributes_variance.colorEnd = finalEvent.attributes_variance.colorEnd.isEmpty() ? this.attributes_variance.get().colorEnd : finalEvent.attributes_variance.colorEnd;
+
+                    finalEvent.attributes_variance.duration = finalEvent.attributes_variance.duration.isEmpty() ? this.attributes_variance.get().duration : finalEvent.attributes_variance.duration;
+                    finalEvent.attributes_variance.count = finalEvent.attributes_variance.count.isEmpty() ? this.attributes_variance.get().count : finalEvent.attributes_variance.count;
+                }
+
+
+                newEventsMap.put(k, Either.left(finalEvent));
+
+            });
+
+
+            this.events = Optional.of(newEventsMap);
     }
+
+
 
 
     public int getId() {

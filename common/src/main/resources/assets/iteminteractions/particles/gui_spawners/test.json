@@ -1,0 +1,66 @@
+{
+  "attributes": {
+    "x": 0,
+    "y": 0,
+    "speedX": 0,
+    "speedY": 0,
+    "frictionX": 0.9,
+    "frictionY": 0.9,
+    "colorStart": "#FFFFFFFF",
+    "colorEnd": "#00FFFFFF",
+    "duration":  100
+
+  },
+
+  "attributes_variance": {
+    "speedX": 0.2,
+    "speedY": 0.2,
+    "colorStart": "#00202020"
+  },
+
+  "events": {
+    "onPut": {
+      "particles": [
+        {"id":  "particles/bubble.json"},
+        {"id":  "particles/bubble.json"},
+        {"id":  "particles/bubble.json"}
+      ]
+    },
+
+    "onIdle":  {
+      "attributes": {
+        "colorStart": "#FFFF0000",
+        "count": 5,
+        "interval": 5
+      },
+      "particles": [
+        {"id":  "particles/smoke.json"}
+      ]
+    },
+
+    "onCarried": "onIdle",
+
+    "onPickup": {
+      "use": "onPut",
+      "count": 2,
+      "attributes": {
+        "colorStart": "#FF00FF00"
+      }
+    }
+  },
+
+  "applies": [
+    {
+      "id": "iron_sword"
+    },
+
+    {
+      "id": "redstone_lamp",
+      "components": {
+        "block_state":{
+          "powered": "true"
+        }
+      }
+    }
+  ]
+}

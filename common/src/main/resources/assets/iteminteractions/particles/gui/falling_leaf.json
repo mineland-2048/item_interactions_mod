@@ -1,5 +1,5 @@
 {
   "textures": [
-    "iteminteractions:texutres/particle/gui/falling_leaf.png"
+    "iteminteractions:gui/falling_leaf"
   ]
 }

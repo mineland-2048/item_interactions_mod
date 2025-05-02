@@ -14,7 +14,9 @@
     "frictionY": 0.0,
 
     "color_start": "#FFFFFFFF",
-    "color_end": "#00FFFFFF"
+    "color_end": "#00FFFFFF",
+
+    "duration": 20
   },
 
   "attributes_variance": {
@@ -30,25 +32,27 @@
     "frictionX": 0.5,
     "frictionY": 0.5,
 
+    "duration_variance": 2,
+
     "color_start": "#00202020"
   },
 
   "events": {
     "onIdle": {
       "particles": [
-        {"id":  "falling_leaf"}
+        {"id":  "iteminteractions:particles/gui/falling_leaf.json"}
       ],
 
-      "interval": 5
+      "interval": 20
     },
 
     "onPut": {
 
       "particles": [
-        {"id":  "falling_leaf"},
-        {"id":  "falling_leaf"},
-        {"id":  "falling_leaf"},
-        {"id":  "falling_leaf"}
+        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
+        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
+        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
+        {"id":  "iteminteractions:particles/gui/falling_leaf.json"}
       ]
     },
 

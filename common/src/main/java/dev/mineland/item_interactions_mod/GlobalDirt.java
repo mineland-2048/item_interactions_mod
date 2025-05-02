@@ -17,6 +17,12 @@ public class GlobalDirt {
     public static class slotSpawners{
         private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
 
+        public static void setState(int id, String state) {
+            if (SPAWNERS.get(id) == null || SPAWNERS.get(id).isEmpty()) return;
+            for (GuiParticleSpawner s : SPAWNERS.get(id)) {
+                s.setState(state);
+            }
+        }
         public static List<GuiParticleSpawner> get(int id) {
             return SPAWNERS.get(id);
         }
@@ -26,8 +32,13 @@ public class GlobalDirt {
             SPAWNERS.get(id).add(guiParticleSpawner);
         }
 
-        public static void set(int id, List<GuiParticleSpawner> guiParticleSpawners) {
+        public static void set(int id, List<GuiParticleSpawner> guiParticleSpawners, String state) {
+            for (GuiParticleSpawner s : guiParticleSpawners) s.setState(state);
             SPAWNERS.set(id, guiParticleSpawners);
+        }
+
+        public static void set(int id, List<GuiParticleSpawner> guiParticleSpawners) {
+            set(id, guiParticleSpawners, "onIdle");
         }
 
         public static int size() {
@@ -48,6 +59,7 @@ public class GlobalDirt {
 
         public static List<ResourceLocation> getIdList(int id) {
             List<ResourceLocation> result = new ArrayList<>();
+            if (SPAWNERS.get(id) == null) return result;
             for(GuiParticleSpawner s : get(id)) {
                 result.add(s.getName());
             }
@@ -103,6 +115,8 @@ public class GlobalDirt {
 
     public static float drag = 0.8f;
 
+    public static int particleCount = 0;
+
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
@@ -132,7 +146,7 @@ public class GlobalDirt {
         particleList.clear();
         slotSpawners.clear();
 
-        carriedGuiParticleSpawner = null;
+        carriedGuiParticleSpawner.clear();
 
     }
 
@@ -178,6 +192,7 @@ public class GlobalDirt {
         } else shouldTickParticles = false;
 
 
+        particleCount = 0;
 
 
 

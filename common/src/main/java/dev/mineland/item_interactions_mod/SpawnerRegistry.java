@@ -44,6 +44,7 @@ public record SpawnerRegistry() {
         List<ResourceLocation> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
         List<GuiParticleSpawner> result = new ArrayList<>();
 
+        if (spawnerIds == null) return result;
         for (ResourceLocation id : spawnerIds) {
             GuiParticleSpawner guiParticleSpawner = getSpawnerFromId(id);
 
@@ -56,6 +57,8 @@ public record SpawnerRegistry() {
     public static List<ResourceLocation> getList(ItemStack item) {
         List<ResourceLocation> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
         List<ResourceLocation> result = new ArrayList<>();
+
+        if (spawnerIds == null) return result;
 
         for (ResourceLocation id : spawnerIds) {
             GuiParticleSpawner guiParticleSpawner = getSpawnerFromId(id);

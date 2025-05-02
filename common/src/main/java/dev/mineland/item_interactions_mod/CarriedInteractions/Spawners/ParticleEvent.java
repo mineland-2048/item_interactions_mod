@@ -2,6 +2,7 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Spawners;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class ParticleEvent {
 
     public ParticleInstance attributes;
     public ParticleInstance attributes_variance;
-    public List<ParticleInstance> particles = new ArrayList<>(10);
+    public List<ParticleInstance> particles = new ArrayList<>();
 
     public String use = "";
 
@@ -46,7 +47,8 @@ public class ParticleEvent {
 //    ).apply(particleInstanceInstance, ParticleEvent::new));
 
     public ParticleEvent() {
-
+        attributes = new ParticleInstance();
+        attributes_variance = ParticleInstance.defaultVariance();
     }
 
     public ParticleEvent(float a, String use) {
@@ -56,7 +58,7 @@ public class ParticleEvent {
 
     public ParticleEvent(float interval, ParticleInstance attributes, ParticleInstance attributes_variance, List<ParticleInstance> particles, String use) {
 //        this.name = name;
-        System.out.println("eventing");
+//        System.out.println("eventing");
         this.interval = interval;
         this.attributes = attributes;
         this.attributes_variance = attributes_variance;
@@ -68,10 +70,11 @@ public class ParticleEvent {
 
     }
 
-    void fire(GuiParticleSpawner guiParticleSpawner, float x, float y, float speedX, float speedY) {
-        System.out.println("ParticleEvent fired");
+    void fire(GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
         for (ParticleInstance p : particles) {
-            p.spawn();
+            for (int i = 0; i < p.count.orElse(1); i++) {
+                p.spawn(guiGraphics, x, y, speedX, speedY, attributes, attributes_variance);
+            }
         }
     };
 
