@@ -199,6 +199,8 @@ public class GuiParticleSpawner {
             return;
         }
         Either<ParticleEvent, String> eventStringEither = this.getEvents().get(eventName);
+        if (eventStringEither == null) return;
+
         if (eventStringEither.right().isPresent()) {
             fireEvent(eventStringEither.right().get(), timeDuration, guiGraphics, x, y, speedX, speedY);
             return;
@@ -208,6 +210,9 @@ public class GuiParticleSpawner {
 
         eventStringEither.ifLeft(e -> {
             e.nextInterval -= 1;
+
+            e.use.ifPresent(s -> e.inheritFromParent(this.getEvents(), this.getEvents().get(s)));
+
             if (e.nextInterval <= 0) {
                 e.nextInterval = e.interval.orElse(0f);
                 e.fire(guiGraphics, x, y, speedX, speedY);
@@ -280,25 +285,25 @@ public class GuiParticleSpawner {
         return attributes_variance.orElseGet(ParticleInstance::new);
     }
 
-    public void setAttributes_variance(ParticleInstance attributes) {
+    public void setAttributes_variance(ParticleInstance attributes_variance) {
         if (this.attributes_variance.isPresent()) {
             ParticleInstance newAttributes = this.attributes_variance.get();
 
-            attributes.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
-            attributes.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
-            attributes.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
-            attributes.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
-            attributes.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
-            attributes.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
-            attributes.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
-            attributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
-            attributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
-            attributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
-            attributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
-            attributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
+            attributes_variance.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
+            attributes_variance.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
+            attributes_variance.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
+            attributes_variance.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
+            attributes_variance.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
+            attributes_variance.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
+            attributes_variance.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
+            attributes_variance.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
+            attributes_variance.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
+            attributes_variance.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+            attributes_variance.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
+            attributes_variance.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
             this.attributes_variance = Optional.of(newAttributes);
-        } else this.attributes_variance = Optional.of(attributes);
+        } else this.attributes_variance = Optional.of(attributes_variance);
     }
 
     public List<GuiParticleSpawner> getChildGuiParticleSpawners() {
@@ -332,9 +337,9 @@ public class GuiParticleSpawner {
                 else if (eitherCurrentEvent.right().isPresent()) finalEvent.use = Optional.of(eitherCurrentEvent.right().get());
 
 
-                ParticleInstance empty = new ParticleInstance();
-                if (finalEvent.attributes.isEmpty())  finalEvent.attributes = Optional.of(empty);
-                if (finalEvent.attributes_variance.isEmpty())  finalEvent.attributes_variance = Optional.of(empty);
+                if (finalEvent.attributes.isEmpty())  finalEvent.attributes = Optional.of(new ParticleInstance());
+                if (finalEvent.attributes_variance.isEmpty())  finalEvent.attributes_variance = Optional.of(new ParticleInstance());
+
                 if (this.attributes.isPresent()) {
                     finalEvent.attributes.get().x = finalEvent.attributes.get().x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.get().x;
                     finalEvent.attributes.get().y = finalEvent.attributes.get().y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.get().y;
@@ -355,7 +360,8 @@ public class GuiParticleSpawner {
                     finalEvent.attributes.get().count = finalEvent.attributes.get().count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.get().count;
 
                 }
-                if (attributes_variance.isPresent()) {
+
+                if (this.attributes_variance.isPresent()) {
                     finalEvent.attributes_variance.get().x = finalEvent.attributes_variance.get().x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.get().x;
                     finalEvent.attributes_variance.get().y = finalEvent.attributes_variance.get().y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.get().y;
 

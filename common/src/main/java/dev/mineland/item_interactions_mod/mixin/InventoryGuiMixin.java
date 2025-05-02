@@ -58,6 +58,8 @@ public abstract class InventoryGuiMixin {
 
         GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 
+        carriedItem = ItemStack.EMPTY;
+
 
     }
 

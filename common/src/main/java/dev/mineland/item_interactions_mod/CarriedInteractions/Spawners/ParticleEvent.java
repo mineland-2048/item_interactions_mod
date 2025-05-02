@@ -1,12 +1,12 @@
 package dev.mineland.item_interactions_mod.CarriedInteractions.Spawners;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 public class ParticleEvent {
@@ -80,12 +80,81 @@ public class ParticleEvent {
     }
 
     void fire(GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
+        ParticleInstance empty = new ParticleInstance();
+        int eventCount = this.attributes.orElse(empty).count.orElse(1);
+        int rand = this.attributes_variance.orElse(empty).count.orElse(0);
         for (ParticleInstance p : particles.orElse(new ArrayList<>())) {
-            for (int i = 0; i < p.count.orElse(1); i++) {
-                p.spawn(guiGraphics, x, y, speedX, speedY, attributes.orElse(new ParticleInstance()), attributes_variance.orElse(new ParticleInstance()));
+            for (int i = 0; i < (int) MiscUtils.randomVariance(p.count.orElse(eventCount), rand); i++) {
+                p.spawn(guiGraphics, x, y, speedX, speedY, attributes.orElse(empty), attributes_variance.orElse(empty));
             }
         }
     };
+
+    public void inheritFromParent(Map<String, Either<ParticleEvent, String>> eventMap, Either<ParticleEvent, String> parent) {
+        if (parent == null) return;
+        if (parent.right().isPresent()) {
+            inheritFromParent(eventMap, parent);
+            return;
+        }
+        if (parent.left().isEmpty()) return;
+
+        ParticleInstance localAttributes = new ParticleInstance();
+        ParticleInstance localAttributesVariance = new ParticleInstance();
+
+
+        if (parent.left().get().attributes.isPresent()) {
+            localAttributes = parent.left().get().attributes.orElse(localAttributes);
+        }
+
+        if (this.attributes.isPresent()) {
+                ParticleInstance newAttributes = this.attributes.get();
+
+                localAttributes.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
+                localAttributes.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
+                localAttributes.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
+                localAttributes.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
+                localAttributes.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
+                localAttributes.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
+                localAttributes.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
+                localAttributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
+                localAttributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
+                localAttributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+                localAttributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
+                localAttributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
+
+                this.attributes = Optional.of(newAttributes);
+            } else this.attributes = Optional.of(localAttributes);
+
+        if (parent.left().get().attributes_variance.isPresent()) {
+            localAttributesVariance = parent.left().get().attributes_variance.orElse(localAttributesVariance);
+        }
+
+        if (this.attributes_variance.isPresent()) {
+                ParticleInstance newAttributes = this.attributes_variance.get();
+
+                localAttributesVariance.x.ifPresent(attr -> newAttributes.x = Optional.of(attr));
+                localAttributesVariance.y.ifPresent(attr -> newAttributes.y = Optional.of(attr));
+                localAttributesVariance.speedX.ifPresent(attr -> newAttributes.speedX = Optional.of(attr));
+                localAttributesVariance.speedY.ifPresent(attr -> newAttributes.speedY = Optional.of(attr));
+                localAttributesVariance.accelerationX.ifPresent(attr -> newAttributes.accelerationX = Optional.of(attr));
+                localAttributesVariance.accelerationY.ifPresent(attr -> newAttributes.accelerationY = Optional.of(attr));
+                localAttributesVariance.frictionX.ifPresent(attr -> newAttributes.frictionX = Optional.of(attr));
+                localAttributesVariance.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
+                localAttributesVariance.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
+                localAttributesVariance.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+                localAttributesVariance.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
+                localAttributesVariance.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
+
+                this.attributes_variance = Optional.of(newAttributes);
+            } else this.attributes_variance = Optional.of(localAttributesVariance);
+
+
+        if (this.particles.isEmpty()) this.particles = parent.left().get().particles;
+
+        this.use = Optional.empty();
+
+    }
+
 
 //    String getName() {return this.name;}
 

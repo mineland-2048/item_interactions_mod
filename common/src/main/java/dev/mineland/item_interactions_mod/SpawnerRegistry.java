@@ -95,7 +95,7 @@ public record SpawnerRegistry() {
             carriedList.add(s.getName());
         }
 
-        return new HashSet<>(itemList).containsAll(carriedList);
+        return new HashSet<>(carriedList).containsAll(itemList);
 
     }
 }

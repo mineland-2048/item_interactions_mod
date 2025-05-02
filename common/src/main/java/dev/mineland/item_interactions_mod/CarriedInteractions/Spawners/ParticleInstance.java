@@ -137,8 +137,8 @@ public class ParticleInstance {
 
         double pX = MiscUtils.randomVariance(spawnX + x, xVar) ;
         double pY = MiscUtils.randomVariance(spawnY + y, yVar) ;
-        double pSpeedX = MiscUtils.randomVariance(speedX, speedXVar) ;
-        double pSpeedY = MiscUtils.randomVariance(speedY, speedYVar) ;
+        double pSpeedX = MiscUtils.randomVariance(spawnSpeedX + speedX, speedXVar) ;
+        double pSpeedY = MiscUtils.randomVariance(spawnSpeedY + speedY, speedYVar) ;
         double pAccX = MiscUtils.randomVariance(accelerationX, accelerationXVar) ;
         double pAccY = MiscUtils.randomVariance(accelerationY, accelerationYVar) ;
         double pFrictX = Math.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;

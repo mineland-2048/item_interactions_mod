@@ -48,8 +48,8 @@ public class GuiParticleSpawnersLogic {
                 return false;
             }
 
-            int globalX = slot.x + leftPos;
-            int globalY = slot.y + topPos;
+            int globalX = slot.x + leftPos + 8;
+            int globalY = slot.y + topPos + 8;
 
 
 //            Slot was empty or had some spawners but will receive a new set of spawners
@@ -58,9 +58,9 @@ public class GuiParticleSpawnersLogic {
 
                 GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, "onPut");
                 GlobalDirt.slotSpawners.tick(slotCount, GlobalDirt.tickDelta, guiGraphics, globalX, globalY, 0f, 0f);
-
-
                 GlobalDirt.slotSpawners.setState(slotCount, "onIdle");
+
+
                 return false;
             }
 
@@ -84,33 +84,34 @@ public class GuiParticleSpawnersLogic {
 //    Is ran once per frame
     public static void mainLogic(GuiGraphics guiGraphics) {
 
+        List<BaseParticle> shouldDelete = new ArrayList<>();
+        if (GlobalDirt.shouldTickParticles) {
+
+
         // if the carried is empty or the item has no spawners then clear the carried spawner
         if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner.clear();
 
 //        if there is a carried item
         else if (carriedItem != null && !carriedItem.isEmpty()) {
 
-//            if the carried item has the same spawners as the new carried item
-//            aka, if its a different item from the previous tick
-            if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem)) {
+
+//            if its a different item from the previous tick
+            if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem) || (carriedGuiParticleSpawner.isEmpty())) {
 
 //                if it has a spawner, use it and pick it up
                 List<GuiParticleSpawner> newGuiParticleSpawner = SpawnerRegistry.get(carriedItem);
                 if (!newGuiParticleSpawner.isEmpty()) {
                     carriedGuiParticleSpawner = newGuiParticleSpawner;
-                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.fireEvent("onPickup", tickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) speedX*0.1f, (float) speedY*0.1f));
+                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
+                    GlobalDirt.slotSpawners.tickSpawners(carriedGuiParticleSpawner, tickDelta, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY);
+                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
 
                 }
                 else GlobalDirt.carriedGuiParticleSpawner.clear();
             }
         }
-
-
-
 //        Particle ticker
-        List<BaseParticle> shouldDelete = new ArrayList<>();
-        if (GlobalDirt.shouldTickParticles) {
 
             for (BaseParticle particle : GlobalDirt.particleList) {
                 particle.tick();
@@ -120,8 +121,10 @@ public class GuiParticleSpawnersLogic {
 
             if (carriedGuiParticleSpawner != null) {
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
-//                carriedGuiParticleSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
-                carriedGuiParticleSpawner.forEach((spawner) -> spawner.fireEvent("onCarried", tickDelta, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY));
+
+                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onCarried"));
+                GlobalDirt.slotSpawners.tickSpawners(carriedGuiParticleSpawner, tickDelta, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY);
+                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
             }
 

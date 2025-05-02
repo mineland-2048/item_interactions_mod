@@ -20,6 +20,10 @@
 
   "events": {
     "onPut": {
+      "attributes_variance": {
+        "speedX": 32,
+        "speedY": 32
+      },
       "particles": [
         {"id":  "particles/bubble.json"},
         {"id":  "particles/bubble.json"},

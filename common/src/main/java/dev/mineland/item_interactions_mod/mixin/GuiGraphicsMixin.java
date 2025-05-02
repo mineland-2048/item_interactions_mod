@@ -61,7 +61,7 @@ public abstract class GuiGraphicsMixin{
 
             if (iteminteractions$canAnimate()) {
 
-
+                this.pose.pushPose();
                 switch (ItemInteractionsConfig.animationConfig) {
                     case Item_interactions_mod.animation.ANIM_SCALE -> {
                         this.pose.mulPose( AnimScale.makePose(this.pose, i, j, 0).last().pose() );
@@ -92,15 +92,18 @@ public abstract class GuiGraphicsMixin{
     @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V")
     private void renderItemTail(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, int l, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
-            switch (ItemInteractionsConfig.animationConfig) {
-                case ANIM_SPEED: {
-                    this.pose.mulPose(AnimSpeed.makeRollback(this.pose, i, j, 150, speedX, speedY).last().pose());
-                    break;
-                }
-
-                case ANIM_SCALE:
-                    this.pose.mulPose(AnimScale.rollback(this.pose, i, j, 0).last().pose() );
-                    break;
+            if (iteminteractions$canAnimate()) {
+                this.pose.popPose();
+//                switch (ItemInteractionsConfig.animationConfig) {
+//                    case ANIM_SPEED: {
+//                        this.pose.mulPose(AnimSpeed.makeRollback(this.pose, i, j, 150, speedX, speedY).last().pose());
+//                        break;
+//                    }
+//
+//                    case ANIM_SCALE:
+//                        this.pose.mulPose(AnimScale.rollback(this.pose, i, j, 0).last().pose());
+//                        break;
+//                }
             }
 
 

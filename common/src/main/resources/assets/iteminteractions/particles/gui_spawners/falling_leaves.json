@@ -10,7 +10,7 @@
     "accelerationX": 0.0,
     "accelerationY": 0.0,
 
-    "frictionX": 0.9,
+    "frictionX": 0.99,
     "frictionY": 1,
 
     "color_start": "#FFFFFFFF",
@@ -20,17 +20,13 @@
   },
 
   "attributes_variance": {
-    "x": 2,
-    "y": 2,
+    "x": 8,
+    "y": 16,
 
-    "speedX": 5,
-    "speedY": 5,
+    "speedX": 16,
+    "speedY": 2,
 
-    "accelerationX": 1.0,
-    "accelerationY": 1.0,
 
-    "frictionX": 0.2,
-    "frictionY": 0.2,
 
     "duration": 2,
 
@@ -49,15 +45,47 @@
     "onPut": {
 
       "particles": [
-        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
-        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
-        {"id":  "iteminteractions:particles/gui/falling_leaf.json"},
-        {"id":  "iteminteractions:particles/gui/falling_leaf.json"}
+        {
+          "id":  "iteminteractions:particles/gui/falling_leaf.json",
+          "x":  16,
+          "y":  16,
+          "speedX":  5,
+          "speedY":  5,
+          "duration": 100
+
+        },
+        {
+          "id":  "iteminteractions:particles/gui/falling_leaf.json",
+          "x": -16,
+          "y": 16,
+          "speedX": -5,
+          "speedY": 5,
+          "duration":  100
+
+        },
+        {
+          "id":  "iteminteractions:particles/gui/falling_leaf.json",
+          "x":  16,
+          "y":  -16,
+          "speedX":  5,
+          "speedY":  -5,
+          "duration":  100
+
+        },
+        {
+          "id":  "iteminteractions:particles/gui/falling_leaf.json",
+          "x": -16,
+          "y": -16,
+          "speedX": -5,
+          "speedY": -5,
+          "duration":  100
+
+        }
       ]
     },
 
-    "onCarried": "onPut",
+    "onCarried": "onIdle",
     "onShake": {"use":  "onPut", "interval":  2}
 
-  }
+  },
 }

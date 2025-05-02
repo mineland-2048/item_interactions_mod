@@ -1,14 +1,17 @@
 {
   "parent": "iteminteractions:particles/gui_spawners/falling_leaves.json",
   "attributes": {
-    "color_start": "#FF00FF00"
+    "color_start": "#FF00FF00",
+    "color_end": "0000FF00"
   },
 
   "applies": [
     {
       "id": "oak_leaves"
     },
+    {
+      "id": "jungle_leaves"
+    }
 
-    "jungle_leaves"
   ]
 }
