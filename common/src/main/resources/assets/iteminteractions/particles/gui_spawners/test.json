@@ -4,17 +4,17 @@
     "y": 0,
     "speedX": 0,
     "speedY": 0,
-    "frictionX": 0.9,
-    "frictionY": 0.9,
+    "frictionX": 0.99,
+    "frictionY": 0.99,
     "colorStart": "#FFFFFFFF",
     "colorEnd": "#00FFFFFF",
-    "duration":  100
+    "duration":  10
 
   },
 
   "attributes_variance": {
-    "speedX": 0.2,
-    "speedY": 0.2,
+    "speedX": 16,
+    "speedY": 16,
     "colorStart": "#00202020"
   },
 
@@ -28,10 +28,10 @@
     },
 
     "onIdle":  {
+      "interval": 5,
       "attributes": {
         "colorStart": "#FFFF0000",
-        "count": 5,
-        "interval": 5
+        "count": 5
       },
       "particles": [
         {"id":  "particles/smoke.json"}

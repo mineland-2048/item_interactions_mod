@@ -92,6 +92,9 @@ public class GuiParticleSpawner {
 //    }
 //
 
+
+    private JsonObject tempParentJson;
+
     public GuiParticleSpawner parseSpawner(ResourceLocation id) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
         if (resourceManager.getResource(id).isEmpty()) {
@@ -101,7 +104,7 @@ public class GuiParticleSpawner {
 
         try (InputStream stream = resourceManager.getResource(id).get().open()) {
             JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
-
+            this.tempParentJson = json;
             GuiParticleSpawner result;
             DataResult<GuiParticleSpawner> dataResult;
 
@@ -126,7 +129,6 @@ public class GuiParticleSpawner {
         this.childGuiParticleSpawners = parent.childGuiParticleSpawners;
         this.attributes = parent.attributes;
         this.attributes_variance = parent.attributes_variance;
-        this.events = parent.events;
 
     }
     public GuiParticleSpawner(
@@ -137,11 +139,28 @@ public class GuiParticleSpawner {
             Optional<Map<String, Either<ParticleEvent, String>>> eventMap,
             Optional<List<ItemStack>> appliedItems) {
 
-        parent.ifPresent(resourceLocation -> this.copyFromParent(parseSpawner(resourceLocation)));
+        GuiParticleSpawner parentSpawner;
+        Optional<Map<String, Either<ParticleEvent, String>>> parentEvents = Optional.empty();
+        if (parent.isPresent()) {
+            ResourceLocation resourceLocation = parent.get();
+            parentSpawner = parseSpawner(resourceLocation);
+            this.copyFromParent(parentSpawner);
 
+        }
         attributes.ifPresent(this::setAttributes);
         attributes_variance.ifPresent(this::setAttributes_variance);
+
+
+        if (parent.isPresent()) {
+            DataResult<Map<String, Either<ParticleEvent, String>>> p = eventsCodec.parse(JsonOps.INSTANCE, tempParentJson.get("events"));
+            if (p.resultOrPartial().isPresent()) {
+                this.setEvents(p.resultOrPartial().get());
+            }
+
+        }
+
         eventMap.ifPresent(this::setEvents);
+
         appliedItems.ifPresent(this::setAppliedItems);
 
 
@@ -188,9 +207,9 @@ public class GuiParticleSpawner {
 
 
         eventStringEither.ifLeft(e -> {
-            e.nextInterval -= timeDuration;
+            e.nextInterval -= 1;
             if (e.nextInterval <= 0) {
-                e.nextInterval = e.interval;
+                e.nextInterval = e.interval.orElse(0f);
                 e.fire(guiGraphics, x, y, speedX, speedY);
             }
 
@@ -310,47 +329,50 @@ public class GuiParticleSpawner {
                 ParticleEvent finalEvent = new ParticleEvent();
 
                 if (eitherCurrentEvent.left().isPresent()) finalEvent = eitherCurrentEvent.left().get();
-                else if (eitherCurrentEvent.right().isPresent()) finalEvent.use = eitherCurrentEvent.right().get();
+                else if (eitherCurrentEvent.right().isPresent()) finalEvent.use = Optional.of(eitherCurrentEvent.right().get());
 
 
+                ParticleInstance empty = new ParticleInstance();
+                if (finalEvent.attributes.isEmpty())  finalEvent.attributes = Optional.of(empty);
+                if (finalEvent.attributes_variance.isEmpty())  finalEvent.attributes_variance = Optional.of(empty);
                 if (this.attributes.isPresent()) {
-                    finalEvent.attributes.x = finalEvent.attributes.x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.x;
-                    finalEvent.attributes.y = finalEvent.attributes.y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.y;
+                    finalEvent.attributes.get().x = finalEvent.attributes.get().x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.get().x;
+                    finalEvent.attributes.get().y = finalEvent.attributes.get().y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.get().y;
 
-                    finalEvent.attributes.speedX = finalEvent.attributes.speedX.isEmpty() ? this.attributes.get().speedX : finalEvent.attributes.speedX;
-                    finalEvent.attributes.speedY = finalEvent.attributes.speedY.isEmpty() ? this.attributes.get().speedY : finalEvent.attributes.speedY;
+                    finalEvent.attributes.get().speedX = finalEvent.attributes.get().speedX.isEmpty() ? this.attributes.get().speedX : finalEvent.attributes.get().speedX;
+                    finalEvent.attributes.get().speedY = finalEvent.attributes.get().speedY.isEmpty() ? this.attributes.get().speedY : finalEvent.attributes.get().speedY;
 
-                    finalEvent.attributes.accelerationX = finalEvent.attributes.accelerationX.isEmpty() ? this.attributes.get().accelerationX : finalEvent.attributes.accelerationX;
-                    finalEvent.attributes.accelerationY = finalEvent.attributes.accelerationY.isEmpty() ? this.attributes.get().accelerationY : finalEvent.attributes.accelerationY;
+                    finalEvent.attributes.get().accelerationX = finalEvent.attributes.get().accelerationX.isEmpty() ? this.attributes.get().accelerationX : finalEvent.attributes.get().accelerationX;
+                    finalEvent.attributes.get().accelerationY = finalEvent.attributes.get().accelerationY.isEmpty() ? this.attributes.get().accelerationY : finalEvent.attributes.get().accelerationY;
 
-                    finalEvent.attributes.frictionX = finalEvent.attributes.frictionX.isEmpty() ? this.attributes.get().frictionX : finalEvent.attributes.frictionX;
-                    finalEvent.attributes.frictionY = finalEvent.attributes.frictionY.isEmpty() ? this.attributes.get().frictionY : finalEvent.attributes.frictionY;
+                    finalEvent.attributes.get().frictionX = finalEvent.attributes.get().frictionX.isEmpty() ? this.attributes.get().frictionX : finalEvent.attributes.get().frictionX;
+                    finalEvent.attributes.get().frictionY = finalEvent.attributes.get().frictionY.isEmpty() ? this.attributes.get().frictionY : finalEvent.attributes.get().frictionY;
 
-                    finalEvent.attributes.colorStart = finalEvent.attributes.colorStart.isEmpty() ? this.attributes.get().colorStart : finalEvent.attributes.colorStart;
-                    finalEvent.attributes.colorEnd = finalEvent.attributes.colorEnd.isEmpty() ? this.attributes.get().colorEnd : finalEvent.attributes.colorEnd;
+                    finalEvent.attributes.get().colorStart = finalEvent.attributes.get().colorStart.isEmpty() ? this.attributes.get().colorStart : finalEvent.attributes.get().colorStart;
+                    finalEvent.attributes.get().colorEnd = finalEvent.attributes.get().colorEnd.isEmpty() ? this.attributes.get().colorEnd : finalEvent.attributes.get().colorEnd;
 
-                    finalEvent.attributes.duration = finalEvent.attributes.duration.isEmpty() ? this.attributes.get().duration : finalEvent.attributes.duration;
-                    finalEvent.attributes.count = finalEvent.attributes.count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.count;
+                    finalEvent.attributes.get().duration = finalEvent.attributes.get().duration.isEmpty() ? this.attributes.get().duration : finalEvent.attributes.get().duration;
+                    finalEvent.attributes.get().count = finalEvent.attributes.get().count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.get().count;
 
                 }
                 if (attributes_variance.isPresent()) {
-                    finalEvent.attributes_variance.x = finalEvent.attributes_variance.x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.x;
-                    finalEvent.attributes_variance.y = finalEvent.attributes_variance.y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.y;
+                    finalEvent.attributes_variance.get().x = finalEvent.attributes_variance.get().x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.get().x;
+                    finalEvent.attributes_variance.get().y = finalEvent.attributes_variance.get().y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.get().y;
 
-                    finalEvent.attributes_variance.speedX = finalEvent.attributes_variance.speedX.isEmpty() ? this.attributes_variance.get().speedX : finalEvent.attributes_variance.speedX;
-                    finalEvent.attributes_variance.speedY = finalEvent.attributes_variance.speedY.isEmpty() ? this.attributes_variance.get().speedY : finalEvent.attributes_variance.speedY;
+                    finalEvent.attributes_variance.get().speedX = finalEvent.attributes_variance.get().speedX.isEmpty() ? this.attributes_variance.get().speedX : finalEvent.attributes_variance.get().speedX;
+                    finalEvent.attributes_variance.get().speedY = finalEvent.attributes_variance.get().speedY.isEmpty() ? this.attributes_variance.get().speedY : finalEvent.attributes_variance.get().speedY;
 
-                    finalEvent.attributes_variance.accelerationX = finalEvent.attributes_variance.accelerationX.isEmpty() ? this.attributes_variance.get().accelerationX : finalEvent.attributes_variance.accelerationX;
-                    finalEvent.attributes_variance.accelerationY = finalEvent.attributes_variance.accelerationY.isEmpty() ? this.attributes_variance.get().accelerationY : finalEvent.attributes_variance.accelerationY;
+                    finalEvent.attributes_variance.get().accelerationX = finalEvent.attributes_variance.get().accelerationX.isEmpty() ? this.attributes_variance.get().accelerationX : finalEvent.attributes_variance.get().accelerationX;
+                    finalEvent.attributes_variance.get().accelerationY = finalEvent.attributes_variance.get().accelerationY.isEmpty() ? this.attributes_variance.get().accelerationY : finalEvent.attributes_variance.get().accelerationY;
 
-                    finalEvent.attributes_variance.frictionX = finalEvent.attributes_variance.frictionX.isEmpty() ? this.attributes_variance.get().frictionX : finalEvent.attributes_variance.frictionX;
-                    finalEvent.attributes_variance.frictionY = finalEvent.attributes_variance.frictionY.isEmpty() ? this.attributes_variance.get().frictionY : finalEvent.attributes_variance.frictionY;
+                    finalEvent.attributes_variance.get().frictionX = finalEvent.attributes_variance.get().frictionX.isEmpty() ? this.attributes_variance.get().frictionX : finalEvent.attributes_variance.get().frictionX;
+                    finalEvent.attributes_variance.get().frictionY = finalEvent.attributes_variance.get().frictionY.isEmpty() ? this.attributes_variance.get().frictionY : finalEvent.attributes_variance.get().frictionY;
 
-                    finalEvent.attributes_variance.colorStart = finalEvent.attributes_variance.colorStart.isEmpty() ? this.attributes_variance.get().colorStart : finalEvent.attributes_variance.colorStart;
-                    finalEvent.attributes_variance.colorEnd = finalEvent.attributes_variance.colorEnd.isEmpty() ? this.attributes_variance.get().colorEnd : finalEvent.attributes_variance.colorEnd;
+                    finalEvent.attributes_variance.get().colorStart = finalEvent.attributes_variance.get().colorStart.isEmpty() ? this.attributes_variance.get().colorStart : finalEvent.attributes_variance.get().colorStart;
+                    finalEvent.attributes_variance.get().colorEnd = finalEvent.attributes_variance.get().colorEnd.isEmpty() ? this.attributes_variance.get().colorEnd : finalEvent.attributes_variance.get().colorEnd;
 
-                    finalEvent.attributes_variance.duration = finalEvent.attributes_variance.duration.isEmpty() ? this.attributes_variance.get().duration : finalEvent.attributes_variance.duration;
-                    finalEvent.attributes_variance.count = finalEvent.attributes_variance.count.isEmpty() ? this.attributes_variance.get().count : finalEvent.attributes_variance.count;
+                    finalEvent.attributes_variance.get().duration = finalEvent.attributes_variance.get().duration.isEmpty() ? this.attributes_variance.get().duration : finalEvent.attributes_variance.get().duration;
+                    finalEvent.attributes_variance.get().count = finalEvent.attributes_variance.get().count.isEmpty() ? this.attributes_variance.get().count : finalEvent.attributes_variance.get().count;
                 }
 
 

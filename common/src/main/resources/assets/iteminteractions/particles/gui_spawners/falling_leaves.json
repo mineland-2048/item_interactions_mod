@@ -5,13 +5,13 @@
     "y": 0,
 
     "speedX": 0.0,
-    "speedY": 0.0,
+    "speedY": 16,
 
     "accelerationX": 0.0,
     "accelerationY": 0.0,
 
-    "frictionX": 0.0,
-    "frictionY": 0.0,
+    "frictionX": 0.9,
+    "frictionY": 1,
 
     "color_start": "#FFFFFFFF",
     "color_end": "#00FFFFFF",
@@ -23,16 +23,16 @@
     "x": 2,
     "y": 2,
 
-    "speedX": 1.0,
-    "speedY": 1.0,
+    "speedX": 5,
+    "speedY": 5,
 
     "accelerationX": 1.0,
     "accelerationY": 1.0,
 
-    "frictionX": 0.5,
-    "frictionY": 0.5,
+    "frictionX": 0.2,
+    "frictionY": 0.2,
 
-    "duration_variance": 2,
+    "duration": 2,
 
     "color_start": "#00202020"
   },
@@ -43,7 +43,7 @@
         {"id":  "iteminteractions:particles/gui/falling_leaf.json"}
       ],
 
-      "interval": 20
+      "interval": 5
     },
 
     "onPut": {

@@ -150,8 +150,8 @@ public class TexturedParticle extends BaseParticle {
 
     public void tick() {
         super.tick();
-        this.x += speedX;
-        this.y += speedY;
+        this.x += speedX / 20;
+        this.y += speedY / 20;
         this.speedX = (speedX + accelerationX) * frictionX;
         this.speedY = (speedY + accelerationY) * frictionY;
 

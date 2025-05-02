@@ -69,7 +69,7 @@ public class GuiParticleSpawnersLogic {
 
 //            No spawner updates. Just tick
             if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x8000FF00);
-            GlobalDirt.slotSpawners.tick(slotCount, GlobalDirt.tickCounter, guiGraphics, globalX, globalY, 0f, 0f);
+            GlobalDirt.slotSpawners.tick(slotCount, tickDelta, guiGraphics, globalX, globalY, 0f, 0f);
             return false;
 
         } catch (Exception e) {

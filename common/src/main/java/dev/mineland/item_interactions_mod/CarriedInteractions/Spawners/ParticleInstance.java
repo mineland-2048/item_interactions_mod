@@ -125,8 +125,8 @@ public class ParticleInstance {
         double speedY = this.speedY.orElse(attributes.speedY.orElse(0f));
         double accelerationX = this.accelerationX.orElse(attributes.accelerationX.orElse(0f));
         double accelerationY = this.accelerationY.orElse(attributes.accelerationY.orElse(0f));
-        double frictionX = this.frictionX.orElse(attributes.frictionX.orElse(0f));
-        double frictionY = this.frictionY.orElse(attributes.frictionY.orElse(0f));
+        double frictionX = this.frictionX.orElse(attributes.frictionX.orElse(1f));
+        double frictionY = this.frictionY.orElse(attributes.frictionY.orElse(1f));
 
         int[] colorStart = MiscUtils.int2Array(this.colorStart.orElse(attributes.colorStart.orElse(new ColorRGBA(0xffffffff))).rgba());
         int[] colorEnd = MiscUtils.int2Array(this.colorEnd.orElse(attributes.colorEnd.orElse(new ColorRGBA(0xffffffff))).rgba());
@@ -141,8 +141,8 @@ public class ParticleInstance {
         double pSpeedY = MiscUtils.randomVariance(speedY, speedYVar) ;
         double pAccX = MiscUtils.randomVariance(accelerationX, accelerationXVar) ;
         double pAccY = MiscUtils.randomVariance(accelerationY, accelerationYVar) ;
-        double pFrictX = MiscUtils.randomVariance(frictionX, frictionXVar) ;
-        double pFrictY = MiscUtils.randomVariance(frictionY, frictionYVar) ;
+        double pFrictX = Math.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;
+        double pFrictY = Math.clamp(MiscUtils.randomVariance(frictionY, frictionYVar), 0, 1) ;
 
         int[] pcStart = new int[4];
         int[] pcEnd = new int[4];
