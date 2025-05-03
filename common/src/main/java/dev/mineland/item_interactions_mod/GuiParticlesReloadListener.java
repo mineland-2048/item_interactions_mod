@@ -39,7 +39,6 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
             try (InputStream stream = resource.open()) {
                 JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
-//                TODO: add logic
                 parseParticle(json);
 
 

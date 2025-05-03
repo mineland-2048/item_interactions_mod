@@ -107,7 +107,10 @@ public class ClientFakeContainer implements Container {
             }
 
 
-            if (slot.getItem().isEmpty()) continue;
+            if (slot.getItem().isEmpty()) {
+                GlobalDirt.slotCount++;
+                continue;
+            }
 //            guiGraphics.drawString(Minecraft.getInstance().font, "x: " + slot.x)
             int itemX = slot.x + 1;
             int itemY = slot.y + 1;
@@ -115,7 +118,9 @@ public class ClientFakeContainer implements Container {
             guiGraphics.renderItem(slot.getItem(), itemX, itemY);
             guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
 
-            GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, this.x, this.y, this.slots.size());
+            GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
+            GlobalDirt.slotCount++;
+
 
         }
 
@@ -143,6 +148,9 @@ public class ClientFakeContainer implements Container {
         GlobalDirt.skipCalcs = true;
         guiGraphics.renderItem(mouseItem, x + 18, y - 36);
         GlobalDirt.skipCalcs = false;
+
+        GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+
     }
 
     public void printItemStacks() {

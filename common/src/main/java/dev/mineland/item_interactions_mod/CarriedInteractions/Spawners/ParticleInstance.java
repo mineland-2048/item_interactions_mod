@@ -156,7 +156,7 @@ public class ParticleInstance {
 //        int count = count.orElse(1);
         double pLifetime = MiscUtils.randomVariance(duration.orElse(attributes.duration.orElse(20f)), attributes_variance.duration.orElse(0f));
 
-        new CopiedParticle(guiGraphics, pX, pY, pSpeedX, pSpeedY, pAccX, pAccY, pFrictX, pFrictY, pLifetime, this.id, MiscUtils.array2Int(pcStart), MiscUtils.array2Int(pcEnd));
+        new TexturedParticle(guiGraphics, pX, pY, pSpeedX, pSpeedY, pAccX, pAccY, pFrictX, pFrictY, pLifetime, this.id, MiscUtils.array2Int(pcStart), MiscUtils.array2Int(pcEnd));
 
 
     }

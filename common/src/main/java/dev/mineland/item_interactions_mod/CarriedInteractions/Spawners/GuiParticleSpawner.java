@@ -8,10 +8,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiParticlesReloadListener;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.predicates.DataComponentPredicates;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -28,16 +33,16 @@ public class GuiParticleSpawner {
     protected int id = 0;
     protected ResourceLocation name = null;
 
+    private Optional<ResourceLocation> parent = Optional.empty();
+    private Optional<List<ResourceLocation>> childrenLocations = Optional.empty();
     private Optional<ParticleInstance> attributes = Optional.empty();
     private Optional<ParticleInstance> attributes_variance = Optional.empty();
     private Optional<Map<String, Either<ParticleEvent, String>>> events = Optional.empty();
+    private Optional<List<ItemStack>> appliedItems = Optional.empty();
 
     private String state = null;
-    private Optional<ResourceLocation> parent = Optional.empty();
-    private Optional<List<ResourceLocation>> childrenLocations = Optional.empty();
 
     private List<GuiParticleSpawner> childGuiParticleSpawners = new ArrayList<>();
-    private Optional<List<ItemStack>> appliedItems = Optional.empty();
 
     private float timer = 0;
 
@@ -46,6 +51,12 @@ public class GuiParticleSpawner {
 
 
 
+    public GuiParticleSpawner duplicate() {
+        return new GuiParticleSpawner(this.parent, this.childrenLocations, attributes, attributes_variance, events, appliedItems);
+
+
+
+    }
     public static Codec<GuiParticleSpawner> CODEC = RecordCodecBuilder.create(
             spawnerInstance -> spawnerInstance.group(
                     ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(s -> s.parent),
@@ -192,29 +203,30 @@ public class GuiParticleSpawner {
 
     public Codec<GuiParticleSpawner> getCODEC() { return GuiParticleSpawner.CODEC; }
 
-    public void fireEvent(String eventName, float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
+    public void fireEvent(int id, int childCount, String eventName, float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
         if (this.events.isEmpty()) {
             System.out.println("No events registered in " + this.getName());
-            this.timer += timeDuration;
+//            this.timer += timeDuration;
             return;
         }
         Either<ParticleEvent, String> eventStringEither = this.getEvents().get(eventName);
         if (eventStringEither == null) return;
 
         if (eventStringEither.right().isPresent()) {
-            fireEvent(eventStringEither.right().get(), timeDuration, guiGraphics, x, y, speedX, speedY);
+            fireEvent(id, childCount, eventStringEither.right().get(), timeDuration, guiGraphics, x, y, speedX, speedY);
             return;
         }
 
 
 
         eventStringEither.ifLeft(e -> {
-            e.nextInterval -= 1;
+            GlobalDirt.slotSpawners.modifySpawnTimer(id, childCount, -timeDuration);
+            float interval = GlobalDirt.slotSpawners.getSpawnerTimer(id, childCount);
 
             e.use.ifPresent(s -> e.inheritFromParent(this.getEvents(), this.getEvents().get(s)));
 
-            if (e.nextInterval <= 0) {
-                e.nextInterval = e.interval.orElse(0f);
+            if (interval <= 0) {
+                GlobalDirt.slotSpawners.setSpawnerTimer(id, childCount, e.interval.orElse(0f));
                 e.fire(guiGraphics, x, y, speedX, speedY);
             }
 
@@ -227,23 +239,101 @@ public class GuiParticleSpawner {
 
     }
 
-    public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
+    public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
 
-        for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY);
+        for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY, slotId, childCount + 1);
         Either<ParticleEvent, String> event = this.getEvents().get(this.state);
         if (event == null) return;
 
-        fireEvent(this.state, timeDuration, guiGraphics, x, y, speedX, speedY);
+        fireEvent(slotId, childCount, this.state, timeDuration, guiGraphics, x, y, speedX, speedY);
 
-        timer += timeDuration;
+//        timer += timeDuration;
     };
 
-    public boolean matches(ItemStack itemStack) {
 
-//        TODO: Do matching logic;
+    public boolean matches(ItemStack itemStack) {
+        DataComponentMap input = itemStack.getComponents();
+
+        for (ItemStack conditionItem : this.appliedItems.orElse(new ArrayList<>())) {
+            if (itemStack.getItem() != conditionItem.getItem()) continue;
+
+            DataComponentMap conditionMap = conditionItem.getComponents();
+            if (conditionMap.isEmpty()) return true;
+
+            if (areDeepSubset(conditionMap, input)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean areDeepSubset(DataComponentMap source, DataComponentMap target) {
+        for (DataComponentType<?> type : source.keySet()) {
+            if (!target.has(type)) {
+                return false;
+            }
+
+            Object sourceValue = source.get(type);
+            Object targetValue = target.get(type);
+
+            if (!compareValuesAsSubset(sourceValue, targetValue)) {
+                return false;
+            }
+        }
         return true;
     }
 
+    @SuppressWarnings("unchecked")
+    private static boolean compareValuesAsSubset(Object source, Object target) {
+        if (source == null || target == null) return source == target;
+
+        if (source instanceof Map && target instanceof Map) {
+            Map<Object, Object> sourceMap = (Map<Object, Object>) source;
+            Map<Object, Object> targetMap = (Map<Object, Object>) target;
+
+            for (Map.Entry<Object, Object> entry : sourceMap.entrySet()) {
+                Object key = entry.getKey();
+                if (!targetMap.containsKey(key)) return false;
+                if (!compareValuesAsSubset(entry.getValue(), targetMap.get(key))) return false;
+            }
+            return true;
+        }
+
+        if (source instanceof Iterable && target instanceof Iterable) {
+            // Require all source elements to be in target
+            for (Object srcItem : (Iterable<?>) source) {
+                boolean matched = false;
+                for (Object tgtItem : (Iterable<?>) target) {
+                    if (compareValuesAsSubset(srcItem, tgtItem)) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) return false;
+            }
+            return true;
+        }
+
+        if (source.getClass().isRecord() && target.getClass().isRecord() && source.getClass() == target.getClass()) {
+            // Reflectively compare fields in the record
+            try {
+                for (var field : source.getClass().getRecordComponents()) {
+                    var getter = field.getAccessor();
+                    Object srcField = getter.invoke(source);
+                    Object tgtField = getter.invoke(target);
+                    if (!compareValuesAsSubset(srcField, tgtField)) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Failed to compare record fields", e);
+            }
+        }
+
+        // Fallback to simple equality
+        return source.equals(target);
+    }
 
     public List<ItemStack> getAppliedItems() {
 

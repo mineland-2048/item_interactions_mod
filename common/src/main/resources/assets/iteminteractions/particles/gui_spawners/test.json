@@ -32,7 +32,7 @@
     },
 
     "onIdle":  {
-      "interval": 5,
+      "interval": 50,
       "attributes": {
         "colorStart": "#FFFF0000",
         "count": 5

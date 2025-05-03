@@ -13,10 +13,8 @@
     "frictionX": 0.99,
     "frictionY": 1,
 
-    "color_start": "#FFFFFFFF",
-    "color_end": "#00FFFFFF",
 
-    "duration": 20
+    "duration": 200
   },
 
   "attributes_variance": {
@@ -28,9 +26,8 @@
 
 
 
-    "duration": 2,
+    "duration": 2
 
-    "color_start": "#00202020"
   },
 
   "events": {
@@ -39,7 +36,7 @@
         {"id":  "iteminteractions:particles/gui/falling_leaf.json"}
       ],
 
-      "interval": 5
+      "interval": 100
     },
 
     "onPut": {
@@ -87,5 +84,5 @@
     "onCarried": "onIdle",
     "onShake": {"use":  "onPut", "interval":  2}
 
-  },
+  }
 }

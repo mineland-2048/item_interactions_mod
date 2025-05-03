@@ -98,4 +98,12 @@ public record SpawnerRegistry() {
         return new HashSet<>(carriedList).containsAll(itemList);
 
     }
+
+    public static List<GuiParticleSpawner> create(List<GuiParticleSpawner> itemGuiParticleSpawnerList) {
+        List<GuiParticleSpawner> result = new ArrayList<>();
+        for (GuiParticleSpawner a : itemGuiParticleSpawnerList) {
+            result.add(a.duplicate());
+        }
+        return result;
+    }
 }

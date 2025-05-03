@@ -66,7 +66,7 @@ public class BaseParticle {
     public boolean shouldDelete = false;
     public void tick() {
 
-        lifeTime ++;
+        lifeTime++;
 
         if (lifeTime > maxTick) {
             shouldDelete = true;
