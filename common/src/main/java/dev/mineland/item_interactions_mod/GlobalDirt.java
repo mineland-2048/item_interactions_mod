@@ -9,14 +9,17 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GlobalDirt {
     public static class slotSpawners{
         private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
         private static final List<List<Float>> SPAWNER_TIMERS = new ArrayList<>(90);
+
 
 
         public static void setState(int id, String state) {
@@ -89,8 +92,10 @@ public class GlobalDirt {
             tickSpawners(id, get(id), time, guiGraphics, globalX, globalY, speedX, speedY);
         }
         public static void tickSpawners(int slotId, List<GuiParticleSpawner> guiParticleSpawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+            int childCount = 0;
             for (GuiParticleSpawner guiParticleSpawner : guiParticleSpawners) {
-                guiParticleSpawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY, slotId, 0);
+                guiParticleSpawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY, slotId, childCount);
+                childCount++;
             }
 
         }
@@ -139,6 +144,12 @@ public class GlobalDirt {
 
     public static double     lastMouseX = 0, lastMouseY = 0,
                             speedX = 0, speedY = 0;
+
+    public static double absSpeed = 0;
+    public static double shakeSpeed = 0;
+
+    public static boolean isShaking = false;
+//    public static int shakeTimer = 0;
 
     public static int topPos = 0, leftPos = 0;
 
@@ -227,8 +238,24 @@ public class GlobalDirt {
 
         mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
+
         speedX = Math.clamp((speedX + (mouseDeltaX * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
         speedY = Math.clamp((speedY + (mouseDeltaY * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
+        absSpeed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
+
+        shakeSpeed = (shakeSpeed + absSpeed) / 2;
+        boolean wasShaking = isShaking;
+        isShaking = (shakeSpeed > 20);
+
+        if (isShaking && !wasShaking) {
+            Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
+        }
+
+
+
+
+
+
 
 
 

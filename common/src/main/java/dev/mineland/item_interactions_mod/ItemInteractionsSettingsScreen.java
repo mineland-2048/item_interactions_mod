@@ -114,9 +114,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             inventoryPreview.setItem(0,  new ItemStack(Items.DIAMOND));
             inventoryPreview.setItem(1,  new ItemStack(Items.IRON_SWORD));
             inventoryPreview.setItem(2,  new ItemStack(Items.DIAMOND_PICKAXE));
-
             inventoryPreview.setItem(4,  new ItemStack(Items.REDSTONE_LAMP));
-
             inventoryPreview.setItem(6,  new ItemStack(Items.FLINT_AND_STEEL));
             inventoryPreview.setItem(7,  new ItemStack(Items.ZOMBIE_HEAD));
             inventoryPreview.setItem(8,  new ItemStack(Items.EGG));
@@ -237,10 +235,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
                 Component message = Component.literal("Mouse speed: " + ItemInteractionsConfig.mouseSpeedMult + "x");
-//
-//                if (ItemInteractionsConfig.debugDraws) {
-//                    message = Component.literal("MouseSpeedSlider: " +this.value);
-//                }
 
 
                 this.setMessage(message);

@@ -11,6 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiParticlesReloadListener;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -226,18 +227,17 @@ public class GuiParticleSpawner {
             e.use.ifPresent(s -> e.inheritFromParent(this.getEvents(), this.getEvents().get(s)));
 
             if (interval <= 0) {
-                GlobalDirt.slotSpawners.setSpawnerTimer(id, childCount, e.interval.orElse(0f));
+                float nextTime = (float) MiscUtils.randomVariance(e.interval.orElse(0f), e.interval_variance.orElse(0f));
+                GlobalDirt.slotSpawners.setSpawnerTimer(id, childCount, nextTime);
                 e.fire(guiGraphics, x, y, speedX, speedY);
             }
 
 //            this.getEvents().put(eventName, Either.left(e));
 
         });
-
-
-
-
     }
+
+
 
     public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
 

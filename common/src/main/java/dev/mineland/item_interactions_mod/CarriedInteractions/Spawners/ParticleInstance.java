@@ -135,12 +135,13 @@ public class ParticleInstance {
         int[] colorEndVar = MiscUtils.int2Array(attributes_variance.colorEnd.orElse(new ColorRGBA(0)).rgba());
 
 
+//        Y axis is negatied since guiGraphics is from top to bottom instead of bottom to top
         double pX = MiscUtils.randomVariance(spawnX + x, xVar) ;
-        double pY = MiscUtils.randomVariance(spawnY + y, yVar) ;
+        double pY = MiscUtils.randomVariance(spawnY - y, yVar) ;
         double pSpeedX = MiscUtils.randomVariance(spawnSpeedX + speedX, speedXVar) ;
-        double pSpeedY = MiscUtils.randomVariance(spawnSpeedY + speedY, speedYVar) ;
+        double pSpeedY = MiscUtils.randomVariance(spawnSpeedY - speedY, speedYVar) ;
         double pAccX = MiscUtils.randomVariance(accelerationX, accelerationXVar) ;
-        double pAccY = MiscUtils.randomVariance(accelerationY, accelerationYVar) ;
+        double pAccY = MiscUtils.randomVariance(-accelerationY, accelerationYVar) ;
         double pFrictX = Math.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;
         double pFrictY = Math.clamp(MiscUtils.randomVariance(frictionY, frictionYVar), 0, 1) ;
 

@@ -13,6 +13,7 @@ public class ParticleEvent {
 
 //    public String name;
     public Optional<Float> interval = Optional.empty();
+    public Optional<Float> interval_variance = Optional.empty();
     public float nextInterval = 0;
 
     public Optional<ParticleInstance> attributes = Optional.empty();
@@ -26,6 +27,7 @@ public class ParticleEvent {
     public static final Codec<ParticleEvent> CODEC = RecordCodecBuilder.create(
             eventInstance -> eventInstance.group(
                 Codec.FLOAT.optionalFieldOf("interval").forGetter(e -> e.interval),
+                Codec.FLOAT.optionalFieldOf("interval_variance").forGetter(e -> e.interval_variance),
                 ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes").forGetter((ParticleEvent e) -> e.attributes),
                 ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes_variance").forGetter((ParticleEvent e) -> e.attributes_variance),
                 ParticleInstance.CODEC.listOf().optionalFieldOf("particles").forGetter((ParticleEvent e) -> e.particles),
@@ -57,10 +59,11 @@ public class ParticleEvent {
         System.out.println(use);
     }
 
-    public ParticleEvent(float interval, ParticleInstance attributes, ParticleInstance attributes_variance, List<ParticleInstance> particles, String use) {
+    public ParticleEvent(float interval, float interval_variance, ParticleInstance attributes, ParticleInstance attributes_variance, List<ParticleInstance> particles, String use) {
 //        this.name = name;
 //        System.out.println("eventing");
         this.interval = Optional.of(interval);
+        this.interval_variance = Optional.of(interval_variance);
         this.attributes = Optional.of(attributes);
         this.attributes_variance = Optional.of(attributes_variance);
         this.particles = Optional.of(particles);
@@ -71,8 +74,9 @@ public class ParticleEvent {
 
     }
 
-    public ParticleEvent(Optional<Float> interval, Optional<ParticleInstance> attributes, Optional<ParticleInstance> attributes_variance, Optional<List<ParticleInstance>> particles, Optional<String> use) {
+    public ParticleEvent(Optional<Float> interval, Optional<Float> interval_variance, Optional<ParticleInstance> attributes, Optional<ParticleInstance> attributes_variance, Optional<List<ParticleInstance>> particles, Optional<String> use) {
         this.interval = interval;
+        this.interval_variance = interval_variance;
         this.attributes = attributes;
         this.attributes_variance = attributes_variance;
         this.particles = particles;
@@ -151,6 +155,8 @@ public class ParticleEvent {
 
         if (this.particles.isEmpty()) this.particles = parent.left().get().particles;
 
+        if (this.interval.isEmpty()) this.interval = parent.left().get().interval;
+        if (this.interval_variance.isEmpty()) this.interval_variance = parent.left().get().interval_variance;
         this.use = Optional.empty();
 
     }

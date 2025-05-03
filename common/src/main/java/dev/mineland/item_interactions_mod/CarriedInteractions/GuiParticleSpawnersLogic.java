@@ -9,6 +9,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -103,8 +104,9 @@ public class GuiParticleSpawnersLogic {
                 if (!newGuiParticleSpawner.isEmpty()) {
                     carriedGuiParticleSpawner = newGuiParticleSpawner;
 //                    carriedGuiParticleSpawnerTimers.clear();
+                    Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
                     carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
-                    GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY);
+                    GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
                     carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
 
@@ -123,8 +125,9 @@ public class GuiParticleSpawnersLogic {
             if (carriedGuiParticleSpawner != null) {
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
 
-                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onCarried"));
-                GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX - 8, (float) lastMouseY - 8, (float) mouseDeltaX, (float) mouseDeltaY);
+
+                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(GlobalDirt.isShaking ? "onShake" : "onCarried"));
+                GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
             }

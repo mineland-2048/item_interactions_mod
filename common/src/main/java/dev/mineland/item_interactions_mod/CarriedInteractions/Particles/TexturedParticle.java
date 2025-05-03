@@ -134,7 +134,10 @@ public class TexturedParticle extends BaseParticle {
 
         } catch (Exception e) {
 //            Item_interactions_mod.warnMessage("died from getting vanilla texture (" + particleLocation + "): " + e);
-            return new ArrayList<>();
+
+            List<ResourceLocation> r = new ArrayList<>();
+            r.add(ResourceLocation.parse("minecraft:textures/missingno.png"));
+            return r;
         }
     }
 
@@ -162,7 +165,7 @@ public class TexturedParticle extends BaseParticle {
             case LIFETIME -> {
                 if (length == 0) break;
                 int index = (int) Math.floor((lifeTime / maxTick) * length);
-                textureIndex = index % length;
+                textureIndex = Math.clamp(index, 0, length - 1);
 
 
 //                if (!isMCMetaAnimatedTexture) break;
@@ -174,7 +177,7 @@ public class TexturedParticle extends BaseParticle {
 
             case FRAMETIME -> {
                 if (lifeTime % frametime == 0) {
-                    textureIndex = (textureIndex + 1) % length;
+                    textureIndex = (textureIndex + 1) % (length + 1);
                 }
 
 //                uvHeight = height;

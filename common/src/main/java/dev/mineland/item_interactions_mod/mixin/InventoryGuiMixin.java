@@ -54,6 +54,7 @@ public abstract class InventoryGuiMixin {
 
         if (ItemInteractionsConfig.debugDraws) {
             guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
         }
 
         GuiParticleSpawnersLogic.mainLogic(guiGraphics);
