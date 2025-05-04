@@ -85,9 +85,8 @@ public class GuiParticleSpawnersLogic {
 
 //    Is ran once per frame
     public static void mainLogic(GuiGraphics guiGraphics) {
-
         List<BaseParticle> shouldDelete = new ArrayList<>();
-            if (GlobalDirt.shouldTickParticles) {
+        if (GlobalDirt.shouldTickParticles && ItemInteractionsConfig.enableGuiParticles) {
 
 
             // if the carried is empty or the item has no spawners then clear the carried spawner
@@ -115,33 +114,20 @@ public class GuiParticleSpawnersLogic {
                     else GlobalDirt.carriedGuiParticleSpawner.clear();
                 }
             }
-    //        Particle ticker
-
-            for (BaseParticle particle : GlobalDirt.particleList) {
-                particle.tick();
-                particle.render();
-                if (particle.shouldDelete) shouldDelete.add(particle);
-            }
-
-            if (carriedGuiParticleSpawner != null) {
-                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
-
-
-                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(GlobalDirt.isShaking ? "onShake" : "onCarried"));
-                GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
-                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
-
-            }
 
             isInventoryScrolling = false;
 
-        } else {
-            for (BaseParticle particle : GlobalDirt.particleList) {
-                particle.render();
-//                if (particle.shouldDelete) shouldDelete.add(particle);
-            }
-
         }
+
+        for (BaseParticle particle : GlobalDirt.particleList) {
+            if (shouldTickParticles) {
+                particle.tick();
+                if (particle.shouldDelete) shouldDelete.add(particle);
+            }
+            particle.render();
+        }
+
+
 
         GlobalDirt.particleList.removeAll(shouldDelete);
 

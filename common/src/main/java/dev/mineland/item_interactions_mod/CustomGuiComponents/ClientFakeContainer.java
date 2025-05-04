@@ -118,8 +118,10 @@ public class ClientFakeContainer implements Container {
             guiGraphics.renderItem(slot.getItem(), itemX, itemY);
             guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
 
-            GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
-            GlobalDirt.slotCount++;
+            if (ItemInteractionsConfig.enableGuiParticles) {
+                GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
+                GlobalDirt.slotCount++;
+            }
 
 
         }
@@ -143,11 +145,17 @@ public class ClientFakeContainer implements Container {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 
         renderSlots(guiGraphics);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 350);
         renderMouseItem(guiGraphics, mouseX, mouseY);
+        guiGraphics.pose().translate(0, 0, 350);
+        guiGraphics.pose().popPose();
 
         GlobalDirt.skipCalcs = true;
         guiGraphics.renderItem(mouseItem, x + 18, y - 36);
         GlobalDirt.skipCalcs = false;
+
 
         GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 

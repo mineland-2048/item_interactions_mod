@@ -57,7 +57,7 @@ public abstract class InventoryGuiMixin {
             guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
         }
 
-        GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+        if (ItemInteractionsConfig.enableGuiParticles) GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 
         carriedItem = ItemStack.EMPTY;
 
@@ -88,9 +88,9 @@ public abstract class InventoryGuiMixin {
     @Unique
     boolean dead = false;
 
-    @Unique
     @Inject(method = "renderSlot", at = @At("TAIL"))
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
+        if (!ItemInteractionsConfig.enableGuiParticles) return;
         this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 

@@ -40,6 +40,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private SteppedSliderButton scaleAmount;
     private SteppedSliderButton mouseSpeedMult;
     private SteppedSliderButton mouseDeceleration;
+    private Button guiParticlesButton;
 
 
     private Button resetButton;
@@ -61,6 +62,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     double oldScaleAmount       = ItemInteractionsConfig.scaleAmount       ;
     double oldMouseDeceleration = ItemInteractionsConfig.mouseDeceleration ;
     double oldMouseSpeedMult    = ItemInteractionsConfig.mouseSpeedMult    ;
+    boolean oldParticleEnabled  = ItemInteractionsConfig.enableGuiParticles;
 //    public static double scaleSpeed;
 //    public static float scaleAmount;
 //    public static double mouseSpeedMult = 1;
@@ -96,6 +98,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseSpeedMult.setTooltip(Tooltip.create(Component.literal("Multiplier for the speed gained while moving the mouse")));
         mouseDeceleration.setTooltip(Tooltip.create(Component.literal("The deceleration factor for the items. \n1 = normal deceleration\n0 = no deceleration")));
 
+        guiParticlesButton.setTooltip(Tooltip.create(Component.literal("Enable or disable particles in the inventory from resource packs.")));
+
 
         boolean hadItems = false;
         if (Minecraft.getInstance().level != null  && Minecraft.getInstance().player != null) {
@@ -111,8 +115,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
         }
 
         if (!hadItems) {
-            inventoryPreview.setItem(0,  new ItemStack(Items.DIAMOND));
-            inventoryPreview.setItem(1,  new ItemStack(Items.IRON_SWORD));
+            inventoryPreview.setItem(0,  new ItemStack(Items.CRAFTING_TABLE));
+            inventoryPreview.setItem(1,  new ItemStack(Items.OAK_LEAVES));
             inventoryPreview.setItem(2,  new ItemStack(Items.DIAMOND_PICKAXE));
             inventoryPreview.setItem(4,  new ItemStack(Items.REDSTONE_LAMP));
             inventoryPreview.setItem(6,  new ItemStack(Items.FLINT_AND_STEEL));
@@ -303,6 +307,30 @@ public class ItemInteractionsSettingsScreen extends Screen {
         inventoryPreview = rightColumnLayout.addChild(inventoryPreview, LayoutSettings::alignVerticallyMiddle);
         rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings::alignHorizontallyCenter);
 
+
+        Component debugButtonInitialText = Component.literal("Inventory particles: ")
+                .append(Component.literal(""+ItemInteractionsConfig.enableGuiParticles)
+                        .withStyle(ItemInteractionsConfig.enableGuiParticles ? ChatFormatting.GREEN : ChatFormatting.RED)
+                );
+
+        guiParticlesButton = rightColumnLayout.addChild(
+                Button.builder(debugButtonInitialText, (self) -> {
+                    ItemInteractionsConfig.enableGuiParticles = !ItemInteractionsConfig.enableGuiParticles;
+
+                    ChatFormatting color = ItemInteractionsConfig.enableGuiParticles ?
+                            ChatFormatting.GREEN : ChatFormatting.RED;
+
+
+                    self.setMessage(
+                            Component.literal("Inventory particles: ")
+                                    .append(Component.literal(""+ItemInteractionsConfig.enableGuiParticles)
+                                            .withStyle(color)
+                                    )
+                    );
+                }).build(), LayoutSettings::alignHorizontallyCenter
+        );
+
+
         LinearLayout footerLayout = LinearLayout.horizontal().spacing(8);
         footerLayout.addChild(Button.builder(CommonComponents.GUI_CANCEL, arg -> this.onCancel()).width(Button.DEFAULT_WIDTH).build());
         footerLayout.addChild(Button.builder(CommonComponents.GUI_DONE, arg -> this.onClose()).width(Button.DEFAULT_WIDTH).build());
@@ -350,6 +378,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         ItemInteractionsConfig.scaleAmount = oldScaleAmount;
         ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
         ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
+        ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
         this.minecraft.setScreen(parent);
     }
 
@@ -359,6 +388,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         scaleAmount.setValue(ItemInteractionsConfig.DefaultValues.scaleAmount);
         mouseSpeedMult.setValue(ItemInteractionsConfig.DefaultValues.mouseSpeedMult);
         mouseDeceleration.setValue(ItemInteractionsConfig.DefaultValues.mouseDeceleration);
+        guiParticlesButton.setMessage(Component.literal(""+ItemInteractionsConfig.DefaultValues.enableGuiParticles));
 
         ItemInteractionsConfig.init();
 
