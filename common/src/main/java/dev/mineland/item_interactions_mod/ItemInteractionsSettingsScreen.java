@@ -388,7 +388,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
         scaleAmount.setValue(ItemInteractionsConfig.DefaultValues.scaleAmount);
         mouseSpeedMult.setValue(ItemInteractionsConfig.DefaultValues.mouseSpeedMult);
         mouseDeceleration.setValue(ItemInteractionsConfig.DefaultValues.mouseDeceleration);
-        guiParticlesButton.setMessage(Component.literal(""+ItemInteractionsConfig.DefaultValues.enableGuiParticles));
+        guiParticlesButton.setMessage(
+                Component.literal("Inventory particles: ").append(
+                Component.literal("" + ItemInteractionsConfig.DefaultValues.enableGuiParticles).withStyle(ChatFormatting.GREEN)
+        ));
 
         ItemInteractionsConfig.init();
 
