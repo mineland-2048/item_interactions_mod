@@ -57,7 +57,8 @@ public class GuiParticleSpawnersLogic {
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, currentSpawnersList.isEmpty() ? 0xFF00FF00 : 0xFFFFFF00);
 
 
-                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, "onPut");
+
+                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, isInventoryScrolling ? "onIdle" : "onPut");
                 GlobalDirt.slotSpawners.tick(slotCount, spawnerTickDelta, guiGraphics, globalX, globalY, 0f, 0f);
                 GlobalDirt.slotSpawners.setState(slotCount, "onIdle");
 
@@ -86,35 +87,35 @@ public class GuiParticleSpawnersLogic {
     public static void mainLogic(GuiGraphics guiGraphics) {
 
         List<BaseParticle> shouldDelete = new ArrayList<>();
-        if (GlobalDirt.shouldTickParticles) {
+            if (GlobalDirt.shouldTickParticles) {
 
 
-        // if the carried is empty or the item has no spawners then clear the carried spawner
-        if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner.clear();
+            // if the carried is empty or the item has no spawners then clear the carried spawner
+            if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner.clear();
 
-//        if there is a carried item
-        else if (carriedItem != null && !carriedItem.isEmpty()) {
-
-
-//            if its a different item from the previous tick
-            if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem) || (carriedGuiParticleSpawner.isEmpty())) {
-
-//                if it has a spawner, use it and pick it up
-                List<GuiParticleSpawner> newGuiParticleSpawner = SpawnerRegistry.get(carriedItem);
-                if (!newGuiParticleSpawner.isEmpty()) {
-                    carriedGuiParticleSpawner = newGuiParticleSpawner;
-//                    carriedGuiParticleSpawnerTimers.clear();
-                    Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
-                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
-                    GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
-                    carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
+    //        if there is a carried item
+            else if (carriedItem != null && !carriedItem.isEmpty()) {
 
 
+    //            if its a different item from the previous tick
+                if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem) || (carriedGuiParticleSpawner.isEmpty())) {
+
+    //                if it has a spawner, use it and pick it up
+                    List<GuiParticleSpawner> newGuiParticleSpawner = SpawnerRegistry.get(carriedItem);
+                    if (!newGuiParticleSpawner.isEmpty()) {
+                        carriedGuiParticleSpawner = newGuiParticleSpawner;
+    //                    carriedGuiParticleSpawnerTimers.clear();
+                        Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
+                        carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
+                        GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
+                        carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
+
+
+                    }
+                    else GlobalDirt.carriedGuiParticleSpawner.clear();
                 }
-                else GlobalDirt.carriedGuiParticleSpawner.clear();
             }
-        }
-//        Particle ticker
+    //        Particle ticker
 
             for (BaseParticle particle : GlobalDirt.particleList) {
                 particle.tick();
@@ -132,6 +133,8 @@ public class GuiParticleSpawnersLogic {
 
             }
 
+            isInventoryScrolling = false;
+
         } else {
             for (BaseParticle particle : GlobalDirt.particleList) {
                 particle.render();
@@ -140,9 +143,8 @@ public class GuiParticleSpawnersLogic {
 
         }
 
-
-//        for (BaseParticle particle : shouldDelete) { ; }
         GlobalDirt.particleList.removeAll(shouldDelete);
+
 
     }
 }

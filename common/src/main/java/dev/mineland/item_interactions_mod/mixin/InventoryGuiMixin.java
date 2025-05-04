@@ -62,6 +62,7 @@ public abstract class InventoryGuiMixin {
         carriedItem = ItemStack.EMPTY;
 
 
+
     }
 
     @Inject(method = "init", at = @At("HEAD"))

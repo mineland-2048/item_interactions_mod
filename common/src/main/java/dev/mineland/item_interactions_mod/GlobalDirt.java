@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class GlobalDirt {
+
     public static class slotSpawners{
         private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
         private static final List<List<Float>> SPAWNER_TIMERS = new ArrayList<>(90);
@@ -128,6 +129,8 @@ public class GlobalDirt {
 
 
     }
+
+
     public static boolean isCurrentItem3d;
     public static ItemStack carriedItem;
 
@@ -173,6 +176,7 @@ public class GlobalDirt {
 
     public static int particleCount = 0;
 
+    public static boolean isInventoryScrolling = false;
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
