@@ -51,6 +51,10 @@ public final class Item_interactions_mod {
         logger.warn(message);
     }
 
+    public static void errorMessage(String message) {
+        logger.error(message);
+    }
+
 
     public static void refreshConfig() {
         logger.info("Refreshing config");

@@ -121,9 +121,9 @@ public class GuiParticleSpawner {
             DataResult<GuiParticleSpawner> dataResult;
 
             dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, json);
-            result = dataResult.resultOrPartial(Item_interactions_mod::warnMessage).orElseThrow();
 
-
+            String warnMessage = String.format("Errors found in '%s': ", id);
+            result = dataResult.resultOrPartial((s) -> Item_interactions_mod.warnMessage(warnMessage + s)).orElseThrow();
 
             result.setName(id);
             return result;
@@ -131,7 +131,7 @@ public class GuiParticleSpawner {
 
 
         } catch (JsonParseException | IOException e) {
-            Item_interactions_mod.warnMessage("Couldnt parse parent '" + id + "'!\n" + e);
+            Item_interactions_mod.warnMessage("Couldn't parse parent '" + id + "'!\n" + e);
             return null;
         }
 
@@ -416,7 +416,7 @@ public class GuiParticleSpawner {
 //            Map<String, Either<ParticleEvent, String>> eventsMap = this.events.orElse(new HashMap<>())
             Map<String, Either<ParticleEvent, String>> newEventsMap = this.events.orElse(new HashMap<>());
 
-            System.out.println("Parsing events: " + newEvents);
+//            System.out.println("Parsing events: " + newEvents);
 
 
             newEvents.forEach((String k, Either<ParticleEvent, String> newEvent) -> {
