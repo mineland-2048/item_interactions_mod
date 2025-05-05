@@ -5,9 +5,7 @@
   "minVersion": "0.8",
   "client": [
     "CreativeModeItemPickerMixin",
-    "ResourcePackReloadMixin"
-  ],
-  "mixins": [
+    "ResourcePackReloadMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",

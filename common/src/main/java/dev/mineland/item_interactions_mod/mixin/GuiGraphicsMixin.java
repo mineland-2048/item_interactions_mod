@@ -25,8 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
-@Mixin(GuiGraphics.class)
-public abstract class GuiGraphicsMixin{
+@Mixin(value = GuiGraphics.class)
+public abstract class GuiGraphicsMixin{//
     @Shadow @Final private ItemStackRenderState scratchItemStackRenderState;
     @Shadow @Final private Minecraft minecraft;
     @Shadow @Final private PoseStack pose;
@@ -45,14 +45,9 @@ public abstract class GuiGraphicsMixin{
 
     @Unique int iteminteractions$offset = -8;
 
-//  TODO: fix compatibility with smooth swapping
-//  https://github.com/mineland-2048/item_interactions_mod/issues/2
-    // mix into smooth-swapping's DrawContextMixin.java smooth_Swapping$renderSwap
-    // and add a rollback pose into their matrix.
-    // Also make their transition items have the animation selected
 
-
-    @Inject(at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V")
+//    smooth-swapping compat by doing the item tilting after their swap
+    @Inject(order = 1500, at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V")
     private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, int l, CallbackInfo ci) {
 
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
