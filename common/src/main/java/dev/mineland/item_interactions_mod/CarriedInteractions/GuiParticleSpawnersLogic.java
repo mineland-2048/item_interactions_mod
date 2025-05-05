@@ -107,7 +107,7 @@ public class GuiParticleSpawnersLogic {
                         Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
                         GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
-                        carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onCarried"));
+                        carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
 
                     }
@@ -116,6 +116,7 @@ public class GuiParticleSpawnersLogic {
 
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(isShaking ? "onShake" : "onCarried"));
                 GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
+                carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
             }
 

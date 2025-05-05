@@ -487,6 +487,9 @@ public class GuiParticleSpawner {
 
     public void setState(String state) {
         this.state = state;
+        for (GuiParticleSpawner child : childGuiParticleSpawners) {
+            child.setState(state);
+        }
     }
 
     public float getTimer() {

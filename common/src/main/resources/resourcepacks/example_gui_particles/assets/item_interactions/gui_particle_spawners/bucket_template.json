@@ -1,0 +1,27 @@
+{
+  "attributes": {
+    "y": 4,
+    "duration": 20,
+    "speedY": 32,
+    "accelerationY": -4
+  },
+
+  "attributes_variance": {
+    "x": 2,
+    "speedX": 4,
+    "speedY":  10,
+    "y": 4
+  },
+
+  "events": {
+    "onShake": {
+      "interval": 10,
+      "particles": [
+        {
+          "id": "falling_water",
+          "count": 3
+        }
+      ]
+    }
+  }
+}

@@ -107,7 +107,10 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         String spawnerString = SpawnerRegistry.SPAWNER_MAP.size() == 1 ?
                 "Parsed %d Gui particle spawner": "Parsed %d Gui particle spawners";
 
-        Item_interactions_mod.infoMessage(String.format(spawnerString, SpawnerRegistry.SPAWNER_MAP.size()));
+        String errorCountString = "";
+        if (spawnerErrorCount == 1) errorCountString = " (1 error)";
+        else if (spawnerErrorCount > 1) errorCountString = " (" + spawnerErrorCount + " errors)";
+        Item_interactions_mod.infoMessage(String.format(spawnerString + errorCountString, SpawnerRegistry.SPAWNER_MAP.size()));
 
 
 

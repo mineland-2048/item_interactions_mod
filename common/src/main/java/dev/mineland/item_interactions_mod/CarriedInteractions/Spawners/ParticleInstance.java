@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.CopiedParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.TexturedParticle;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;

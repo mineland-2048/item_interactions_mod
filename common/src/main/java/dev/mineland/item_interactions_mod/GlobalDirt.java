@@ -93,7 +93,7 @@ public class GlobalDirt {
             int childCount = 0;
             for (GuiParticleSpawner guiParticleSpawner : guiParticleSpawners) {
                 guiParticleSpawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY, slotId, childCount);
-                childCount++;
+                childCount += guiParticleSpawner.getChildGuiParticleSpawners().size() + 1;
             }
 
         }
@@ -137,7 +137,6 @@ public class GlobalDirt {
 
     public static long lastMilis = 0;
 
-//    public static int animationSetting = Iteminteractions.getAnimationSetting();
     public static float msCounter = 0;
 
     public static boolean debugStuck = false;
@@ -153,7 +152,6 @@ public class GlobalDirt {
 
     public static int topPos = 0, leftPos = 0;
 
-//    public static double mouseDdeceleration = 0.8f;
 
     public static float tickScale = 1;
 
@@ -288,15 +286,8 @@ public class GlobalDirt {
         msCounter += frameDelta;
         msCounter %= 1000;
         lastMilis = currentMilis;
-//        System.out.println("Finished timer");
     }
 
-//    public static List<TransitionItem> transItems;
-
-
-//    public static void addTransItem(ItemStack itemStack, Slot slot, int lastMouseX, int lastMouseY) {
-//        transItems.add(new TransitionItem(itemStack, slot, lastMouseX, lastMouseY));
-//    }
 }
 
 
