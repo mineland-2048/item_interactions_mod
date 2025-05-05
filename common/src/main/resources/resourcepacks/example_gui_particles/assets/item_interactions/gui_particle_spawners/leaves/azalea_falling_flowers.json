@@ -1,0 +1,79 @@
+{
+
+  "attributes": {
+    "x": 0,
+    "y": 0,
+
+    "speedX": 0.0,
+    "speedY": -10,
+
+    "accelerationX": 0.0,
+    "accelerationY": 0.0,
+
+    "frictionX": 0.9,
+    "frictionY": 1,
+
+
+    "duration": 20,
+
+    "color_start": "#FFD07BE3",
+    "color_end": "#FFD07BE3"
+  },
+
+  "attributes_variance": {
+    "x": 8,
+    "y": 2,
+
+    "speedX": 16,
+    "speedY": 2,
+
+
+
+    "duration": 4
+
+  },
+
+  "events": {
+    "onIdle": {
+      "particles": [
+        {"id":  "minecraft:cherry_leaves"}
+      ],
+
+      "interval": 80
+    },
+
+    "onPut": {
+
+      "particles": [
+
+        {
+          "id":  "minecraft:cherry_leaves",
+          "x":  2,
+          "y":  -2,
+          "speedX":  5,
+          "speedY":  -5,
+          "duration":  40
+
+        },
+        {
+          "id":  "minecraft:cherry_leaves",
+          "x": -2,
+          "y": -2,
+          "speedX": -5,
+          "speedY": -5,
+          "duration":  40
+
+        }
+      ]
+    },
+
+    "onCarried": "onIdle",
+
+    "onShake": {"use":  "onPut", "interval":  80}
+
+  },
+
+  "applies": [
+    {"id":  "flowering_azalea_leaves"}
+  ]
+}

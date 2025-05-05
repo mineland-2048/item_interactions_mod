@@ -9,25 +9,19 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.GuiParticlesReloadListener;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
-import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.predicates.DataComponentPredicates;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemStack;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.*;
 
 public class GuiParticleSpawner {
@@ -77,39 +71,18 @@ public class GuiParticleSpawner {
         this.id = -1;
     }
 
-//    public GuiParticleSpawner(ResourceLocation parent, List<ResourceLocation> childrenLocations, ParticleInstance attributes, ParticleInstance attributes_variance, Map<String, Either<ParticleEvent, String>> events, List<ItemStack> appliedItems) {
-//        this.parent = parent;
-//
-//        if (parent != null) {
-//            System.out.println("Parent! parse all stuff into self");
-//
-//                Optional<Resource> parentResource = Minecraft.getInstance().getResourceManager().getResource(parent);
-//
-//                if (parentResource.isPresent()) {
-//
-//                }
-//
-//
-//        }
-//
-//        for (ResourceLocation child : childrenLocations) {
-//            System.out.println("parse " + child + "into children");
-//        }
-//
-//        this.childrenLocations = childrenLocations;
-//        this.attributes = attributes;
-//        this.attributes_variance = attributes_variance;
-//        this.events = events;
-//        this.appliedItems = appliedItems;
-//    }
-//
 
 
     private JsonObject tempParentJson;
 
     public GuiParticleSpawner parseSpawner(ResourceLocation id) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+//        if (! id.getPath().startsWith("gui_particle_spawners/")) id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
+
+        id = id.withPath("gui_particle_spawners/" + id.getPath() + ".json");
         if (resourceManager.getResource(id).isEmpty()) {
+            if (!GlobalDirt.spawnerErrorList.containsKey(id)) GlobalDirt.spawnerErrorList.put(id, new ArrayList<>());
+            GlobalDirt.spawnerErrorList.get(id).add(id + " doesn't exist");
             Item_interactions_mod.warnMessage("Spawner '" + id + "' is empty!");
             return null;
         };
@@ -123,7 +96,12 @@ public class GuiParticleSpawner {
             dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, json);
 
             String warnMessage = String.format("Errors found in '%s': ", id);
-            result = dataResult.resultOrPartial((s) -> Item_interactions_mod.warnMessage(warnMessage + s)).orElseThrow();
+            ResourceLocation finalId = id;
+            result = dataResult.resultOrPartial((s) -> {
+                if (!GlobalDirt.spawnerErrorList.containsKey(finalId)) GlobalDirt.spawnerErrorList.put(finalId, new ArrayList<>());
+                GlobalDirt.spawnerErrorList.get(finalId).add(warnMessage + s);
+                Item_interactions_mod.warnMessage(warnMessage + s);
+            }).orElseThrow();
 
             result.setName(id);
             return result;
@@ -131,7 +109,11 @@ public class GuiParticleSpawner {
 
 
         } catch (JsonParseException | IOException e) {
+            if (!GlobalDirt.spawnerErrorList.containsKey(id)) GlobalDirt.spawnerErrorList.put(id, new ArrayList<>());
+            GlobalDirt.spawnerErrorList.get(id).add(e.getMessage());
+
             Item_interactions_mod.warnMessage("Couldn't parse parent '" + id + "'!\n" + e);
+            GlobalDirt.spawnerErrorCount++;
             return null;
         }
 

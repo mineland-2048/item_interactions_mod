@@ -1,17 +1,27 @@
 package dev.mineland.item_interactions_mod.CarriedInteractions.Spawners;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.CopiedParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.TexturedParticle;
 import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ColorRGBA;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ParticleInstance {
@@ -67,6 +77,65 @@ public class ParticleInstance {
     }
 
     public ParticleInstance(Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> duration, Optional<Integer> count) {
+        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
+    }
+
+    public static ParticleInstance defaultVariance() {
+        return new ParticleInstance(0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0f, 0);
+    }
+
+
+    public ParticleInstance(float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float duration, int count) {
+        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
+    }
+
+    public ParticleInstance(ResourceLocation id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> duration, Optional<Integer> count) {
+
+        if (id != null) {
+            ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+
+            ResourceLocation fixedPath = id.withPath("particles/" + id.getPath() + ".json");
+
+            Optional<Resource> particleResource =  resourceManager.getResource(fixedPath);
+
+            if (particleResource.isEmpty()) {
+                if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
+                if (!GlobalDirt.particleErrorList.get(id).contains("m")) {
+                    GlobalDirt.particleErrorList.get(id).add("m");
+
+                    String err = "Missing GUI particle: '" + id + "'";
+                    if (fixedPath.getPath().endsWith(".json.json")) err = "particle '" + id + " shouldn't end with .json in the spawner, just the location of the particle";
+                    if (fixedPath.getPath().startsWith("particles/particles/")) err = "particle '" + id + "' shouldn't start the path with 'particles/'. Remove it";
+
+                    Item_interactions_mod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "] " + err);
+                }
+
+            } else {
+                try (Reader reader = particleResource.get().openAsReader()){
+                    JsonElement particleJson = JsonParser.parseReader(reader);
+                    JsonArray textureList = particleJson.getAsJsonObject().get("textures").getAsJsonArray();
+
+                    for (JsonElement textureLocationJson : textureList.asList()) {
+                        ResourceLocation textureLocation = ResourceLocation.parse(textureLocationJson.getAsString());
+                        textureLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
+                        if (resourceManager.getResource(textureLocation).isEmpty()) {
+                            if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
+
+                            GlobalDirt.particleErrorList.get(id).add("Missing texture " + textureLocation);
+                            Item_interactions_mod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "]: Missing texture '" + textureLocation + "'");
+
+                        }
+
+
+                    }
+
+                } catch (Exception e) {
+                    Item_interactions_mod.errorMessage("Failed to parse GUI particle '" + fixedPath + "': " + e);
+                    return;
+                }
+            }
+        }
+        this.id = id;
         this.x = x;
         this.y = y;
         this.speedX = speedX;
@@ -85,21 +154,7 @@ public class ParticleInstance {
 
         this.duration = duration;
         this.count = count;
-    }
 
-    public static ParticleInstance defaultVariance() {
-        return new ParticleInstance(0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0f, 0);
-    }
-
-
-    public ParticleInstance(float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float duration, int count) {
-        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
-    }
-
-    public ParticleInstance(ResourceLocation id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> duration, Optional<Integer> count) {
-        this(x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
-
-        this.id = id;
 
     }
 
@@ -162,10 +217,6 @@ public class ParticleInstance {
 
     }
 
-    public void spawn() {
 
-
-        System.out.println("Spawned " + id);
-    }
 
 }

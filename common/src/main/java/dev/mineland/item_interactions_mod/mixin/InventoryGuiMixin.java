@@ -74,13 +74,6 @@ public abstract class InventoryGuiMixin {
 
     @Inject(method = "init", at = @At("TAIL"))
     protected void initMixin(CallbackInfo ci) {
-//        GlobalDirt.msCounter = 0;
-//        GlobalDirt.topPos = this.topPos;
-//        GlobalDirt.leftPos = this.leftPos;
-//        GlobalDirt.speedX = 0;
-//        GlobalDirt.speedY = 0;
-//        this.dead = false;
-
         GlobalDirt.restore();
     }
 

@@ -9,11 +9,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
-import org.joml.Vector2d;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GlobalDirt {
 
@@ -188,6 +185,12 @@ public class GlobalDirt {
 
     public static boolean shouldTickParticles;
 
+    public static boolean isReloadingResources;
+
+    public static Map<ResourceLocation, List<String>> spawnerErrorList = new HashMap<>();
+    public static Map<ResourceLocation, List<String>> particleErrorList = new HashMap<>();
+    public static int spawnerErrorCount = 0;
+    public static String currentParticleSpawner;
 
     public static void restore() {
 //        System.out.println("Restoring global dirt");
@@ -219,6 +222,9 @@ public class GlobalDirt {
     }
 
     public static int tickCounter;
+
+
+
 
     public static void updateTimer() {
 //        System.out.println("Updating Timer");

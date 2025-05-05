@@ -1,7 +1,6 @@
 package dev.mineland.item_interactions_mod;
 
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +48,13 @@ public final class Item_interactions_mod {
 
     public static void warnMessage(String message) {
         logger.warn(message);
+        if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
     }
 
     public static void errorMessage(String message) {
         logger.error(message);
+        if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
+
     }
 
 

@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "duration": 200,
+    "y": -8
+  },
+
+  "attributes_variance": {
+    "x": 32,
+    "y": 8,
+    "speedX": 4,
+    "speedY": 1
+  },
+
+  "events": {
+    "onIdle": {
+      "interval": 50,
+      "particles": [{ "id": "firefly" }]
+    },
+    "onPut": {
+      "interval": 0,
+      "particles": [
+        {
+          "id": "firefly",
+          "count": 4
+        }
+      ]
+    }
+  },
+
+  "applies": [{ "id": "firefly_bush" }]
+}

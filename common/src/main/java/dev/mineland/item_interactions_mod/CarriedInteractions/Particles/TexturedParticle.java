@@ -109,7 +109,7 @@ public class TexturedParticle extends BaseParticle {
 
     private List<ResourceLocation> getTexturesFromArray(ResourceLocation particleLocation) {
         try {
-            Resource a = Minecraft.getInstance().getResourceManager().getResource(particleLocation).orElseThrow();
+            Resource a = Minecraft.getInstance().getResourceManager().getResource(particleLocation.withPrefix("particles/").withSuffix(".json")).orElseThrow();
             List<ResourceLocation> finalList = new ArrayList<>();
 
 

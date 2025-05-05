@@ -9,8 +9,8 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public final class Item_interactions_modNeoForge {
     public Item_interactions_modNeoForge(ModContainer container) {
         // Run our common setup.
-        container.registerExtensionPoint(IConfigScreenFactory.class, new ItemInteractionsConfigNeoforge() {
-        });
+        container.registerExtensionPoint(IConfigScreenFactory.class, new ItemInteractionsConfigNeoforge() {});
         Item_interactions_mod.init();
+
     }
 }

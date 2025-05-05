@@ -1,8 +1,6 @@
 package dev.mineland.item_interactions_mod;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 //import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import com.mojang.serialization.DataResult;
@@ -10,7 +8,6 @@ import com.mojang.serialization.JsonOps;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -18,44 +15,19 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import static dev.mineland.item_interactions_mod.GlobalDirt.*;
+
 public class GuiParticlesReloadListener implements ResourceManagerReloadListener {
 
 
-    private int errorCount;
 
-//
-//    private void parseParticle(JsonObject GuiParticleJson) {
-//
-//    }
-//
-//    private void loadParticles(ResourceManager resourceManager) {
-//        for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("particles/gui", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
-//
-//            ResourceLocation id = entry.getKey();
-//            Resource resource = entry.getValue();
-//
-//            try (InputStream stream = resource.open()) {
-//                JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
-//
-//                parseParticle(json);
-//
-//
-//
-//                Item_interactions_mod.infoMessage("Parsed particle: " + id);
-//            } catch (IOException | JsonParseException e) {
-//                Item_interactions_mod.errorMessage("Failed to load particle '" + id + "'\n" + e);
-//
-//            }
-//        }
-//
-//    }
 
 
     private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
@@ -63,12 +35,17 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         GuiParticleSpawner result;
         DataResult<GuiParticleSpawner> dataResult;
 
+        currentParticleSpawner = id.toString();
+        ResourceLocation filePath = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
+
 
         dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
 
         result = dataResult.resultOrPartial((s) -> {
-            Item_interactions_mod.warnMessage("Error in '" + id + "\n" + s);
-            errorCount++;
+            if (!spawnerErrorList.containsKey(filePath)) spawnerErrorList.put(filePath, new ArrayList<>());
+            spawnerErrorList.get(filePath).add(s);
+            Item_interactions_mod.warnMessage("Errors found in '" + filePath + "\n" + s);
+            spawnerErrorCount++;
         }).orElseThrow();
         result.setName(id);
         return result;
@@ -84,13 +61,18 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         }
     }
     private void loadSpawners(ResourceManager resourceManager) {
-        errorCount = 0;
-        for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("particles/gui_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
+        for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("gui_particle_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
             {
+
+
 
 
                 ResourceLocation id = entry.getKey();
                 Resource resource = entry.getValue();
+
+                if (ItemInteractionsConfig.debugDraws) {
+                    Item_interactions_mod.infoMessage("Loading " + id + ":" + resource);
+                }
 
                 try (InputStream stream = resource.open()) {
                     JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
@@ -105,8 +87,9 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
                 } catch (Exception e) {
                     Item_interactions_mod.errorMessage("Couldn't parse '" + id + "': \n" + e.getCause());
-
-                    errorCount++;
+                    if (!spawnerErrorList.containsKey(id)) spawnerErrorList.put(id, new ArrayList<>());
+                    spawnerErrorList.get(id).add(e.getMessage());
+                    spawnerErrorCount++;
 
                 }
             }
@@ -116,6 +99,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
     private void loadStuff(ResourceManager resourceManager) {
         Item_interactions_mod.infoMessage("Reloading gui particle spawners");
+
         SpawnerRegistry.clear();
 
         loadSpawners(resourceManager);
@@ -128,23 +112,29 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
 
 
-
     }
     @Override
     public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
 
         CompletableFuture<Void> a = CompletableFuture.supplyAsync(() -> {
 
+            isReloadingResources = true;
+            spawnerErrorList.clear();
+            particleErrorList.clear();
+            spawnerErrorCount = 0;
+            currentParticleSpawner = "";
             this.loadStuff(resourceManager);
 
-            if (errorCount > 0) {
+            if (spawnerErrorCount > 0) {
 
-                String errorTitle = (errorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
+                String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
                 SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
-                        Component.literal(String.format(errorTitle, errorCount)),
+                        Component.literal(String.format(errorTitle, spawnerErrorCount)),
                         Component.literal("Check the logs for more information") );
 
             }
+
+            isReloadingResources = false;
             return null;
 
 
