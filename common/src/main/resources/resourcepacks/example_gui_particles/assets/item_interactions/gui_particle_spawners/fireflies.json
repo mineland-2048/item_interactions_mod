@@ -24,7 +24,8 @@
           "count": 4
         }
       ]
-    }
+    },
+    "onCarried": "onIdle"
   },
 
   "applies": [{ "id": "firefly_bush" }]

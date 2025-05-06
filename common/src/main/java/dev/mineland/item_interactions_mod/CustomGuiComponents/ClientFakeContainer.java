@@ -139,9 +139,9 @@ public class ClientFakeContainer implements Container {
     }
 
     public void renderMouseItem(GuiGraphics guiGraphics, int x, int y) {
+        GlobalDirt.carriedItem = mouseItem;
         guiGraphics.renderItem(mouseItem, x - 8, y - 8);
         guiGraphics.renderItemDecorations(Minecraft.getInstance().font, mouseItem, x - 8, y - 8);
-        GlobalDirt.carriedItem = mouseItem;
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {

@@ -3,10 +3,12 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -211,6 +213,14 @@ public class TexturedParticle extends BaseParticle {
         this.y += speedY / 20;
         this.speedX = (speedX + accelerationX) * frictionX;
         this.speedY = (speedY + accelerationY) * frictionY;
+
+        if (
+                (this.x + width) < 0 || (this.x - width) > Minecraft.getInstance().getWindow().getGuiScaledWidth()
+            ||  (this.y + height) < 0 || (this.y - height) > Minecraft.getInstance().getWindow().getGuiScaledHeight()
+
+        ) {
+            shouldDelete = true;
+        }
 
     }
 }
