@@ -75,6 +75,6 @@
     "onCarried": "onIdle",
 
     "onPickup": "onPut",
-    "onShake": { "use": "onPut", "interval": 20 }
+    "onShake": { "use": "onPut", "interval": 2 }
   }
 }

@@ -15,7 +15,7 @@
 
   "events": {
     "onShake": {
-      "interval": 10,
+      "interval": 2,
       "particles": [
         {
           "id": "falling_water",

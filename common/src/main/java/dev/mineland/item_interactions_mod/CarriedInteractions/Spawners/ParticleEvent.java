@@ -83,13 +83,41 @@ public class ParticleEvent {
         this.use = use;
     }
 
-    void fire(GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
+    private ParticleInstance combineAttributes(Optional<ParticleInstance> base, Optional<ParticleInstance> newer) {
+
+        if (base.isEmpty() && newer.isEmpty()) return new ParticleInstance();
+        if (newer.isEmpty()) return base.get();
+        if (base.isEmpty()) return newer.get();
+        ParticleInstance result = base.get();
+
+        ParticleInstance newerAttributes = newer.get();
+
+        newerAttributes.x.ifPresent(attr -> result.x = Optional.of(attr));
+        newerAttributes.y.ifPresent(attr -> result.y = Optional.of(attr));
+        newerAttributes.speedX.ifPresent(attr -> result.speedX = Optional.of(attr));
+        newerAttributes.speedY.ifPresent(attr -> result.speedY = Optional.of(attr));
+        newerAttributes.accelerationX.ifPresent(attr -> result.accelerationX = Optional.of(attr));
+        newerAttributes.accelerationY.ifPresent(attr -> result.accelerationY = Optional.of(attr));
+        newerAttributes.frictionX.ifPresent(attr -> result.frictionX = Optional.of(attr));
+        newerAttributes.frictionY.ifPresent(attr -> result.frictionY = Optional.of(attr));
+        newerAttributes.colorStart.ifPresent(attr -> result.colorStart = Optional.of(attr));
+        newerAttributes.colorEnd.ifPresent(attr -> result.colorEnd = Optional.of(attr));
+        newerAttributes.duration.ifPresent(attr -> result.duration = Optional.of(attr));
+        newerAttributes.count.ifPresent(attr -> result.count = Optional.of(attr));
+
+        return result;
+    }
+
+    void fire(GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, Optional<ParticleInstance> spawnerAttributes, Optional<ParticleInstance> spawnerAttributesVariance) {
         ParticleInstance empty = new ParticleInstance();
-        int eventCount = this.attributes.orElse(empty).count.orElse(1);
-        int rand = this.attributes_variance.orElse(empty).count.orElse(0);
+
+        ParticleInstance combined = combineAttributes(spawnerAttributes, this.attributes);
+        ParticleInstance combinedVariance = combineAttributes(spawnerAttributesVariance, this.attributes_variance);
+        int eventCount = combined.count.orElse(1);
+        int rand = combinedVariance.count.orElse(0);
         for (ParticleInstance p : particles.orElse(new ArrayList<>())) {
             for (int i = 0; i < (int) MiscUtils.randomVariance(p.count.orElse(eventCount), rand); i++) {
-                p.spawn(guiGraphics, x, y, speedX, speedY, attributes.orElse(empty), attributes_variance.orElse(empty));
+                p.spawn(guiGraphics, x, y, speedX, speedY, combined, combinedVariance);
             }
         }
     };

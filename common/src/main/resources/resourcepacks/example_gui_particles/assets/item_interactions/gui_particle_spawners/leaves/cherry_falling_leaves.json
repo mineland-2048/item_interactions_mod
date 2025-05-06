@@ -78,7 +78,7 @@
     "onPickup": "onPut",
 
 
-    "onShake": { "use": "onPut", "interval": 20 }
+    "onShake": { "use": "onPut", "interval": 2 }
   },
 
   "applies": [{ "id": "cherry_leaves" }]

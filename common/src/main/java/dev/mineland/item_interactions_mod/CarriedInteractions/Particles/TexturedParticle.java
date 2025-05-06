@@ -191,13 +191,15 @@ public class TexturedParticle extends BaseParticle {
 
         int finalColor = MiscUtils.colorLerp((float) Math.clamp(lifeTime / maxTick, 0f, 1f), this.tintStart, this.tintEnd);
 
+        this.guiGraphics.pose().pushPose();
+        this.guiGraphics.pose().translate(0, 0, 300);
         this.guiGraphics.blit(RenderType::guiTextured, this.frames.get(textureIndex),
                 (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
                 0f, yStart,
                 totalTextureWidth, uvHeight,
                 totalTextureWidth, totalTextureHeight,
                 finalColor);
-
+        this.guiGraphics.pose().popPose();
 
 
 //        this.guiGraphics.blit();

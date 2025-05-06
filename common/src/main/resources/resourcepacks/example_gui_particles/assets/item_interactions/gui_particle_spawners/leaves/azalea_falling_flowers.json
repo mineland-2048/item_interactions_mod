@@ -69,7 +69,7 @@
 
     "onCarried": "onIdle",
 
-    "onShake": {"use":  "onPut", "interval":  80}
+    "onShake": {"use":  "onPut", "interval":  4}
 
   },
 

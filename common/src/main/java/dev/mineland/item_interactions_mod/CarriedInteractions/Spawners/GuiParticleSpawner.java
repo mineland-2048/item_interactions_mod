@@ -123,6 +123,7 @@ public class GuiParticleSpawner {
         this.childGuiParticleSpawners = parent.childGuiParticleSpawners;
         this.attributes = parent.attributes;
         this.attributes_variance = parent.attributes_variance;
+        this.events = parent.events;
 
     }
     public GuiParticleSpawner(
@@ -140,6 +141,7 @@ public class GuiParticleSpawner {
             parentSpawner = parseSpawner(resourceLocation);
             this.copyFromParent(parentSpawner);
 
+
         }
         attributes.ifPresent(this::setAttributes);
         attributes_variance.ifPresent(this::setAttributes_variance);
@@ -150,6 +152,7 @@ public class GuiParticleSpawner {
             if (p.resultOrPartial().isPresent()) {
                 this.setEvents(p.resultOrPartial().get());
             }
+
 
         }
 
@@ -211,11 +214,8 @@ public class GuiParticleSpawner {
             if (interval <= 0) {
                 float nextTime = (float) MiscUtils.randomVariance(e.interval.orElse(0f), e.interval_variance.orElse(0f));
                 GlobalDirt.slotSpawners.setSpawnerTimer(id, childCount, nextTime);
-                e.fire(guiGraphics, x, y, speedX, speedY);
+                e.fire(guiGraphics, x, y, speedX, speedY, this.attributes, this.attributes_variance);
             }
-
-//            this.getEvents().put(eventName, Either.left(e));
-
         });
     }
 
@@ -412,46 +412,46 @@ public class GuiParticleSpawner {
                 if (finalEvent.attributes.isEmpty())  finalEvent.attributes = Optional.of(new ParticleInstance());
                 if (finalEvent.attributes_variance.isEmpty())  finalEvent.attributes_variance = Optional.of(new ParticleInstance());
 
-                if (this.attributes.isPresent()) {
-                    finalEvent.attributes.get().x = finalEvent.attributes.get().x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.get().x;
-                    finalEvent.attributes.get().y = finalEvent.attributes.get().y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.get().y;
+//                if (this.attributes.isPresent()) {
+//                    finalEvent.attributes.get().x = finalEvent.attributes.get().x.isEmpty() ? this.attributes.get().x : finalEvent.attributes.get().x;
+//                    finalEvent.attributes.get().y = finalEvent.attributes.get().y.isEmpty() ? this.attributes.get().y : finalEvent.attributes.get().y;
+//
+//                    finalEvent.attributes.get().speedX = finalEvent.attributes.get().speedX.isEmpty() ? this.attributes.get().speedX : finalEvent.attributes.get().speedX;
+//                    finalEvent.attributes.get().speedY = finalEvent.attributes.get().speedY.isEmpty() ? this.attributes.get().speedY : finalEvent.attributes.get().speedY;
+//
+//                    finalEvent.attributes.get().accelerationX = finalEvent.attributes.get().accelerationX.isEmpty() ? this.attributes.get().accelerationX : finalEvent.attributes.get().accelerationX;
+//                    finalEvent.attributes.get().accelerationY = finalEvent.attributes.get().accelerationY.isEmpty() ? this.attributes.get().accelerationY : finalEvent.attributes.get().accelerationY;
+//
+//                    finalEvent.attributes.get().frictionX = finalEvent.attributes.get().frictionX.isEmpty() ? this.attributes.get().frictionX : finalEvent.attributes.get().frictionX;
+//                    finalEvent.attributes.get().frictionY = finalEvent.attributes.get().frictionY.isEmpty() ? this.attributes.get().frictionY : finalEvent.attributes.get().frictionY;
+//
+//                    finalEvent.attributes.get().colorStart = finalEvent.attributes.get().colorStart.isEmpty() ? this.attributes.get().colorStart : finalEvent.attributes.get().colorStart;
+//                    finalEvent.attributes.get().colorEnd = finalEvent.attributes.get().colorEnd.isEmpty() ? this.attributes.get().colorEnd : finalEvent.attributes.get().colorEnd;
+//
+//                    finalEvent.attributes.get().duration = finalEvent.attributes.get().duration.isEmpty() ? this.attributes.get().duration : finalEvent.attributes.get().duration;
+//                    finalEvent.attributes.get().count = finalEvent.attributes.get().count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.get().count;
+//
+//                }
 
-                    finalEvent.attributes.get().speedX = finalEvent.attributes.get().speedX.isEmpty() ? this.attributes.get().speedX : finalEvent.attributes.get().speedX;
-                    finalEvent.attributes.get().speedY = finalEvent.attributes.get().speedY.isEmpty() ? this.attributes.get().speedY : finalEvent.attributes.get().speedY;
-
-                    finalEvent.attributes.get().accelerationX = finalEvent.attributes.get().accelerationX.isEmpty() ? this.attributes.get().accelerationX : finalEvent.attributes.get().accelerationX;
-                    finalEvent.attributes.get().accelerationY = finalEvent.attributes.get().accelerationY.isEmpty() ? this.attributes.get().accelerationY : finalEvent.attributes.get().accelerationY;
-
-                    finalEvent.attributes.get().frictionX = finalEvent.attributes.get().frictionX.isEmpty() ? this.attributes.get().frictionX : finalEvent.attributes.get().frictionX;
-                    finalEvent.attributes.get().frictionY = finalEvent.attributes.get().frictionY.isEmpty() ? this.attributes.get().frictionY : finalEvent.attributes.get().frictionY;
-
-                    finalEvent.attributes.get().colorStart = finalEvent.attributes.get().colorStart.isEmpty() ? this.attributes.get().colorStart : finalEvent.attributes.get().colorStart;
-                    finalEvent.attributes.get().colorEnd = finalEvent.attributes.get().colorEnd.isEmpty() ? this.attributes.get().colorEnd : finalEvent.attributes.get().colorEnd;
-
-                    finalEvent.attributes.get().duration = finalEvent.attributes.get().duration.isEmpty() ? this.attributes.get().duration : finalEvent.attributes.get().duration;
-                    finalEvent.attributes.get().count = finalEvent.attributes.get().count.isEmpty() ? this.attributes.get().count : finalEvent.attributes.get().count;
-
-                }
-
-                if (this.attributes_variance.isPresent()) {
-                    finalEvent.attributes_variance.get().x = finalEvent.attributes_variance.get().x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.get().x;
-                    finalEvent.attributes_variance.get().y = finalEvent.attributes_variance.get().y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.get().y;
-
-                    finalEvent.attributes_variance.get().speedX = finalEvent.attributes_variance.get().speedX.isEmpty() ? this.attributes_variance.get().speedX : finalEvent.attributes_variance.get().speedX;
-                    finalEvent.attributes_variance.get().speedY = finalEvent.attributes_variance.get().speedY.isEmpty() ? this.attributes_variance.get().speedY : finalEvent.attributes_variance.get().speedY;
-
-                    finalEvent.attributes_variance.get().accelerationX = finalEvent.attributes_variance.get().accelerationX.isEmpty() ? this.attributes_variance.get().accelerationX : finalEvent.attributes_variance.get().accelerationX;
-                    finalEvent.attributes_variance.get().accelerationY = finalEvent.attributes_variance.get().accelerationY.isEmpty() ? this.attributes_variance.get().accelerationY : finalEvent.attributes_variance.get().accelerationY;
-
-                    finalEvent.attributes_variance.get().frictionX = finalEvent.attributes_variance.get().frictionX.isEmpty() ? this.attributes_variance.get().frictionX : finalEvent.attributes_variance.get().frictionX;
-                    finalEvent.attributes_variance.get().frictionY = finalEvent.attributes_variance.get().frictionY.isEmpty() ? this.attributes_variance.get().frictionY : finalEvent.attributes_variance.get().frictionY;
-
-                    finalEvent.attributes_variance.get().colorStart = finalEvent.attributes_variance.get().colorStart.isEmpty() ? this.attributes_variance.get().colorStart : finalEvent.attributes_variance.get().colorStart;
-                    finalEvent.attributes_variance.get().colorEnd = finalEvent.attributes_variance.get().colorEnd.isEmpty() ? this.attributes_variance.get().colorEnd : finalEvent.attributes_variance.get().colorEnd;
-
-                    finalEvent.attributes_variance.get().duration = finalEvent.attributes_variance.get().duration.isEmpty() ? this.attributes_variance.get().duration : finalEvent.attributes_variance.get().duration;
-                    finalEvent.attributes_variance.get().count = finalEvent.attributes_variance.get().count.isEmpty() ? this.attributes_variance.get().count : finalEvent.attributes_variance.get().count;
-                }
+//                if (this.attributes_variance.isPresent()) {
+//                    finalEvent.attributes_variance.get().x = finalEvent.attributes_variance.get().x.isEmpty() ? this.attributes_variance.get().x : finalEvent.attributes_variance.get().x;
+//                    finalEvent.attributes_variance.get().y = finalEvent.attributes_variance.get().y.isEmpty() ? this.attributes_variance.get().y : finalEvent.attributes_variance.get().y;
+//
+//                    finalEvent.attributes_variance.get().speedX = finalEvent.attributes_variance.get().speedX.isEmpty() ? this.attributes_variance.get().speedX : finalEvent.attributes_variance.get().speedX;
+//                    finalEvent.attributes_variance.get().speedY = finalEvent.attributes_variance.get().speedY.isEmpty() ? this.attributes_variance.get().speedY : finalEvent.attributes_variance.get().speedY;
+//
+//                    finalEvent.attributes_variance.get().accelerationX = finalEvent.attributes_variance.get().accelerationX.isEmpty() ? this.attributes_variance.get().accelerationX : finalEvent.attributes_variance.get().accelerationX;
+//                    finalEvent.attributes_variance.get().accelerationY = finalEvent.attributes_variance.get().accelerationY.isEmpty() ? this.attributes_variance.get().accelerationY : finalEvent.attributes_variance.get().accelerationY;
+//
+//                    finalEvent.attributes_variance.get().frictionX = finalEvent.attributes_variance.get().frictionX.isEmpty() ? this.attributes_variance.get().frictionX : finalEvent.attributes_variance.get().frictionX;
+//                    finalEvent.attributes_variance.get().frictionY = finalEvent.attributes_variance.get().frictionY.isEmpty() ? this.attributes_variance.get().frictionY : finalEvent.attributes_variance.get().frictionY;
+//
+//                    finalEvent.attributes_variance.get().colorStart = finalEvent.attributes_variance.get().colorStart.isEmpty() ? this.attributes_variance.get().colorStart : finalEvent.attributes_variance.get().colorStart;
+//                    finalEvent.attributes_variance.get().colorEnd = finalEvent.attributes_variance.get().colorEnd.isEmpty() ? this.attributes_variance.get().colorEnd : finalEvent.attributes_variance.get().colorEnd;
+//
+//                    finalEvent.attributes_variance.get().duration = finalEvent.attributes_variance.get().duration.isEmpty() ? this.attributes_variance.get().duration : finalEvent.attributes_variance.get().duration;
+//                    finalEvent.attributes_variance.get().count = finalEvent.attributes_variance.get().count.isEmpty() ? this.attributes_variance.get().count : finalEvent.attributes_variance.get().count;
+//                }
 
 
                 newEventsMap.put(k, Either.left(finalEvent));
