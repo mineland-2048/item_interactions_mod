@@ -87,4 +87,12 @@ public class MiscUtils {
             return (a + ((b-a) * t));
     }
 
+    public static int[] applyBrightness(int[] colorArray, double brightness) {
+        double clampedBrightness = Math.clamp(brightness, 0, 1);
+        int r = (int) (colorArray[1] * clampedBrightness);
+        int g = (int) (colorArray[2] * clampedBrightness);
+        int b = (int) (colorArray[3] * clampedBrightness);
+
+        return new int[]{colorArray[0], r, g, b};
+    }
 }

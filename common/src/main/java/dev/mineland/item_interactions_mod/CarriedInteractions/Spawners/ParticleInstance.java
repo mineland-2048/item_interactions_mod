@@ -2,7 +2,6 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Spawners;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,9 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ColorRGBA;
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -32,6 +28,8 @@ public class ParticleInstance {
                             duration;
 
     public Optional<ColorRGBA> colorStart , colorEnd;
+
+    public Optional<Float> brightnessStart, brightnessEnd;
 
     public Optional<Integer> count;
 
@@ -48,6 +46,8 @@ public class ParticleInstance {
             Codec.FLOAT.optionalFieldOf("frictionY").forGetter(p -> p.frictionY),
             ColorRGBA.CODEC.optionalFieldOf("color_start").forGetter(p -> p.colorStart),
             ColorRGBA.CODEC.optionalFieldOf("color_end").forGetter(p -> p.colorEnd),
+            Codec.FLOAT.optionalFieldOf("brightness_start").forGetter(p -> p.brightnessStart),
+            Codec.FLOAT.optionalFieldOf("brightness_end").forGetter(p -> p.brightnessEnd),
             Codec.FLOAT.optionalFieldOf("duration").forGetter(p -> p.duration),
             Codec.INT.optionalFieldOf("count").forGetter(p -> p.count)
 
@@ -64,6 +64,8 @@ public class ParticleInstance {
             Codec.FLOAT.optionalFieldOf("frictionY").forGetter(p -> p.frictionY),
             ColorRGBA.CODEC.optionalFieldOf("color_start").forGetter(p -> p.colorStart),
             ColorRGBA.CODEC.optionalFieldOf("color_end").forGetter(p -> p.colorEnd),
+            Codec.FLOAT.optionalFieldOf("brightness_start").forGetter(p -> p.brightnessStart),
+            Codec.FLOAT.optionalFieldOf("brightness_end").forGetter(p -> p.brightnessEnd),
             Codec.FLOAT.optionalFieldOf("duration").forGetter(p -> p.duration),
             Codec.INT.optionalFieldOf("count").forGetter(p -> p.count)
 
@@ -71,24 +73,24 @@ public class ParticleInstance {
 
     public ParticleInstance() {
 //        this(0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0f, 0);
-        this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),Optional.empty(),Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
     }
 
-    public ParticleInstance(Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> duration, Optional<Integer> count) {
-        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
+    public ParticleInstance(Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> brightnessStart, Optional<Float> brightnessEnd, Optional<Float> duration, Optional<Integer> count) {
+        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, brightnessStart, brightnessEnd, duration, count);
     }
 
     public static ParticleInstance defaultVariance() {
-        return new ParticleInstance(0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0f, 0);
+        return new ParticleInstance(0f,0f,0f,0f,0f,0f,0f,0f,new ColorRGBA(0), new ColorRGBA(0), 0f, 0f, 0f, 0);
     }
 
 
-    public ParticleInstance(float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float duration, int count) {
-        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, duration, count);
+    public ParticleInstance(float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float brightnessStart, float brightnessEnd, float duration, int count) {
+        this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, brightnessStart, brightnessEnd, duration, count);
     }
 
-    public ParticleInstance(ResourceLocation id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> duration, Optional<Integer> count) {
+    public ParticleInstance(ResourceLocation id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> brightnessStart, Optional<Float> brightnessEnd, Optional<Float> duration, Optional<Integer> count) {
 
         if (id != null) {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
@@ -150,6 +152,12 @@ public class ParticleInstance {
         this.colorStart = colorStart;
         this.colorEnd = colorEnd;
 
+        if (brightnessStart.isEmpty() && brightnessEnd.isPresent()) brightnessStart = brightnessEnd;
+        else if (brightnessEnd.isEmpty() && brightnessStart.isPresent()) brightnessEnd = brightnessStart;
+
+        this.brightnessStart = brightnessStart;
+        this.brightnessEnd = brightnessEnd;
+
 
         this.duration = duration;
         this.count = count;
@@ -157,8 +165,8 @@ public class ParticleInstance {
 
     }
 
-    public ParticleInstance(ResourceLocation id, float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float duration, int count) {
-        this(id, Optional.of(x), Optional.of(y), Optional.of(speedX), Optional.of(speedY), Optional.of(accelerationX), Optional.of(accelerationY), Optional.of(frictionX), Optional.of(frictionY), Optional.of(colorStart), Optional.of(colorEnd), Optional.of(duration), Optional.of(count));
+    public ParticleInstance(ResourceLocation id, float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float brightnessStart, float brightnessEnd, float duration, int count) {
+        this(id, Optional.of(x), Optional.of(y), Optional.of(speedX), Optional.of(speedY), Optional.of(accelerationX), Optional.of(accelerationY), Optional.of(frictionX), Optional.of(frictionY), Optional.of(colorStart), Optional.of(colorEnd), Optional.of(brightnessStart), Optional.of(brightnessEnd), Optional.of(duration), Optional.of(count));
     }
 
     public void spawn(GuiGraphics guiGraphics, float spawnX, float spawnY, float spawnSpeedX, float spawnSpeedY, ParticleInstance attributes, ParticleInstance attributes_variance) {
@@ -172,6 +180,8 @@ public class ParticleInstance {
         double accelerationYVar = attributes_variance.accelerationY.orElse(0f);
         double frictionXVar = attributes_variance.frictionX.orElse(0f);
         double frictionYVar = attributes_variance.frictionY.orElse(0f);
+        float brightnessStartVar = attributes_variance.brightnessStart.orElse(1f);
+        float brightnessEndVar = attributes_variance.brightnessEnd.orElse(1f);
 
         double x = this.x.orElse(attributes.x.orElse(0f));
         double y = this.y.orElse(attributes.y.orElse(0f));
@@ -182,14 +192,20 @@ public class ParticleInstance {
         double frictionX = this.frictionX.orElse(attributes.frictionX.orElse(1f));
         double frictionY = this.frictionY.orElse(attributes.frictionY.orElse(1f));
 
+        float brightnessStart = this.brightnessStart.orElse(attributes.brightnessStart.orElse(1f));
+        float brightnessEnd = this.brightnessEnd.orElse(attributes.brightnessEnd.orElse(1f));
+
+
         int[] colorStart = MiscUtils.int2Array(this.colorStart.orElse(attributes.colorStart.orElse(new ColorRGBA(0xffffffff))).rgba());
         int[] colorEnd = MiscUtils.int2Array(this.colorEnd.orElse(attributes.colorEnd.orElse(new ColorRGBA(0xffffffff))).rgba());
 
         int[] colorStartVar = MiscUtils.int2Array(attributes_variance.colorStart.orElse(new ColorRGBA(0)).rgba());
         int[] colorEndVar = MiscUtils.int2Array(attributes_variance.colorEnd.orElse(new ColorRGBA(0)).rgba());
 
+        colorStart = MiscUtils.applyBrightness(colorStart, MiscUtils.randomVariance(brightnessStart, brightnessStartVar));
+        colorEnd = MiscUtils.applyBrightness(colorEnd, MiscUtils.randomVariance(brightnessEnd, brightnessEndVar));
 
-//        Y axis is negatied since guiGraphics is from top to bottom instead of bottom to top
+//        Y axis is negated since guiGraphics is from top to bottom instead of bottom to top
         double pX = MiscUtils.randomVariance(spawnX + x, xVar) ;
         double pY = MiscUtils.randomVariance(spawnY - y, yVar) ;
         double pSpeedX = MiscUtils.randomVariance(spawnSpeedX + speedX, speedXVar) ;
@@ -218,7 +234,7 @@ public class ParticleInstance {
 
 
     public ParticleInstance copy() {
-        return new ParticleInstance(this.x, this.y, this.speedX, this.speedY, this.accelerationX, this.accelerationY, this.frictionX, this.frictionY, this.colorStart, this.colorEnd, this.duration, this.count);
+        return new ParticleInstance(this.x, this.y, this.speedX, this.speedY, this.accelerationX, this.accelerationY, this.frictionX, this.frictionY, this.colorStart, this.colorEnd, this.brightnessStart, this.brightnessEnd, this.duration, this.count);
     }
 
 }
