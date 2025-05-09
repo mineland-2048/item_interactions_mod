@@ -225,6 +225,10 @@ public class GuiParticleSpawner {
 
         for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY, slotId, childCount + 1);
         Either<ParticleEvent, String> event = this.getEvents().get(this.state);
+        if (this.state.equals("onShake") && event == null) {
+            event = this.getEvents().get("onCarried");
+            this.state = "onCarried";
+        }
         if (event == null) return;
 
         fireEvent(slotId, childCount, this.state, timeDuration, guiGraphics, x, y, speedX, speedY);

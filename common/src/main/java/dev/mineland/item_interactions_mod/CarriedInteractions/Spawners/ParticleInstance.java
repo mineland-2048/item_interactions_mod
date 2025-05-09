@@ -180,8 +180,8 @@ public class ParticleInstance {
         double accelerationYVar = attributes_variance.accelerationY.orElse(0f);
         double frictionXVar = attributes_variance.frictionX.orElse(0f);
         double frictionYVar = attributes_variance.frictionY.orElse(0f);
-        float brightnessStartVar = attributes_variance.brightnessStart.orElse(1f);
-        float brightnessEndVar = attributes_variance.brightnessEnd.orElse(1f);
+        float brightnessStartVar = attributes_variance.brightnessStart.orElse(0f);
+        float brightnessEndVar = attributes_variance.brightnessEnd.orElse(0f);
 
         double x = this.x.orElse(attributes.x.orElse(0f));
         double y = this.y.orElse(attributes.y.orElse(0f));
