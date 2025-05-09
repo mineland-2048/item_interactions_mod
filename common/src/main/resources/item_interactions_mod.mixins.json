@@ -5,10 +5,10 @@
   "minVersion": "0.8",
   "client": [
     "CreativeModeItemPickerMixin",
-    "ResourcePackReloadMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
+    "ResourcePackReloadMixin",
     "SettingsScreenMixin"
   ],
   "injectors": {

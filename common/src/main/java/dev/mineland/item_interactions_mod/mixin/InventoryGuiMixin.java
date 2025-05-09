@@ -78,6 +78,8 @@ public abstract class InventoryGuiMixin {
         GlobalDirt.particleList.clear();
         GlobalDirt.slotSpawners.clear();
 
+
+
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -94,9 +96,6 @@ public abstract class InventoryGuiMixin {
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
         if (!ItemInteractionsConfig.enableGuiParticles) return;
 
-
-        if (slotCount%10 == 0) System.out.println();
-        System.out.print(slotCount + ", ");
         this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 
