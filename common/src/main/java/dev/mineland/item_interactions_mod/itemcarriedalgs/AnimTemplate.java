@@ -19,14 +19,14 @@ public class AnimTemplate {
         GlobalDirt.tickScale = tickRate / 20;
 
         GlobalDirt.frameTime = currentMilis - lastMilis;
-        GlobalDirt.tickDelta = ((frameTime) / 1000f);
+        GlobalDirt.frameDelta = ((frameTime) / 1000f);
 
 
 
     }
 
     public static void setLastVariables() {
-        msCounter += tickDelta;
+        msCounter += frameDelta;
         msCounter %= 1000;
 
         lastMilis = currentMilis;

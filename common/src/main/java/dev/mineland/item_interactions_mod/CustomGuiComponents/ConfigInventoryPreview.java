@@ -124,7 +124,10 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
                 256, 256);
 
 
+        guiGraphics.pose().pushPose();
+//        guiGraphics.pose().translate(0, 0, -20);
         container.render(guiGraphics, mouseX, mouseY);
+        guiGraphics.pose().popPose();
 
         GlobalDirt.updateMousePositions();
         GlobalDirt.tailUpdateTimer();

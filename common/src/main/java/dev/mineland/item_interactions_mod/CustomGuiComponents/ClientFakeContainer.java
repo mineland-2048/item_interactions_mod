@@ -1,5 +1,6 @@
 package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
+import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
@@ -86,10 +87,8 @@ public class ClientFakeContainer implements Container {
     }
 
     public void renderSlots(GuiGraphics guiGraphics) {
-
+        GlobalDirt.slotCount = 0;
         for (Slot slot : slots) {
-
-
             if (ItemInteractionsConfig.debugDraws) {
                 int slotX = (int) ((slot.x - this.x) * 2);
                 int slotY = (int) 40 + ((slot.y - this.y) * 2);
@@ -108,13 +107,22 @@ public class ClientFakeContainer implements Container {
             }
 
 
-            if (slot.getItem().isEmpty()) continue;
+            if (slot.getItem().isEmpty()) {
+                GlobalDirt.slotCount++;
+
+                continue;
+            }
 //            guiGraphics.drawString(Minecraft.getInstance().font, "x: " + slot.x)
             int itemX = slot.x + 1;
             int itemY = slot.y + 1;
 
             guiGraphics.renderItem(slot.getItem(), itemX, itemY);
             guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
+
+            if (ItemInteractionsConfig.enableGuiParticles) {
+                GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
+                GlobalDirt.slotCount++;
+            }
 
 
         }
@@ -131,6 +139,7 @@ public class ClientFakeContainer implements Container {
     }
 
     public void renderMouseItem(GuiGraphics guiGraphics, int x, int y) {
+        GlobalDirt.carriedItem = mouseItem;
         guiGraphics.renderItem(mouseItem, x - 8, y - 8);
         guiGraphics.renderItemDecorations(Minecraft.getInstance().font, mouseItem, x - 8, y - 8);
     }
@@ -138,11 +147,21 @@ public class ClientFakeContainer implements Container {
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
 
         renderSlots(guiGraphics);
-        renderMouseItem(guiGraphics, mouseX, mouseY);
 
+//        GlobalDirt.carriedItem = mouseItem;
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 350);
+        renderMouseItem(guiGraphics, mouseX, mouseY);
+        guiGraphics.pose().translate(0, 0, 350);
+        guiGraphics.pose().popPose();
         GlobalDirt.skipCalcs = true;
         guiGraphics.renderItem(mouseItem, x + 18, y - 36);
         GlobalDirt.skipCalcs = false;
+
+
+        GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+        GlobalDirt.carriedItem = ItemStack.EMPTY;
+
     }
 
     public void printItemStacks() {

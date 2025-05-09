@@ -4,11 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-  ],
-  "mixins": [
+    "CreativeModeItemPickerMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
+    "ResourcePackReloadMixin",
     "SettingsScreenMixin"
   ],
   "injectors": {

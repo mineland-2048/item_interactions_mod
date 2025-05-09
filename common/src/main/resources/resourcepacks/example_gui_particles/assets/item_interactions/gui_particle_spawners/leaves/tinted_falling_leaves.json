@@ -1,0 +1,13 @@
+{
+  "parent": "item_interactions:leaves/falling_leaves",
+  "attributes": {
+    "color_start": "#FF48b518"
+  },
+
+  "applies": [
+    { "id": "oak_leaves" },
+    { "id": "jungle_leaves" },
+    { "id": "acacia_leaves" },
+    { "id": "dark_oak_leaves" }
+  ]
+}
