@@ -217,5 +217,8 @@ public class ParticleInstance {
     }
 
 
+    public ParticleInstance copy() {
+        return new ParticleInstance(this.x, this.y, this.speedX, this.speedY, this.accelerationX, this.accelerationY, this.frictionX, this.frictionY, this.colorStart, this.colorEnd, this.duration, this.count);
+    }
 
 }

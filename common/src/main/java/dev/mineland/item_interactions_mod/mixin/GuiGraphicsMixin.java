@@ -2,10 +2,10 @@ package dev.mineland.item_interactions_mod.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
+import dev.mineland.item_interactions_mod.ItemInteractionsConfig.animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
@@ -58,11 +59,11 @@ public abstract class GuiGraphicsMixin{//
 
                 this.pose.pushPose();
                 switch (ItemInteractionsConfig.animationConfig) {
-                    case Item_interactions_mod.animation.ANIM_SCALE -> {
+                    case animation.ANIM_SCALE -> {
                         this.pose.mulPose( AnimScale.makePose(this.pose, i, j, 0).last().pose() );
                     }
 
-                    case Item_interactions_mod.animation.ANIM_SPEED -> {
+                    case animation.ANIM_SPEED -> {
                         PoseStack newPose = AnimSpeed.makePose(this.pose, i, j, 150, speedX, speedY, GlobalDirt.isCurrentItem3d);
                         this.pose.mulPose(newPose.last().pose());
                     }

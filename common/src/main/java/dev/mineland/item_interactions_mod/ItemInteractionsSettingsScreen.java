@@ -35,7 +35,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     public Button doneButton;
 
     private Button debugButton;
-    private CycleButton<Item_interactions_mod.animation> animationCycleButton;
+    private CycleButton<ItemInteractionsConfig.animation> animationCycleButton;
     private SteppedSliderButton scaleSpeed;
     private SteppedSliderButton scaleAmount;
     private SteppedSliderButton mouseSpeedMult;
@@ -57,7 +57,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
 
-    Item_interactions_mod.animation oldAnimationConfig = ItemInteractionsConfig.animationConfig;
+    ItemInteractionsConfig.animation oldAnimationConfig = ItemInteractionsConfig.animationConfig;
     double oldScaleSpeed        = ItemInteractionsConfig.scaleSpeed        ;
     double oldScaleAmount       = ItemInteractionsConfig.scaleAmount       ;
     double oldMouseDeceleration = ItemInteractionsConfig.mouseDeceleration ;
@@ -169,15 +169,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         animationCycleButton = leftColumnLayout.addChild(
-                CycleButton.<Item_interactions_mod.animation>builder(animationSetting ->
+                CycleButton.<ItemInteractionsConfig.animation>builder(animationSetting ->
                                 animationSetting.component.copy().withStyle(
-                                        animationSetting == Item_interactions_mod.animation.NONE ?
+                                        animationSetting == ItemInteractionsConfig.animation.NONE ?
                                                 ChatFormatting.RED : ChatFormatting.YELLOW)
                         )
                         .withValues(
-                                Item_interactions_mod.animation.ANIM_SPEED,
-                                Item_interactions_mod.animation.ANIM_SCALE,
-                                Item_interactions_mod.animation.NONE)
+                                ItemInteractionsConfig.animation.ANIM_SPEED,
+                                ItemInteractionsConfig.animation.ANIM_SCALE,
+                                ItemInteractionsConfig.animation.NONE)
                         .withInitialValue(ItemInteractionsConfig.animationConfig)
                         .create(Component.literal("Animation"),
                                 (arg, arg2) -> {

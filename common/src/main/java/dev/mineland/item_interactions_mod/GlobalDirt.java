@@ -1,6 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.Util;
@@ -44,6 +45,7 @@ public class GlobalDirt {
             int count = 0;
             if (id == -1) GlobalDirt.carriedGuiParticleSpawnerTimer = new ArrayList<>();
             else SPAWNER_TIMERS.set(id, new ArrayList<>());
+
             for (GuiParticleSpawner s : guiParticleSpawners) {
                 s.setState(state);
                 count++;
@@ -131,7 +133,7 @@ public class GlobalDirt {
     public static boolean isCurrentItem3d;
     public static ItemStack carriedItem;
 
-    public static boolean devenv = false;
+    public static boolean devenv = true;
     public static List<BaseParticle> particleList = new ArrayList<>();
 
 
@@ -209,6 +211,7 @@ public class GlobalDirt {
         slotSpawners.clear();
 
         carriedGuiParticleSpawner.clear();
+        GuiParticleSpawnersLogic.reset();
 
     }
 

@@ -88,7 +88,7 @@ public class ParticleEvent {
         if (base.isEmpty() && newer.isEmpty()) return new ParticleInstance();
         if (newer.isEmpty()) return base.get();
         if (base.isEmpty()) return newer.get();
-        ParticleInstance result = base.get();
+        ParticleInstance result = base.get().copy();
 
         ParticleInstance newerAttributes = newer.get();
 

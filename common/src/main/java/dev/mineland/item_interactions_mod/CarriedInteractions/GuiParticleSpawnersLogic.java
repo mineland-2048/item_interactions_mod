@@ -18,10 +18,35 @@ import static dev.mineland.item_interactions_mod.GlobalDirt.mouseDeltaY;
 
 public class GuiParticleSpawnersLogic {
 //    Is ran once per slot. It
-    public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int slotCount) {
-//        if (dead) return true;
+
+    private static final List<Slot> slots = new ArrayList<>();
+
+    public static void reset() {
+        slots.clear();
+    }
+    public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
 
         if (!GlobalDirt.shouldTickParticles) return false;
+
+//        For some reason, dragging an item makes the slots shift.
+//        this fixes onPut events being fired when they shouldnt
+        int slotCount = initialSlotCount;
+
+        while (slots.size() <= GlobalDirt.slotCount) slots.add(null);
+
+        if (slots.get(slotCount) != slot) {
+            if (slotCount-1 >= 0 && slots.get(slotCount - 1) == slot) {
+                GlobalDirt.slotCount--;
+            } else if (slotCount+1 < slots.size() && slots.get(slotCount + 1) == slot) {
+                GlobalDirt.slotCount++;
+            }
+
+            slotCount = GlobalDirt.slotCount;
+        }
+
+        slots.set(slotCount, slot);
+
+
 
         while (GlobalDirt.slotSpawners.size() <= slotCount) GlobalDirt.slotSpawners.add(null);
 

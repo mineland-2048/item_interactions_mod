@@ -1,7 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
 //import dev.architectury.transformer.shadowed.impl.com.google.gson.GsonBuilder;
-import dev.mineland.item_interactions_mod.Item_interactions_mod.animation;
+import net.minecraft.network.chat.Component;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -38,6 +38,32 @@ public class ItemInteractionsConfig {
         mouseDeceleration = DefaultValues.mouseDeceleration;
         mouseSpeedMult = DefaultValues.mouseSpeedMult;
         enableGuiParticles = DefaultValues.enableGuiParticles;
+    }
+
+    public static animation getAnimationSetting() {
+        return animationConfig;
+    }
+
+    public static String getAnimationSettingString(animation anim) {
+        return switch (anim) {
+            case ANIM_SCALE -> "scale";
+            case ANIM_SPEED -> "speed";
+            case null, default -> "none";
+        };
+    }
+
+    public enum animation {
+        ANIM_SCALE("scale"),
+        ANIM_SPEED("speed"),
+        NONE("none");
+
+        public final String name;
+        public final Component component;
+        private animation(String name) {
+            this.name = name;
+            component = Component.literal(this.name);
+
+        }
     }
 
     static class DefaultValues {

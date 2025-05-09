@@ -6,9 +6,11 @@ import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,6 +27,8 @@ public abstract class InventoryGuiMixin {
 
     @Shadow protected int leftPos;
 
+
+    @Shadow private ItemStack draggingItem;
 
 
     @Inject(method = "renderFloatingItem",at = @At("HEAD"))
@@ -45,6 +49,10 @@ public abstract class InventoryGuiMixin {
     public void renderMixinHead(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
         GlobalDirt.updateTimer();
         GlobalDirt.slotCount = 0;
+
+        if (!this.draggingItem.isEmpty()) {
+            System.out.println("dragging");
+        }
 
     }
     @Inject(method = "render", at = @At("TAIL"))
@@ -81,9 +89,14 @@ public abstract class InventoryGuiMixin {
     @Unique
     boolean dead = false;
 
+
     @Inject(method = "renderSlot", at = @At("TAIL"))
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
         if (!ItemInteractionsConfig.enableGuiParticles) return;
+
+
+        if (slotCount%10 == 0) System.out.println();
+        System.out.print(slotCount + ", ");
         this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 
