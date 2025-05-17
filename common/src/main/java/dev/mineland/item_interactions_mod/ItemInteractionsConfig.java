@@ -30,7 +30,8 @@ public class ItemInteractionsConfig {
             scale_speed = 4
             scale_amount = 0.1
     */
-   
+
+
     public static void init() {
         animationConfig = DefaultValues.animationConfig;
         scaleSpeed = DefaultValues.scaleSpeed;

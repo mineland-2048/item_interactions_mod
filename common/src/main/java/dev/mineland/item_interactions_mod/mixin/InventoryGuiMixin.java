@@ -39,10 +39,6 @@ public abstract class InventoryGuiMixin {
                                            CallbackInfo callbackInfo) {
         GlobalDirt.carriedItem = itemStack;
 
-
-
-
-
     }
 
     @Inject(method = "render", at = @At("HEAD"))

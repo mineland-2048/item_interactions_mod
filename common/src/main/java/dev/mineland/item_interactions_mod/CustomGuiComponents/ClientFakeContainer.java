@@ -149,11 +149,11 @@ public class ClientFakeContainer implements Container {
         renderSlots(guiGraphics);
 
 //        GlobalDirt.carriedItem = mouseItem;
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 350);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(0, 0);
         renderMouseItem(guiGraphics, mouseX, mouseY);
-        guiGraphics.pose().translate(0, 0, 350);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().translate(0, 0);
+        guiGraphics.pose().popMatrix();
         GlobalDirt.skipCalcs = true;
         guiGraphics.renderItem(mouseItem, x + 18, y - 36);
         GlobalDirt.skipCalcs = false;

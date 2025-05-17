@@ -12,33 +12,17 @@ public class AnimSpeed extends AnimTemplate {
 
     public static Quaternionf rollback;
 
-    public static PoseStack makePose(PoseStack pose, int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
+    public static void modifyPose(PoseStack pose, int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
+        pose.pushPose();
+        pose.mulPose(makePose(x,y,z,doubleSpeedX,doubleSpeedY,is3d).last().pose());
+    }
+    public static PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
 //        setVariables();
         PoseStack newPose = new PoseStack();
 
         float speedY = (float) (doubleSpeedY);
         float speedX = (float) (doubleSpeedX);
-
-
-//        if (!GlobalDirt.skipCalcs) {
-//            mouseDeltaX = i - lastMouseX;
-//            mouseDeltaY = j - lastMouseY;
-//            speedX = Math.clamp((speedX + mouseDeltaX) * drag,-40f,  40f);
-//            speedY = Math.clamp((speedY + mouseDeltaY) * drag,-40f,  40f);
-//        }
-
         float zPlane = (232.0f + 150f);
-
-
-//
-//                        this.drawString(this.minecraft.font, "§fspeedX: " + speedX,      -GlobalDirt.leftPos,  -GlobalDirt.topPos, 0xFFFFFFFF);
-//                        this.drawString(this.minecraft.font, "§fspeedY: " + speedY,      -GlobalDirt.leftPos,  -GlobalDirt.topPos + this.minecraft.font.lineHeight, 0xFFFFFFFF);
-//                        this.drawString(this.minecraft.font, "§ftickDelta: " + tickDelta,      -GlobalDirt.leftPos,  -GlobalDirt.topPos + this.minecraft.font.lineHeight * 2, 0xFFFFFFFF);
-//                        this.drawString(this.minecraft.font, "§drag: " + drag,      -GlobalDirt.leftPos,  -GlobalDirt.topPos + this.minecraft.font.lineHeight * 3, 0xFFFFFFFF);
-
-
-//                    guiGraphics.pose().translate(-this.leftPos, -this.topPos, 0);
-
         if (is3d) {
 
 
@@ -46,17 +30,11 @@ public class AnimSpeed extends AnimTemplate {
                     .rotateTo(0, 0, zPlane,
                             (speedX*4), (speedY*4), zPlane).normalize();
 
-//                            int hThing = 128+16+8;
             newPose.rotateAround(quatPointTo, x , y , z);
 
             rollback = new Quaternionf()
                     .rotateTo(0, 0, zPlane,
                             (-speedX*4), (-speedY*4), zPlane).normalize();
-
-
-
-
-//                        this.pose.translate(-i, -j, 0);
         } else {
 
 //                            speedY = Math.clamp (speedY, -20, 20);
@@ -74,10 +52,6 @@ public class AnimSpeed extends AnimTemplate {
                     .rotateX(-angleVertical)
                     .normalize();
 
-
-
-
-
         }
 
 //        setLastVariables();
@@ -90,19 +64,19 @@ public class AnimSpeed extends AnimTemplate {
 
 
 
-    public static PoseStack makeRollback(PoseStack pose, int x, int y, int z, double speedX, double speedY, boolean is3d) {
+    public static PoseStack makeRollback(int x, int y, int z, double speedX, double speedY, boolean is3d) {
         PoseStack newPose = new PoseStack();
         newPose.rotateAround(rollback, x, y, z);
         return newPose;
     }
 
 
-    public static PoseStack makePose(PoseStack pose, int x, int y, int z, double speedX, double speedY) {
-        return makePose(pose, x, y, z, speedX, speedY, GlobalDirt.isCurrentItem3d);
+    public static PoseStack makePose(int x, int y, int z, double speedX, double speedY) {
+        return makePose(x, y, z, speedX, speedY, GlobalDirt.isCurrentItem3d);
     }
 
-    public static PoseStack makeRollback(PoseStack pose, int x, int y, int z, double speedX, double speedY) {
-        return makeRollback(pose, x, y, z, speedX, speedY, GlobalDirt.isCurrentItem3d);
+    public static PoseStack makeRollback(int x, int y, int z, double speedX, double speedY) {
+        return makeRollback(x, y, z, speedX, speedY, GlobalDirt.isCurrentItem3d);
     }
 
 

@@ -5,11 +5,12 @@
   "minVersion": "0.8",
   "client": [
     "CreativeModeItemPickerMixin",
+    "GameRendererMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
-    "ResourcePackReloadMixin",
-    "SettingsScreenMixin"
+    "SettingsScreenMixin",
+    "VideoSettingsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
