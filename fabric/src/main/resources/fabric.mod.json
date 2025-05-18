@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "item_interactions_mod",
-  "version": "${version}",
+  "version": "${version}+${minecraft_version}",
   "name": "Item interactions mod",
   "description": "Item interactions in your inventory!",
   "authors": [
@@ -28,10 +28,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.16.14",
-    "minecraft": "~1.21.6-alpha",
+    "minecraft": "${minecraft_version}",
     "java": ">=21"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }

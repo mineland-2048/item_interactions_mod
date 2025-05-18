@@ -42,7 +42,8 @@ processResources {
 //    from(project(":common").sourceSets["main"].resources)
 
     filesMatching('fabric.mod.json') {
-        expand version: project.version
+        expand version: project.version,
+        "minecraft_version": rootProject.minecraft_version
     }
 }
 
