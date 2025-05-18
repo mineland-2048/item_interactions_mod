@@ -1,0 +1,25 @@
+{
+  "attributes": {
+    "y": 4,
+    "speedY": 8,
+    "color_start": "#FF000000",
+    "color_end": "#FF000000",
+    "duration": 100
+  },
+  "attributes_variance":{
+    "x": 4,
+    "color_start": "#00101010",
+    "duration": 20
+  },
+  "events": {
+    "onIdle": {
+      "interval": 100,
+      "interval_variance": 50,
+      "particles": [
+        {"id":  "smoke"}
+      ]
+    },
+
+    "onCarried": "onIdle"
+  }
+}

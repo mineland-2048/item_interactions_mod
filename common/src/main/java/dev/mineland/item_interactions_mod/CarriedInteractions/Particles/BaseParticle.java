@@ -2,72 +2,32 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 public class BaseParticle {
     GuiGraphics guiGraphics;
+    double x, y;
+    double speedX, speedY;
+    double accelerationX, accelerationY;
+    double frictionX, frictionY;
 
-    double x;
-    double y;
+    int r, g, b;
+    float a;
 
-    double speedX;
-    double speedY;
+    int rEnd, gEnd, bEnd;
+    float aEnd;
 
-    double accelerationX;
-    double accelerationY;
+    double lifeTime;
 
-    double frictionX;
-    double frictionY;
-
-//    Define in spawner:
-//    double rX;
-//    double rY;
-//
-//    double rSpeedX;
-//    double rSpeedY;
-//
-//    double rLifeDuration;
-    
-    double lifeDuration;
+    double maxTick;
 
 
     int id;
-    double lifeTime;
 
 
-    public BaseParticle(GuiGraphics guiGraphics,
-                        double x, double y,
-                        double speedX, double speedY,
-                        double accelerationX, double accelerationY,
-                        double lifeDuration) {
-
-        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, 0, 0, lifeDuration);
-
-    }
-
-//    public BaseParticle(GuiGraphics guiGraphics,
-//                        double x, double y,
-//                        double speedX, double speedY,
-//                        double accelerationX, double accelerationY,
-//                        double frictionX, double frictionY,
-//                        double lifeDuration) {
-//
-//        this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeDuration);
-//
-//    }
-
-    public BaseParticle (GuiGraphics guiGraphics,
-                         double x, double y,
-                         double speedX, double speedY,
-                         double accelerationX, double accelerationY,
-                         double frictionX, double frictionY,
-                         double lifeDuration
-//                         double rLifeDuration
-//                         double rX, double rY,
-//                         double rSpeedX, double rSpeedY
-)
-    {
-
+    public BaseParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime) {
         this.guiGraphics = guiGraphics;
         this.x = x;
         this.y = y;
@@ -77,20 +37,11 @@ public class BaseParticle {
         this.accelerationY = accelerationY;
         this.frictionX = frictionX;
         this.frictionY = frictionY;
-
-        this.lifeDuration = lifeDuration;
-
-//        this.rLifeDuration = rLifeDuration;
-//        this.rX = rX;
-//        this.rY = rY;
-//        this.rSpeedX = rSpeedX;
-//        this.rSpeedY = rSpeedY;
-
-
+        this.maxTick = lifeTime;
 
         this.id = GlobalDirt.particleList.size();
-
         GlobalDirt.particleList.add(this);
+
 
     }
 
@@ -103,17 +54,21 @@ public class BaseParticle {
             int l = (int) this.y + 2;
             this.guiGraphics.fill (i,j,k,l, 0xFFFF0000);
 
-//            this.guiGraphics.drawString(Minecraft.getInstance().font, "#" + this.id + ": " + "x: " + x + ". y: " + y + ". sX: " + speedX + ". sY: " + speedY, 0, 10 * this.id, 0xFFFF0000);
+            String debugString = String.format("""
+                    %d: x: %.2f, y: %.2f, %.5f
+                    """, this.id, this.x, this.y, this.lifeTime);
+            this.guiGraphics.drawString(Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, 0xFFFF0000);
 
+            GlobalDirt.particleCount++;
         }
     }
 
     public boolean shouldDelete = false;
     public void tick() {
 
-        lifeTime ++;
+        lifeTime++;
 
-        if (lifeTime > lifeDuration) {
+        if (lifeTime > maxTick) {
             shouldDelete = true;
         }
     }

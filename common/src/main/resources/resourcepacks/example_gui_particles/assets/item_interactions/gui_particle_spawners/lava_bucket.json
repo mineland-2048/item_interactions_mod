@@ -1,0 +1,20 @@
+{
+  "parent": "item_interactions:living_water_buckets",
+  "children": [ "item_interactions:smoke"],
+  "attributes": {
+    "color_start": "#FFFFFF00",
+    "color_end": "#00FF2000"
+  },
+  "attributes_variance": {
+    "color_start": "#00008000",
+    "speedY": 20
+  },
+
+  "applies": [
+    {"id":  "lava_bucket"}
+  ]
+
+
+
+
+}

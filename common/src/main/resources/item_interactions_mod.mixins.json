@@ -4,13 +4,13 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-    "ResourcePackReloadMixin"
-  ],
-  "mixins": [
+    "CreativeModeItemPickerMixin",
+    "GameRendererMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
-    "SettingsScreenMixin"
+    "SettingsScreenMixin",
+    "VideoSettingsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

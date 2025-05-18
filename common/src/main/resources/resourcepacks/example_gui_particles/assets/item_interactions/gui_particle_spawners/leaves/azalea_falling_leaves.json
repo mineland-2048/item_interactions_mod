@@ -1,0 +1,9 @@
+{
+  "parent": "item_interactions:leaves/falling_leaves",
+  "attributes": {
+    "color_start": "#FF6F922C",
+    "color_end": "#FF6F922C"
+  },
+
+  "applies": [{ "id": "azalea_leaves" }, { "id": "flowering_azalea_leaves" }]
+}

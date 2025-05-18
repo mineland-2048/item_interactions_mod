@@ -33,12 +33,13 @@ dependencies {
 
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$project.fabric_api_version"
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
 
 }
 
 processResources {
     inputs.property 'version', project.version
+//    from(project(":common").sourceSets["main"].resources)
 
     filesMatching('fabric.mod.json') {
         expand version: project.version

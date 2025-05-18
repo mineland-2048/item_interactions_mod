@@ -1,17 +1,16 @@
 package dev.mineland.item_interactions_mod.mixin;
 
-import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
-import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.Spawner;
-import dev.mineland.item_interactions_mod.CarriedInteractions.checkForParticles;
+import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
-import dev.mineland.item_interactions_mod.ItemInteractionsResources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
 
@@ -31,6 +28,8 @@ public abstract class InventoryGuiMixin {
     @Shadow protected int leftPos;
 
 
+    @Shadow private ItemStack draggingItem;
+
 
     @Inject(method = "renderFloatingItem",at = @At("HEAD"))
     protected void mixedRenderFloatingItem(GuiGraphics guiGraphics,
@@ -40,16 +39,16 @@ public abstract class InventoryGuiMixin {
                                            CallbackInfo callbackInfo) {
         GlobalDirt.carriedItem = itemStack;
 
-
-
-
-
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     public void renderMixinHead(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
         GlobalDirt.updateTimer();
         GlobalDirt.slotCount = 0;
+
+        if (!this.draggingItem.isEmpty()) {
+            System.out.println("dragging");
+        }
 
     }
     @Inject(method = "render", at = @At("TAIL"))
@@ -59,51 +58,14 @@ public abstract class InventoryGuiMixin {
 
         if (ItemInteractionsConfig.debugDraws) {
             guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
         }
 
-        if (carriedItem == null || carriedItem.isEmpty() || ItemInteractionsResources.getFromItem(carriedItem) == null) carriedSpawner = null;
-        else if (carriedItem != null && !carriedItem.isEmpty()) {
-            if (!ItemInteractionsResources.compareSpawner(carriedSpawner, carriedItem)) {
-                Spawner newSpawner = ItemInteractionsResources.getFromItem(carriedItem);
+        if (ItemInteractionsConfig.enableGuiParticles) GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 
-                if (newSpawner != null) {
-                    carriedSpawner = newSpawner.newInstance(-1);
-                    carriedSpawner.onCarried(guiGraphics, lastMouseX, lastMouseY, speedX*0.1, speedY*0.1, 0, 0);
+        carriedItem = ItemStack.EMPTY;
 
 
-                }
-                else GlobalDirt.carriedSpawner = null;
-            }
-        }
-
-
-
-
-
-        List<BaseParticle> shouldDelete = new ArrayList<>();
-        if (GlobalDirt.shouldTickParticles) {
-            for (BaseParticle particle : GlobalDirt.particleList) {
-                particle.tick();
-                particle.render();
-                if (particle.shouldDelete) shouldDelete.add(particle);
-            }
-
-            if (carriedSpawner != null) {
-                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill((int) lastMouseX - 8, (int) lastMouseY - 8, (int) lastMouseX + 2, (int) lastMouseY + 2, 0xFF00FFFF);
-                carriedSpawner.tick(guiGraphics, lastMouseX - 8, lastMouseY - 8, mouseDeltaX, mouseDeltaY, 0, 0);
-            }
-
-        } else {
-            for (BaseParticle particle : GlobalDirt.particleList) {
-                particle.render();
-//                if (particle.shouldDelete) shouldDelete.add(particle);
-            }
-
-        }
-
-
-//        for (BaseParticle particle : shouldDelete) { ; }
-        GlobalDirt.particleList.removeAll(shouldDelete);
 
     }
 
@@ -112,17 +74,12 @@ public abstract class InventoryGuiMixin {
         GlobalDirt.particleList.clear();
         GlobalDirt.slotSpawners.clear();
 
+
+
     }
 
     @Inject(method = "init", at = @At("TAIL"))
     protected void initMixin(CallbackInfo ci) {
-//        GlobalDirt.msCounter = 0;
-//        GlobalDirt.topPos = this.topPos;
-//        GlobalDirt.leftPos = this.leftPos;
-//        GlobalDirt.speedX = 0;
-//        GlobalDirt.speedY = 0;
-//        this.dead = false;
-
         GlobalDirt.restore();
     }
 
@@ -130,10 +87,12 @@ public abstract class InventoryGuiMixin {
     @Unique
     boolean dead = false;
 
-    @Unique
+
     @Inject(method = "renderSlot", at = @At("TAIL"))
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
-        this.dead = checkForParticles.check(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
+        if (!ItemInteractionsConfig.enableGuiParticles) return;
+
+        this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 
     }

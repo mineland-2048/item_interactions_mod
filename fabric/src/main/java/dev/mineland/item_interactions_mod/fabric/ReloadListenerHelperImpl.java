@@ -1,7 +1,6 @@
 package dev.mineland.item_interactions_mod.fabric;
 
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
-import dev.mineland.item_interactions_mod.LoaderUtils.ReloadListenerPlatform;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
