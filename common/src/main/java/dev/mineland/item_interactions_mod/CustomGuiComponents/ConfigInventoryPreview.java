@@ -96,14 +96,14 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
 
 //        TOPLEFT corner, TOP and LEFT edges
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND,
+        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
                 invX, invY,
                 0.0F, 0.0F,
                 (18*3 + 7), (containerRows * 18 + 17),
                 256, 256);
 
 //        BOTTOMLEFT corner and BOTTOM Edge
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND,
+        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
                 invX, invY + (containerRows * 18 + 17),
                 0.0F, 215,
                 (18*3 + 7), 7,
@@ -111,24 +111,24 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
 
 //        TOPRIGHT corner and RIGHT edge
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND,
+        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
                 invX + (18*3 + 7), invY,
                 169, 0,
                 7, (containerRows * 18 + 17),
                 256, 256);
 
 //        BOTTOMRIGHT corner
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_BACKGROUND,
+        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
                 invX + (18*3 + 7), invY + (containerRows * 18 + 17),
                 169, 215,
                 7, (7),
                 256, 256);
 
 
-        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().pushPose();
 //        guiGraphics.pose().translate(0, 0, -20);
         container.render(guiGraphics, mouseX, mouseY);
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
 
         GlobalDirt.updateMousePositions();
         GlobalDirt.tailUpdateTimer();

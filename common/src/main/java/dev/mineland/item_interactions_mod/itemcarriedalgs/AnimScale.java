@@ -22,9 +22,9 @@ public class AnimScale extends AnimTemplate {
         scale = (float) ( Math.abs(Math.cos(Math.PI * (msCounter / ((tickScale) / ItemInteractionsConfig.scaleSpeed)))) * ItemInteractionsConfig.scaleAmount);
 
         PoseStack newPose = new PoseStack();
-//        newPose.translate(-itemOffset -(x * scale),-itemOffset -(y * scale), 0);
+        newPose.translate(-itemOffset -(x * scale),-itemOffset -(y * scale), 0);
         newPose.scale(1 + scale, 1 + scale, 1 + scale);
-//        newPose.translate(itemOffset, itemOffset, 0);
+        newPose.translate(itemOffset, itemOffset, 0);
 
 
 //        setVariables();

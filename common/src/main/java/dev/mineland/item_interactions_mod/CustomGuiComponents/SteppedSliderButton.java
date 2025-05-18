@@ -7,7 +7,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
@@ -103,11 +102,11 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
         double stepWidth = (double) this.getWidth() / steps;
         if (divideSteps) for (int x = 0; x < steps; x++) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight(), ARGB.white(this.alpha));
+            guiGraphics.blitSprite(RenderType::guiTextured, this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight(), ARGB.white(this.alpha));
         }
-        else guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
+        else guiGraphics.blitSprite(RenderType::guiTextured, this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight(), ARGB.white(this.alpha));
+        guiGraphics.blitSprite(RenderType::guiTextured, this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight(), ARGB.white(this.alpha));
         int k = this.active ? 16777215 : 10526880;
         this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
 
