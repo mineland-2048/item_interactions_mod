@@ -63,10 +63,6 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     private void loadSpawners(ResourceManager resourceManager) {
         for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("gui_particle_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
             {
-
-
-
-
                 ResourceLocation id = entry.getKey();
                 Resource resource = entry.getValue();
 
@@ -101,7 +97,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         Item_interactions_mod.infoMessage("Reloading gui particle spawners");
 
         SpawnerRegistry.clear();
-
+        GuiRendererHelper.clearCache();
         loadSpawners(resourceManager);
 
         String spawnerString = SpawnerRegistry.SPAWNER_MAP.size() == 1 ?
@@ -116,7 +112,9 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
 
     }
-    @Override
+
+//    public CompletableFuture<Void> reload()
+
     public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
 
         CompletableFuture<Void> a = CompletableFuture.supplyAsync(() -> {
@@ -131,7 +129,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
             if (spawnerErrorCount > 0) {
 
                 String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
-                SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+                SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
                         Component.literal(String.format(errorTitle, spawnerErrorCount)),
                         Component.literal("Check the logs for more information") );
 
@@ -155,6 +153,22 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
+        isReloadingResources = true;
+        spawnerErrorList.clear();
+        particleErrorList.clear();
+        spawnerErrorCount = 0;
+        currentParticleSpawner = "";
+        this.loadStuff(resourceManager);
 
+        if (spawnerErrorCount > 0) {
+
+            String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
+            SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+                    Component.literal(String.format(errorTitle, spawnerErrorCount)),
+                    Component.literal("Check the logs for more information") );
+
+        }
+
+        isReloadingResources = false;
     }
 }

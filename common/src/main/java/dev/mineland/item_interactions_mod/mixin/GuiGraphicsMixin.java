@@ -5,9 +5,8 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
@@ -29,8 +28,7 @@ public abstract class GuiGraphicsMixin{//
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
 
             GuiGraphics self = (GuiGraphics) (Object) this;
-            ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
-            this.minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
+            BakedModel scratchItemStackRenderState = this.minecraft.getItemRenderer().getModel(itemStack, level, livingEntity, k);
 
             GlobalDirt.isCurrentItem3d = scratchItemStackRenderState.usesBlockLight();
 

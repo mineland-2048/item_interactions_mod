@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -51,12 +50,10 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 //        Slot newSlot1 = new Slot();
     }
 
-    @Override
     protected int contentHeight() {
         return 0;
     }
 
-    @Override
     protected double scrollRate() {
         return 0;
     }
@@ -96,14 +93,14 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
 
 //        TOPLEFT corner, TOP and LEFT edges
-        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
+        guiGraphics.blit(CONTAINER_BACKGROUND,
                 invX, invY,
                 0.0F, 0.0F,
                 (18*3 + 7), (containerRows * 18 + 17),
                 256, 256);
 
 //        BOTTOMLEFT corner and BOTTOM Edge
-        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
+        guiGraphics.blit(CONTAINER_BACKGROUND,
                 invX, invY + (containerRows * 18 + 17),
                 0.0F, 215,
                 (18*3 + 7), 7,
@@ -111,14 +108,14 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
 
 //        TOPRIGHT corner and RIGHT edge
-        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
+        guiGraphics.blit(CONTAINER_BACKGROUND,
                 invX + (18*3 + 7), invY,
                 169, 0,
                 7, (containerRows * 18 + 17),
                 256, 256);
 
 //        BOTTOMRIGHT corner
-        guiGraphics.blit(RenderType::guiTextured, CONTAINER_BACKGROUND,
+        guiGraphics.blit(CONTAINER_BACKGROUND,
                 invX + (18*3 + 7), invY + (containerRows * 18 + 17),
                 169, 215,
                 7, (7),

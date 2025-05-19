@@ -4,13 +4,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.SpriteContents;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
@@ -152,8 +154,19 @@ public class TexturedParticle extends BaseParticle {
 
         this.particleLocation = this.frames.get(textureIndex);
 
-        int totalTextureHeight = Minecraft.getInstance().getTextureManager().getTexture(this.particleLocation).getTexture().getHeight(0);
-        int totalTextureWidth = Minecraft.getInstance().getTextureManager().getTexture(this.particleLocation).getTexture().getWidth(0);
+        int totalTextureHeight = 16; //= Minecraft.getInstance().getTextureManager().getTexture(this.particleLocation).getId();
+        int totalTextureWidth = 16; //= Minecraft.getInstance().getTextureManager().getTexture(this.particleLocation).getTexture().getWidth(0);
+
+        try {
+
+            int[] size = GuiRendererHelper.getSize(this.particleLocation);
+            totalTextureHeight = size[0];
+            totalTextureWidth = size[1];
+
+
+        } catch (Exception e) {
+            if (GlobalDirt.devenv) Item_interactions_mod.errorMessage("Died loading particle!" + e);
+        }
 
 
         int yStart = 0;
@@ -196,9 +209,12 @@ public class TexturedParticle extends BaseParticle {
 
         this.guiGraphics.pose().pushPose();
         this.guiGraphics.pose().translate(0, 0, 0);
-        this.guiGraphics.blit(RenderType::guiTextured, this.frames.get(textureIndex),
+
+
+
+        GuiRendererHelper.blit(this.guiGraphics.pose(), this.frames.get(textureIndex),
                 (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
-                0f, yStart,
+                0, yStart,
                 totalTextureWidth, uvHeight,
                 totalTextureWidth, totalTextureHeight,
                 finalColor);

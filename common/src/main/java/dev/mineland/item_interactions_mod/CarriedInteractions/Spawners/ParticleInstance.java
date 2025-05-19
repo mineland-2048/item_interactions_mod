@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.TexturedParticle;
 import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
@@ -119,7 +120,7 @@ public class ParticleInstance {
                     for (JsonElement textureLocationJson : textureList.asList()) {
                         ResourceLocation textureLocation = ResourceLocation.parse(textureLocationJson.getAsString());
                         textureLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
-                        if (resourceManager.getResource(textureLocation).isEmpty()) {
+                        if (resourceManager.getResource(textureLocation).isEmpty() || !GuiRendererHelper.setParticleSizeCache(textureLocation)) {
                             if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
 
                             GlobalDirt.particleErrorList.get(id).add("Missing texture " + textureLocation);
@@ -128,7 +129,11 @@ public class ParticleInstance {
                         }
 
 
+
+
+
                     }
+
 
                 } catch (Exception e) {
                     Item_interactions_mod.errorMessage("Failed to parse GUI particle '" + fixedPath + "': " + e);

@@ -7,7 +7,6 @@
     "CreativeModeItemPickerMixin",
     "GuiGraphicsMixin",
     "InventoryGuiMixin",
-    "IsCarriedConditionalFixMixin",
     "SettingsScreenMixin",
     "VideoSettingsScreenMixin"
   ],

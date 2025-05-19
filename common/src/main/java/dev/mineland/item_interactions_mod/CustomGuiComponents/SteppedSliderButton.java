@@ -12,7 +12,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -100,13 +99,14 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     public void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
         Minecraft minecraft = Minecraft.getInstance();
 
+        int sliderColor = ((int) (this.alpha * 255) << 24);
         double stepWidth = (double) this.getWidth() / steps;
         if (divideSteps) for (int x = 0; x < steps; x++) {
-            guiGraphics.blitSprite(RenderType::guiTextured, this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight(), ARGB.white(this.alpha));
+            guiGraphics.blitSprite(this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight());
         }
-        else guiGraphics.blitSprite(RenderType::guiTextured, this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
+        else guiGraphics.blitSprite(this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 
-        guiGraphics.blitSprite(RenderType::guiTextured, this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight(), ARGB.white(this.alpha));
+        guiGraphics.blitSprite(this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight());
         int k = this.active ? 16777215 : 10526880;
         this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
 
