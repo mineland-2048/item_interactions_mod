@@ -1,8 +1,0 @@
-{
-  "parent": "item_interactions:leaves/falling_leaves",
-  "attributes": {
-    "color_start": "#FFFFFFFF"
-  },
-
-  "applies": [{ "id": "pale_oak_leaves" }]
-}
