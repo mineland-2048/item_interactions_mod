@@ -17,7 +17,6 @@ public class ResourcePackRegistrar {
 
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
-        if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
         ResourceLocation packLocation = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "resourcepacks/example_gui_particles");
 
         event.addPackFinders(
