@@ -22,7 +22,7 @@
     ],
     "modmenu": ["dev.mineland.item_interactions_mod.fabric.client.ItemInteractionsModMenuApiImpl"]
 
-  },
+  },  
   "mixins": [
     "item_interactions_mod.mixins.json"
   ],
