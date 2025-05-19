@@ -208,17 +208,19 @@ public class TexturedParticle extends BaseParticle {
         int finalColor = MiscUtils.colorLerp((float) Math.clamp(lifeTime / maxTick, 0f, 1f), this.tintStart, this.tintEnd);
 
         this.guiGraphics.pose().pushPose();
-        this.guiGraphics.pose().translate(0, 0, 0);
+//        This is just as close to the tooltip layer as the particles could go without overlapping.
+//        h
+        this.guiGraphics.pose().translate(0, 0, 399);
 
 
 
         GuiRendererHelper.blit(this.guiGraphics.pose(), this.frames.get(textureIndex),
                 (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
-                0, yStart,
+                0f, yStart,
                 totalTextureWidth, uvHeight,
                 totalTextureWidth, totalTextureHeight,
                 finalColor);
-        this.guiGraphics.pose().pushPose();
+        this.guiGraphics.pose().popPose();
 
 
 //        this.guiGraphics.blit();
