@@ -149,9 +149,8 @@ public class ClientFakeContainer implements Container {
 
 //        GlobalDirt.carriedItem = mouseItem;
         guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 0);
+        guiGraphics.pose().translate(0, 0, 350);
         renderMouseItem(guiGraphics, mouseX, mouseY);
-        guiGraphics.pose().translate(0, 0, 0);
         guiGraphics.pose().popPose();
         GlobalDirt.skipCalcs = true;
         guiGraphics.renderItem(mouseItem, x + 18, y - 36);
