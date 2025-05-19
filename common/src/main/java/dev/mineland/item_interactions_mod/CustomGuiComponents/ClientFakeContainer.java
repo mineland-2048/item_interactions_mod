@@ -112,7 +112,6 @@ public class ClientFakeContainer implements Container {
 
                 continue;
             }
-//            guiGraphics.drawString(Minecraft.getInstance().font, "x: " + slot.x)
             int itemX = slot.x + 1;
             int itemY = slot.y + 1;
 
