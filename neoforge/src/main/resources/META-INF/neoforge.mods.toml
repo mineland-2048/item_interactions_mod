@@ -13,12 +13,13 @@ Item interactions in your inventory!
 '''
 logoFile = "assets/item_interactions_mod/icon.png"
 
+
 [[dependencies.item_interactions_mod]]
 modId = "neoforge"
 type = "required"
 versionRange = "[21,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.item_interactions_mod]]
 modId = "minecraft"
