@@ -16,12 +16,12 @@ public final class Item_interactions_modFabric implements ModInitializer {
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
 
-        Item_interactions_mod.init();
-
-        FabricLoader.getInstance().getModContainer(Item_interactions_mod.MOD_ID).ifPresent(container -> {
-            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "example_gui_particles");
-            ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
-        });
+//        Item_interactions_mod.init();
+//
+//        FabricLoader.getInstance().getModContainer(Item_interactions_mod.MOD_ID).ifPresent(container -> {
+//            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "example_gui_particles");
+//            ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
+//        });
         // Run our common setup.
     }
 }

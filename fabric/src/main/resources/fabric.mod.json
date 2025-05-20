@@ -12,11 +12,8 @@
   },
   "license": "LGPL-3.0",
   "icon": "assets/item_interactions_mod/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "dev.mineland.item_interactions_mod.fabric.Item_interactions_modFabric"
-    ],
     "client": [
       "dev.mineland.item_interactions_mod.fabric.client.Item_interactions_modFabricClient"
     ],
