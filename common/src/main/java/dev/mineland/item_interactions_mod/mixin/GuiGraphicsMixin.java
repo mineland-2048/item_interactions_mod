@@ -23,8 +23,8 @@ public abstract class GuiGraphicsMixin{//
     @Shadow @Final private PoseStack pose;
 
 //    smooth-swapping compat by doing the item tilting after their swap
-    @Inject(order = 1500, at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
-    private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
+    @Inject(order = 1500, at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V")
+    private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, int l, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
 
             GuiGraphics self = (GuiGraphics) (Object) this;
@@ -41,8 +41,8 @@ public abstract class GuiGraphicsMixin{//
     }
 
 
-    @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
-    private void renderItemTail(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V")
+    private void renderItemTail(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, int l, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
             if (iteminteractions$canAnimate()) {
                 pose.popPose();
