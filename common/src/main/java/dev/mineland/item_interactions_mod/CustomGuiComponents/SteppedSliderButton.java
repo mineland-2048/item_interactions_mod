@@ -16,10 +16,10 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class SteppedSliderButton extends AbstractWidget {
-    private static final ResourceLocation SLIDER_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider");
-    private static final ResourceLocation HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_highlighted");
-    private static final ResourceLocation SLIDER_HANDLE_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_handle");
-    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider_handle_highlighted");
+    private static final ResourceLocation SLIDER_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider");
+    private static final ResourceLocation HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_highlighted");
+    private static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_handle");
+    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_handle_highlighted");
     protected static final int TEXT_MARGIN = 2;
     private static final int HANDLE_WIDTH = 8;
     private static final int HANDLE_HALF_WIDTH = 4;

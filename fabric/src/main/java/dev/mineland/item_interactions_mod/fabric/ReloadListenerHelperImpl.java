@@ -24,7 +24,7 @@ public class ReloadListenerHelperImpl {
             }
 
             private final ResourceManagerReloadListener mainListener = listener;
-            private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "gui_particles");
+            private static final ResourceLocation ID = new ResourceLocation(Item_interactions_mod.MOD_ID, "gui_particles");
 
             public ResourceLocation getFabricId() {
                 return ID;

@@ -16,7 +16,7 @@ public final class Item_interactions_modFabricClient implements ClientModInitial
         Item_interactions_mod.init();
 
         FabricLoader.getInstance().getModContainer(Item_interactions_mod.MOD_ID).ifPresent(container -> {
-            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "example_gui_particles");
+            ResourceLocation packId = new ResourceLocation(Item_interactions_mod.MOD_ID, "example_gui_particles");
             ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
         });
     }

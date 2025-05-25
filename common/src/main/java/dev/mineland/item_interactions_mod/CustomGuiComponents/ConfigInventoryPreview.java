@@ -6,7 +6,7 @@ import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractContainerWidget;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
@@ -16,9 +16,9 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-public class ConfigInventoryPreview extends AbstractContainerWidget {
+public class ConfigInventoryPreview extends AbstractWidget {
 
-    private static final ResourceLocation CONTAINER_BACKGROUND = ResourceLocation.withDefaultNamespace("textures/gui/container/generic_54.png");
+    private static final ResourceLocation CONTAINER_BACKGROUND = new ResourceLocation("textures/gui/container/generic_54.png");
     private final ClientFakeContainer container;
 
     private static int invX, invY;
@@ -217,8 +217,4 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
         super.mouseMoved(d, e);
     }
 
-    @Override
-    public List<? extends GuiEventListener> children() {
-        return List.of();
-    }
 }

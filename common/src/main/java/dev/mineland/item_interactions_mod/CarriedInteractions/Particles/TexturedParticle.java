@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
@@ -121,7 +122,7 @@ public class TexturedParticle extends BaseParticle {
             JsonElement json = JsonParser.parseReader(a.openAsReader());
 
             for(JsonElement textureJson : json.getAsJsonObject().get("textures").getAsJsonArray()) {
-                ResourceLocation raw = ResourceLocation.parse(textureJson.getAsString());
+                ResourceLocation raw = ResourceLocation.tryParse(textureJson.getAsString());
 
 //                If it sets a different texture then use that instead of parsing from just particles
                 String path = raw.getPath().startsWith("textures/") ?
@@ -129,7 +130,7 @@ public class TexturedParticle extends BaseParticle {
 
 //                If it doesnt end in .png then add it
                 path = path.endsWith(".png") ? path : path + ".png";
-                finalList.add(ResourceLocation.fromNamespaceAndPath(raw.getNamespace(), path));
+                finalList.add(new ResourceLocation(raw.getNamespace(), path));
             }
 
             this.length = finalList.size();
@@ -141,7 +142,7 @@ public class TexturedParticle extends BaseParticle {
 //            Item_interactions_mod.warnMessage("died from getting vanilla texture (" + particleLocation + "): " + e);
 
             List<ResourceLocation> r = new ArrayList<>();
-            r.add(ResourceLocation.parse("minecraft:textures/missingno.png"));
+            r.add(new ResourceLocation("minecraft:textures/missingno.png"));
             return r;
         }
     }

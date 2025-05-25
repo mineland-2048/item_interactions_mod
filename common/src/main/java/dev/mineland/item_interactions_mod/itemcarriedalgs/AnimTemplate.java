@@ -13,8 +13,7 @@ public class AnimTemplate {
     public static void setVariables() {
         GlobalDirt.currentMilis = Util.getMillis();
 
-        tickRate = Minecraft.getInstance().level != null ?
-                Minecraft.getInstance().level.tickRateManager().tickrate() : 20;
+        tickRate = 20;
 
         GlobalDirt.tickScale = tickRate / 20;
 

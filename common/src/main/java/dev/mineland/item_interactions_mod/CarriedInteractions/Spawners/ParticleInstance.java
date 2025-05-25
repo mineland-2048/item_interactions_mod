@@ -10,12 +10,12 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
+import dev.mineland.item_interactions_mod.backport.ColorRGBA;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.ColorRGBA;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -29,6 +29,7 @@ public class ParticleInstance {
                             duration;
 
     public Optional<ColorRGBA> colorStart , colorEnd;
+
 
     public Optional<Float> brightnessStart, brightnessEnd;
 
@@ -118,8 +119,8 @@ public class ParticleInstance {
                     JsonArray textureList = particleJson.getAsJsonObject().get("textures").getAsJsonArray();
 
                     for (JsonElement textureLocationJson : textureList.asList()) {
-                        ResourceLocation textureLocation = ResourceLocation.parse(textureLocationJson.getAsString());
-                        textureLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
+                        ResourceLocation textureLocation = ResourceLocation.tryParse(textureLocationJson.getAsString());
+                        textureLocation = new ResourceLocation(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
                         if (resourceManager.getResource(textureLocation).isEmpty() || !GuiRendererHelper.setParticleSizeCache(textureLocation)) {
                             if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
 

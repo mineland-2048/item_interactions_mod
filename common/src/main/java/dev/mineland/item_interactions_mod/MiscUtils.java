@@ -1,11 +1,5 @@
 package dev.mineland.item_interactions_mod;
 
-import net.minecraft.Util;
-import net.minecraft.util.ColorRGBA;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class MiscUtils {
 
     //    I dont know if java has any counting function for strings, so i made this. Aeugh

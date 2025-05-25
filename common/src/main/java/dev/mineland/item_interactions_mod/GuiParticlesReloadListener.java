@@ -36,7 +36,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         DataResult<GuiParticleSpawner> dataResult;
 
         currentParticleSpawner = id.toString();
-        ResourceLocation filePath = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
+        ResourceLocation filePath = new ResourceLocation(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
 
 
         dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
@@ -129,7 +129,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
             if (spawnerErrorCount > 0) {
 
                 String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
-                SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+                SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PACK_LOAD_FAILURE,
                         Component.literal(String.format(errorTitle, spawnerErrorCount)),
                         Component.literal("Check the logs for more information") );
 
@@ -163,7 +163,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         if (spawnerErrorCount > 0) {
 
             String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
-            SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+            SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.PACK_LOAD_FAILURE,
                     Component.literal(String.format(errorTitle, spawnerErrorCount)),
                     Component.literal("Check the logs for more information") );
 

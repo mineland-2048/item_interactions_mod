@@ -11,4 +11,4 @@ rootProject.name = 'item_interactions_mod'
 
 include 'common'
 include 'fabric'
-include 'neoforge'
+//include 'neoforge'

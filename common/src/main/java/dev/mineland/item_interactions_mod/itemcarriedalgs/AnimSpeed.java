@@ -14,7 +14,7 @@ public class AnimSpeed extends AnimTemplate {
 
     public static void modifyPose(PoseStack pose, int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
         pose.pushPose();
-        pose.mulPose(makePose(x,y,z,doubleSpeedX,doubleSpeedY,is3d).last().pose());
+        pose.mulPoseMatrix(makePose(x,y,z,doubleSpeedX,doubleSpeedY,is3d).last().pose());
     }
     public static PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
 //        setVariables();

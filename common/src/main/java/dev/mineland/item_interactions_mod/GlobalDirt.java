@@ -234,8 +234,8 @@ public class GlobalDirt {
 
         currentMilis = Util.getMillis();
 
-        tickRate = Minecraft.getInstance().level != null ?
-                Minecraft.getInstance().level.tickRateManager().tickrate() : 20;
+        tickRate = 20;
+//                Minecraft.getInstance().level.getTic().tickrate() : 20;
 
         tickScale = tickRate / 20;
 

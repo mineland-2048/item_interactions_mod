@@ -13,7 +13,7 @@ public class AnimScale extends AnimTemplate {
 
     public static void modifyPose(PoseStack pose, int x, int y, int z) {
         pose.pushPose();
-        pose.mulPose(makePose(x, y, z).last().pose());
+        pose.mulPoseMatrix(makePose(x, y, z).last().pose());
     }
     public static PoseStack makePose(int x, int y, int z) {
 

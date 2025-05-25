@@ -11,18 +11,23 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
+import dev.mineland.item_interactions_mod.backport.ItemStackWithoutCount;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentType;
+//import net.minecraft.core.component.DataComponentMap;
+//import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class GuiParticleSpawner {
     protected int id = 0;
@@ -61,7 +66,7 @@ public class GuiParticleSpawner {
 
                     eventsCodec.optionalFieldOf("events").forGetter((spawner -> spawner.events)),
 
-                    ItemStack.CODEC.listOf().optionalFieldOf("applies").forGetter(s -> s.appliedItems)
+                    ItemStackWithoutCount.CODEC.listOf().optionalFieldOf("applies").forGetter(s -> s.appliedItems)
 
             ).apply(spawnerInstance, GuiParticleSpawner::new)
     );
@@ -149,8 +154,8 @@ public class GuiParticleSpawner {
 
         if (parent.isPresent()) {
             DataResult<Map<String, Either<ParticleEvent, String>>> p = eventsCodec.parse(JsonOps.INSTANCE, tempParentJson.get("events"));
-            if (p.resultOrPartial().isPresent()) {
-                this.setEvents(p.resultOrPartial().get());
+            if (p.resultOrPartial(s -> {}).isPresent()) {
+                this.setEvents(p.resultOrPartial(s -> {}).get());
             }
 
 
@@ -178,7 +183,7 @@ public class GuiParticleSpawner {
     }
 
     public void setName(String name) {
-        this.name = ResourceLocation.parse(name);
+        this.name = ResourceLocation.tryParse(name);
     }
 
     public ResourceLocation getName() {
@@ -237,37 +242,49 @@ public class GuiParticleSpawner {
     };
 
 
+    // TODO: do item matching logic for 1.20 without components
     public boolean matches(ItemStack itemStack) {
-        DataComponentMap input = itemStack.getComponents();
 
         for (ItemStack conditionItem : this.appliedItems.orElse(new ArrayList<>())) {
-            if (itemStack.getItem() != conditionItem.getItem()) continue;
-
-            DataComponentMap conditionMap = conditionItem.getComponents();
-            if (conditionMap.isEmpty()) return true;
-
-            if (areDeepSubset(conditionMap, input)) {
-                return true;
-            }
+            if (itemStack.getItem().equals (conditionItem.getItem())) return true;
         }
         return false;
+
+//        DataComponentMap input = itemStack.getComponents();
+//
+//        Stream<TagKey<Item>> a = itemStack.getTags();
+//
+//
+//        for (ItemStack conditionItem : this.appliedItems.orElse(new ArrayList<>())) {
+//            if (itemStack.getItem() != conditionItem.getItem()) continue;
+//
+//
+//
+//            DataComponentMap conditionMap = conditionItem.getComponents();
+//            if (conditionMap.isEmpty()) return true;
+//
+//            if (areDeepSubset(conditionMap, input)) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
-    private boolean areDeepSubset(DataComponentMap source, DataComponentMap target) {
-        for (DataComponentType<?> type : source.keySet()) {
-            if (!target.has(type)) {
-                return false;
-            }
-
-            Object sourceValue = source.get(type);
-            Object targetValue = target.get(type);
-
-            if (!compareValuesAsSubset(sourceValue, targetValue)) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    private boolean areDeepSubset(DataComponentMap source, DataComponentMap target) {
+//        for (DataComponentType<?> type : source.keySet()) {
+//            if (!target.has(type)) {
+//                return false;
+//            }
+//
+//            Object sourceValue = source.get(type);
+//            Object targetValue = target.get(type);
+//
+//            if (!compareValuesAsSubset(sourceValue, targetValue)) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     @SuppressWarnings("unchecked")
     private static boolean compareValuesAsSubset(Object source, Object target) {
@@ -329,7 +346,13 @@ public class GuiParticleSpawner {
     }
 
     public void setAppliedItems(List<ItemStack> appliedItems) {
-        this.appliedItems = Optional.of(appliedItems);
+        List<ItemStack> items = new ArrayList<>();
+        for (ItemStack itemStack: appliedItems) {
+            if (itemStack.isEmpty()) continue;
+            items.add(itemStack);
+        }
+
+        this.appliedItems = Optional.of(items);
     }
 
     public ParticleInstance getAttributes() {

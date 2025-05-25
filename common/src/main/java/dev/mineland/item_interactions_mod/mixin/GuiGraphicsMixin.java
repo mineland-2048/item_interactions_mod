@@ -54,9 +54,10 @@ public abstract class GuiGraphicsMixin{//
 
     @Unique
     private static boolean iteminteractions$canAnimate() {
-        if (Minecraft.getInstance().level == null) return true;
+//        if (Minecraft.getInstance().level == null) return true;
 
-        return Minecraft.getInstance().level.tickRateManager().runsNormally() || Minecraft.getInstance().isPaused();
+        return true;
+//        return !Minecraft.getInstance().isPaused();
     }
 
 

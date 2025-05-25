@@ -1,15 +1,17 @@
 package dev.mineland.item_interactions_mod;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPreview;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -68,9 +70,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 //    public static double mouseSpeedMult = 1;
 
 
+    private static final int DEFAULT_SPACING = 8;
 
     public ConfigInventoryPreview inventoryPreview = new ConfigInventoryPreview(
-            width - 100 - Button.DEFAULT_SPACING, height/2 - 50, Button.DEFAULT_WIDTH, 100, Component.literal("Inventory preview"));
+            width - 100 - DEFAULT_SPACING, height/2 - 50, Button.DEFAULT_WIDTH, 100, Component.literal("Inventory preview"));
 
 
 
@@ -108,7 +111,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     inventoryPreview.setItem(hotbar, item);
 
                     if (!item.isEmpty()) hadItems = true;
-
 
 
             }
@@ -165,7 +167,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     void createLayout() {
 
-        this.layout.addTitleHeader(this.title, Minecraft.getInstance().font);
+
+        this.layout.addToHeader(new StringWidget(this.title, Minecraft.getInstance().font));
 
 
         animationCycleButton = leftColumnLayout.addChild(
@@ -179,7 +182,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                 ItemInteractionsConfig.animation.ANIM_SCALE,
                                 ItemInteractionsConfig.animation.NONE)
                         .withInitialValue(ItemInteractionsConfig.animationConfig)
-                        .create(Component.literal("Animation"),
+                        .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
                                 (arg, arg2) -> {
                                     ItemInteractionsConfig.animationConfig = arg2;
                                     updateVisible();

@@ -46,6 +46,7 @@ public class GuiRendererHelper {
         red = (float) ((color >> 16) & 0xff) / 255;
         green = (float) ((color >> 8) & 0xff) / 255;
         blue = (float) (color & 0xff) / 255;
+
         innerBlitTinted(pose, resourceLocation, i, j, k, l, m, f, g, h, n, red, green, blue, alpha);
 
     }
@@ -53,15 +54,16 @@ public class GuiRendererHelper {
 
     static void innerBlitTinted(PoseStack pose, ResourceLocation resourceLocation, int i, int j, int k, int l, int m, float f, float g, float h, float n, float o, float p, float q, float r) {
         RenderSystem.setShaderTexture(0, resourceLocation);
-        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         RenderSystem.enableBlend();
         Matrix4f matrix4f = pose.last().pose();
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-        bufferBuilder.addVertex(matrix4f, (float)i, (float)k, (float)m).setUv(f, h).setColor(o, p, q, r);
-        bufferBuilder.addVertex(matrix4f, (float)i, (float)l, (float)m).setUv(f, n).setColor(o, p, q, r);
-        bufferBuilder.addVertex(matrix4f, (float)j, (float)l, (float)m).setUv(g, n).setColor(o, p, q, r);
-        bufferBuilder.addVertex(matrix4f, (float)j, (float)k, (float)m).setUv(g, h).setColor(o, p, q, r);
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+        bufferBuilder.vertex(matrix4f, (float)i, (float)k, (float)m).color(o, p, q, r).uv(f, h).endVertex();
+        bufferBuilder.vertex(matrix4f, (float)i, (float)l, (float)m).color(o, p, q, r).uv(f, n).endVertex();
+        bufferBuilder.vertex(matrix4f, (float)j, (float)l, (float)m).color(o, p, q, r).uv(g, n).endVertex();
+        bufferBuilder.vertex(matrix4f, (float)j, (float)k, (float)m).color(o, p, q, r).uv(g, h).endVertex();
+        BufferUploader.drawWithShader(bufferBuilder.end());
         RenderSystem.disableBlend();
     }
 
@@ -82,7 +84,7 @@ public class GuiRendererHelper {
         }
         newPose.pushPose();
 
-        guiGraphics.pose().mulPose(newPose.last().pose());
+        guiGraphics.pose().mulPoseMatrix(newPose.last().pose());
 
 
 
