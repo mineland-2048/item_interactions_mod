@@ -74,11 +74,11 @@ public class GuiRendererHelper {
         int y = initialY;
 
         switch (ItemInteractionsConfig.getAnimationSetting()) {
-            case ItemInteractionsConfig.animation.ANIM_SCALE -> {
+            case ANIM_SCALE -> {
                 newPose = AnimScale.makePose(x+16, y+16, 0);
             }
 
-            case ItemInteractionsConfig.animation.ANIM_SPEED -> {
+            case ANIM_SPEED -> {
                 newPose = AnimSpeed.makePose(x+8, y+8, 150, speedX, speedY, isCurrentItem3d);
             }
         }

@@ -226,7 +226,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.scaleAmount = Math.clamp((double) this.value, this.minValue, this.maxValue);
+                ItemInteractionsConfig.scaleAmount = MiscUtils.clamp((double) this.value, this.minValue, this.maxValue);
 
             }
 

@@ -49,7 +49,7 @@ public class ItemInteractionsConfig {
         return switch (anim) {
             case ANIM_SCALE -> "scale";
             case ANIM_SPEED -> "speed";
-            case null, default -> "none";
+            default -> "none";
         };
     }
 

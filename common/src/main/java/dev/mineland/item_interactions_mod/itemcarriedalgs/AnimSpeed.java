@@ -2,6 +2,7 @@ package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 //import static dev.mineland.item_interactions_mod.GlobalDirt.drag;
@@ -37,8 +38,8 @@ public class AnimSpeed extends AnimTemplate {
                             (-speedX*4), (-speedY*4), zPlane).normalize();
         } else {
 
-//                            speedY = Math.clamp (speedY, -20, 20);
-            float angleVertical = Mth.DEG_TO_RAD * 22.5f * Math.clamp((-speedY*0.1f), -1.5f ,1.5f);
+//                            speedY = MiscUtils.clamp (speedY, -20, 20);
+            float angleVertical = (float) (Mth.DEG_TO_RAD * 22.5f * MiscUtils.clamp((-speedY*0.1f), -1.5f ,1.5f));
             float angleHorizontal = Mth.DEG_TO_RAD * speedX*0.4f;
             Quaternionf quatRotateVertical = new Quaternionf()
                     .rotateX(angleVertical)

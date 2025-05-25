@@ -182,7 +182,7 @@ public class TexturedParticle extends BaseParticle {
             case LIFETIME -> {
                 if (length == 0) break;
                 int index = (int) Math.floor((lifeTime / maxTick) * length);
-                textureIndex = Math.clamp(index, 0, length - 1);
+                textureIndex = MiscUtils.clamp(index, 0, length - 1);
 
 
 //                if (!isMCMetaAnimatedTexture) break;
@@ -206,7 +206,7 @@ public class TexturedParticle extends BaseParticle {
             }
         }
 
-        int finalColor = MiscUtils.colorLerp((float) Math.clamp(lifeTime / maxTick, 0f, 1f), this.tintStart, this.tintEnd);
+        int finalColor = MiscUtils.colorLerp((float) MiscUtils.clamp(lifeTime / maxTick, 0f, 1f), this.tintStart, this.tintEnd);
 
         this.guiGraphics.pose().pushPose();
 //        This is just as close to the tooltip layer as the particles could go without overlapping.

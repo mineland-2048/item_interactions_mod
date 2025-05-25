@@ -82,11 +82,26 @@ public class MiscUtils {
     }
 
     public static int[] applyBrightness(int[] colorArray, double brightness) {
-        double clampedBrightness = Math.clamp(brightness, 0, 1);
+        double clampedBrightness = MiscUtils.clamp(brightness, 0, 1);
         int r = (int) (colorArray[1] * clampedBrightness);
         int g = (int) (colorArray[2] * clampedBrightness);
         int b = (int) (colorArray[3] * clampedBrightness);
 
         return new int[]{colorArray[0], r, g, b};
     }
+
+
+    public static double clamp(double value, double min, double max) {
+        return Math.max(min, (Math.min(value, max)));
+    }
+
+    public static float clamp(float value, float min, float max) {
+        return Math.max(min, (Math.min(value, max)));
+    }
+
+    public static int clamp(int value, int min, int max) {
+        return Math.max(min, (Math.min(value, max)));
+    }
+
+
 }

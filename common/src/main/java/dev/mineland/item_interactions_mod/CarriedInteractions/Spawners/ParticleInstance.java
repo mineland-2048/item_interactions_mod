@@ -218,15 +218,15 @@ public class ParticleInstance {
         double pSpeedY = MiscUtils.randomVariance(spawnSpeedY - speedY, speedYVar) ;
         double pAccX = MiscUtils.randomVariance(accelerationX, accelerationXVar) ;
         double pAccY = MiscUtils.randomVariance(-accelerationY, accelerationYVar) ;
-        double pFrictX = Math.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;
-        double pFrictY = Math.clamp(MiscUtils.randomVariance(frictionY, frictionYVar), 0, 1) ;
+        double pFrictX = MiscUtils.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;
+        double pFrictY = MiscUtils.clamp(MiscUtils.randomVariance(frictionY, frictionYVar), 0, 1) ;
 
         int[] pcStart = new int[4];
         int[] pcEnd = new int[4];
 
         for (int i = 0; i < colorStartVar.length; i++) {
-            pcStart[i] = (int) Math.clamp(MiscUtils.randomVariance(colorStart[i], colorStartVar[i]), 0, 255);
-            pcEnd[i] = (int) Math.clamp(MiscUtils.randomVariance(colorEnd[i], colorEndVar[i]), 0, 255);
+            pcStart[i] = (int) MiscUtils.clamp(MiscUtils.randomVariance(colorStart[i], colorStartVar[i]), 0, 255);
+            pcEnd[i] = (int) MiscUtils.clamp(MiscUtils.randomVariance(colorEnd[i], colorEndVar[i]), 0, 255);
         }
 
 

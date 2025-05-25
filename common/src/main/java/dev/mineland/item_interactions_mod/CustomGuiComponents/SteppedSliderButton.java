@@ -1,5 +1,6 @@
 package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -165,7 +166,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     }
 
     private void setValueFromMouse(double d) {
-        handlePosition = Math.clamp((d - (double)(this.getX() + 4)) / (double)(this.width - 8), 0, 1);
+        handlePosition = MiscUtils.clamp((d - (double)(this.getX() + 4)) / (double)(this.width - 8), 0, 1);
         this.setValueInternal((handlePosition * range) + minValue);
     }
 
