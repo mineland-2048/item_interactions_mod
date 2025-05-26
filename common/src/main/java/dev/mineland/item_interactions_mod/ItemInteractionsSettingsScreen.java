@@ -11,6 +11,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -48,14 +49,14 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private Button resetButton;
 
 
-    LinearLayout linearLayout = this.layout.addToContents(LinearLayout.vertical().spacing(8));
-    LinearLayout bodyLayout = linearLayout.addChild(LinearLayout.horizontal(), LayoutSettings::alignHorizontallyCenter).spacing(8);
-    LinearLayout leftColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
+    LinearLayout linearLayout = this.layout.addToContents(new LinearLayout(this.width, this.height, LinearLayout.Orientation.VERTICAL));
+    LinearLayout bodyLayout = linearLayout.addChild(new LinearLayout(this.width, this.height - 64, LinearLayout.Orientation.HORIZONTAL), LayoutSettings.defaults().alignHorizontallyCenter());
 
+    LinearLayout rightColumnLayout = bodyLayout.addChild(new LinearLayout(0, 140, LinearLayout.Orientation.VERTICAL), LayoutSettings.defaults().alignVerticallyMiddle().alignHorizontallyCenter().padding(4));
+    LinearLayout leftColumnLayout = bodyLayout.addChild(new LinearLayout(0, 140, LinearLayout.Orientation.VERTICAL), LayoutSettings.defaults().alignVerticallyTop().alignHorizontallyCenter().padding(4));
 
-    LinearLayout speedAnimLayout = LinearLayout.vertical().spacing(4);
-    LinearLayout scaleAnimLayout = LinearLayout.vertical().spacing(4);
-    LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
+    LinearLayout speedAnimLayout = new LinearLayout(0, 44, LinearLayout.Orientation.VERTICAL);
+    LinearLayout scaleAnimLayout = new LinearLayout(0, 44, LinearLayout.Orientation.VERTICAL);
 
 
 
@@ -276,8 +277,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
         });
 
 
-        leftColumnLayout.addChild(speedAnimLayout);
-        leftColumnLayout.addChild(scaleAnimLayout);
+        leftColumnLayout.addChild(speedAnimLayout, LayoutSettings.defaults().alignVerticallyTop());
+        leftColumnLayout.addChild(scaleAnimLayout, LayoutSettings.defaults().alignVerticallyTop());
 
 
         if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
@@ -307,8 +308,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
 
-        inventoryPreview = rightColumnLayout.addChild(inventoryPreview, LayoutSettings::alignVerticallyMiddle);
-        rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings::alignHorizontallyCenter);
+        inventoryPreview = rightColumnLayout.addChild(inventoryPreview, LayoutSettings.defaults().alignVerticallyMiddle());
+        rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings.defaults().alignHorizontallyCenter());
 
 
         Component debugButtonInitialText = Component.literal("Inventory particles: ")
@@ -330,15 +331,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                             .withStyle(color)
                                     )
                     );
-                }).build(), LayoutSettings::alignHorizontallyCenter
+                }).build(), LayoutSettings.defaults().alignVerticallyMiddle().paddingTop(8)
         );
 
 
-        LinearLayout footerLayout = LinearLayout.horizontal().spacing(8);
-        footerLayout.addChild(Button.builder(CommonComponents.GUI_CANCEL, arg -> this.onCancel()).width(Button.DEFAULT_WIDTH).build());
-        footerLayout.addChild(Button.builder(CommonComponents.GUI_DONE, arg -> this.onClose()).width(Button.DEFAULT_WIDTH).build());
+        LinearLayout footerLayout = new LinearLayout(0, 0, LinearLayout.Orientation.HORIZONTAL);
+        footerLayout.addChild(Button.builder(CommonComponents.GUI_DONE, arg -> this.onClose()).width(Button.DEFAULT_WIDTH).build(), LayoutSettings.defaults().paddingLeft(4) );
+        footerLayout.addChild(Button.builder(CommonComponents.GUI_CANCEL, arg -> this.onCancel()).width(Button.DEFAULT_WIDTH).build(), LayoutSettings.defaults().paddingRight(4) );
 
         this.layout.addToFooter(footerLayout);
+
 
         updateVisible();
 
@@ -351,6 +353,12 @@ public class ItemInteractionsSettingsScreen extends Screen {
         inventoryPreview.mouseMoved(d, e);
         super.mouseMoved(d, e);
 
+    }
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        renderBackground(guiGraphics);
+        super.render(guiGraphics, i, j, f);
     }
 
     @Override

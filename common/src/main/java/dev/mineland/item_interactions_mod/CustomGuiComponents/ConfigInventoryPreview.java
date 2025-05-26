@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -56,6 +57,10 @@ public class ConfigInventoryPreview extends AbstractWidget {
 
     protected double scrollRate() {
         return 0;
+    }
+
+    @Override
+    public void playDownSound(SoundManager soundManager) {
     }
 
     @Override

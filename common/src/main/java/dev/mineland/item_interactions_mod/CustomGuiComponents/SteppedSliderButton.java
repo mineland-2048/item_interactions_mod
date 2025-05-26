@@ -17,10 +17,10 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class SteppedSliderButton extends AbstractWidget {
-    private static final ResourceLocation SLIDER_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider");
-    private static final ResourceLocation HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_highlighted");
-    private static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_handle");
-    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "widget/slider_handle_highlighted");
+    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
+    private static final ResourceLocation HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "textures/gui/slider.png");
+    private static final ResourceLocation SLIDER_HANDLE_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "textures/gui/slider.png");
+    private static final ResourceLocation SLIDER_HANDLE_HIGHLIGHTED_SPRITE = new ResourceLocation(ResourceLocation.DEFAULT_NAMESPACE, "textures/gui/slider.png");
     protected static final int TEXT_MARGIN = 2;
     private static final int HANDLE_WIDTH = 8;
     private static final int HANDLE_HALF_WIDTH = 4;
@@ -70,7 +70,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     }
 
     private ResourceLocation getSprite() {
-        return this.isActive() && this.isFocused() && !this.canChangeValue ? HIGHLIGHTED_SPRITE : SLIDER_SPRITE;
+        return this.isActive() && this.isFocused() && !this.canChangeValue ? HIGHLIGHTED_SPRITE : SLIDER_LOCATION;
     }
 
     private ResourceLocation getHandleSprite() {
@@ -103,11 +103,11 @@ public abstract class SteppedSliderButton extends AbstractWidget {
         int sliderColor = ((int) (this.alpha * 255) << 24);
         double stepWidth = (double) this.getWidth() / steps;
         if (divideSteps) for (int x = 0; x < steps; x++) {
-            guiGraphics.blitSprite(this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight());
+            guiGraphics.blit(this.getSprite(), (int) (this.getX() + (stepWidth*x)) , this.getY(), (int) stepWidth, this.getHeight(), (int) stepWidth, this.getHeight());
         }
-        else guiGraphics.blitSprite(this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        else guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+        guiGraphics.blitNineSliced(SLIDER_LOCATION, this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, 20, 20, 4, 200, 20, 0, this.getHandleTextureY());
 
-        guiGraphics.blitSprite(this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight());
         int k = this.active ? 16777215 : 10526880;
         this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
 
@@ -117,6 +117,16 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 //        guiGraphics.drawString(minecraft.font, "value: " + ((handlePosition * range) + minValue), getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
 //        guiGraphics.drawString(minecraft.font, "step: " + this.selectedStep, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
 //        guiGraphics.drawString(minecraft.font, "range: " + this.range, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+    }
+
+    private int getTextureY() {
+        int i = this.isFocused() && !this.canChangeValue ? 1 : 0;
+        return i * 20;
+    }
+
+    private int getHandleTextureY() {
+        int i = !this.isHovered && !this.canChangeValue ? 2 : 3;
+        return i * 20;
     }
 
     public void onClick(double d, double e) {
