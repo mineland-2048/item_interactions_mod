@@ -1,0 +1,14 @@
+- Fix inheritance with events
+custom event defined in parent wont go through in the children
+
+{"splash": {...}}
+...
+
+{"onCarried": "splash", "onIdle": "onCarried"} will not work
+
+also particles set cant override parent
+
+
+- Fix mouse speed transfer to the particles
+
+- Fix component matching (firework rockets)
