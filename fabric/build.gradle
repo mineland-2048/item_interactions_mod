@@ -34,6 +34,14 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$project.fabric_api_version"
     modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
+    modCompileOnly "maven.modrinth:flow:2.2.0+1.21"
+
+
+//    modImplementation("com.terraformersmc:modmenu:11.0.3")
+
+//    modImplementation "maven.modrinth:flow:2.2.0+1.21"
+//    modImplementation "maven.modrinth:mru:1.0.17+1.21.1-fabric"
+//    modImplementation "dev.isxander:yet-another-config-lib:3.6.1+1.21-fabric"
 
 }
 
@@ -64,4 +72,10 @@ repositories {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
+
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+
+    maven { url "https://maven.isxander.dev/releases" }
 }
