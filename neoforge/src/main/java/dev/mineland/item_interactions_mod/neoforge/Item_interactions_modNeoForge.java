@@ -17,6 +17,8 @@ public final class Item_interactions_modNeoForge {
             new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> new ItemInteractionsSettingsScreen(screen))
         );
         Item_interactions_mod.init();
+        Item_interactions_mod.LOADER = Item_interactions_mod.LOADER_ENUM.FABRIC;
+        
 
 
         modFile = container.getModInfo().getOwningFile().getFile().getFilePath();

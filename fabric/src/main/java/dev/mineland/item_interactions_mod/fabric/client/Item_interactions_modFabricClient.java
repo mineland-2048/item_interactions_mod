@@ -14,6 +14,7 @@ public final class Item_interactions_modFabricClient implements ClientModInitial
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
         Item_interactions_mod.init();
+        Item_interactions_mod.LOADER = Item_interactions_mod.LOADER_ENUM.FABRIC;
 
         FabricLoader.getInstance().getModContainer(Item_interactions_mod.MOD_ID).ifPresent(container -> {
             ResourceLocation packId = new ResourceLocation(Item_interactions_mod.MOD_ID, "example_gui_particles");
