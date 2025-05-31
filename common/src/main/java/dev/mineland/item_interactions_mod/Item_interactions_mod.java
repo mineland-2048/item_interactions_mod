@@ -9,11 +9,19 @@ public final class Item_interactions_mod {
     final static Logger logger = LoggerFactory.getLogger(MOD_ID);
     //    public static List<Particle> UIParticles;
 
+    public enum LOADER_ENUM {
+        FABRIC,
+        NEOFORGE,
+        UNKNOWN
+    };
+
+    public static LOADER_ENUM LOADER;
 
 
 
     public static void init() {
         logger.info("Initializing item interactions mod!");
+        LOADER = LOADER_ENUM.UNKNOWN;
 
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
@@ -46,9 +54,14 @@ public final class Item_interactions_mod {
     public static void refreshConfig() {
         logger.info("Refreshing config");
         ItemInteractionsConfig.refreshConfig();
-
-
     }
 
 
+    public static boolean isFabric() {
+        return LOADER == LOADER_ENUM.FABRIC;
+    }
+
+    public static boolean isNeo() {
+        return LOADER == LOADER_ENUM.NEOFORGE;
+    }
 }
