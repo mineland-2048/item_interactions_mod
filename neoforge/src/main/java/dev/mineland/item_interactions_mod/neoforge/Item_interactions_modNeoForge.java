@@ -27,6 +27,8 @@ public final class Item_interactions_modNeoForge {
         // Run our common setup.
         container.registerExtensionPoint(IConfigScreenFactory.class, new ItemInteractionsConfigNeoforge() {});
         Item_interactions_mod.init();
+        Item_interactions_mod.LOADER = Item_interactions_mod.LOADER_ENUM.FABRIC;
+        
 
 
         modFile = container.getModInfo().getOwningFile().getFile().getFilePath();
