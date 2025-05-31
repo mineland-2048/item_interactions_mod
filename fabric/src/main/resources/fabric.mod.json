@@ -21,7 +21,8 @@
 
   },  
   "mixins": [
-    "item_interactions_mod.mixins.json"
+    "item_interactions_mod.mixins.json",
+    "fabricOnly.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
