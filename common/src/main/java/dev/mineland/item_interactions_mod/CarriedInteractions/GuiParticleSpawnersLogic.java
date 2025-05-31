@@ -27,7 +27,7 @@ public class GuiParticleSpawnersLogic {
     }
     public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
 
-        if (!GlobalDirt.shouldTickParticles) return false;
+        if (!GlobalDirt.shouldTickParticles || dontUpdateTimer) return false;
 
 //        For some reason, dragging an item makes the slots shift.
 //        this fixes onPut events being fired when they shouldnt
@@ -112,7 +112,7 @@ public class GuiParticleSpawnersLogic {
 //    Is ran once per frame
     public static void mainLogic(GuiGraphics guiGraphics) {
         List<BaseParticle> shouldDelete = new ArrayList<>();
-        if (GlobalDirt.shouldTickParticles && ItemInteractionsConfig.enableGuiParticles) {
+        if (shouldTickParticles && ItemInteractionsConfig.enableGuiParticles && !dontUpdateTimer) {
 
 
             // if the carried is empty or the item has no spawners then clear the carried spawner
@@ -153,7 +153,7 @@ public class GuiParticleSpawnersLogic {
 
         int i = 0;
         for (BaseParticle particle : GlobalDirt.particleList) {
-            if (shouldTickParticles) {
+            if (shouldTickParticles && !dontUpdateTimer) {
                 particle.tick();
                 if (particle.shouldDelete) shouldDelete.add(particle);
             }
