@@ -229,6 +229,10 @@ public class GlobalDirt {
 
 
     public static void updateTimer() {
+        if (dontUpdateTimer) {
+            return;
+        }
+
 //        System.out.println("Updating Timer");
         double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
@@ -241,6 +245,8 @@ public class GlobalDirt {
 
         frameTime = currentMilis - lastMilis;
         frameDelta = ((frameTime) / 1000f);
+
+//        frameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
         spawnerTickDelta = tickScale;
 
         drag = (float) Math.pow(
@@ -263,14 +269,6 @@ public class GlobalDirt {
             Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
         }
 
-
-
-
-
-
-
-
-
         double tickTime = Math.floor((msCounter * tickScale * 30));
         if (tickTime != tickCounter) {
             tickCounter = (int) tickTime;
@@ -286,10 +284,13 @@ public class GlobalDirt {
 
     }
 
+    public static boolean dontUpdateTimer = false;
     public static void tailUpdateTimer() {
+        if (dontUpdateTimer) return;
         msCounter += frameDelta;
         msCounter %= 1000;
         lastMilis = currentMilis;
+
     }
 
 }
