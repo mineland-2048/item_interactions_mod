@@ -50,6 +50,15 @@ public class MiscUtils {
             return n + randomRange(-variance, variance);
     }
 
+    public static int[] colorVariance(int[] color, int[] variance) {
+        int[] result = new int[4];
+        for (int i = 0; i < color.length; i++) {
+            result[i] = (int) Math.clamp(MiscUtils.randomVariance(color[i], variance[i]), 0, 255);
+        }
+        return result;
+
+    }
+
     public static int colorLerp(float t, int a, int b) {
 
         int[] s = int2Array(a), e = int2Array(b);
