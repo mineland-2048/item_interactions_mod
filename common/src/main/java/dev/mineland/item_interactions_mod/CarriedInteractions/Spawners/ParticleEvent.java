@@ -102,6 +102,8 @@ public class ParticleEvent {
         newerAttributes.frictionY.ifPresent(attr -> result.frictionY = Optional.of(attr));
         newerAttributes.colorStart.ifPresent(attr -> result.colorStart = Optional.of(attr));
         newerAttributes.colorEnd.ifPresent(attr -> result.colorEnd = Optional.of(attr));
+        newerAttributes.brightnessStart.ifPresent(attr -> result.brightnessStart = Optional.of(attr));
+        newerAttributes.brightnessEnd.ifPresent(attr -> result.brightnessEnd = Optional.of(attr));
         newerAttributes.duration.ifPresent(attr -> result.duration = Optional.of(attr));
         newerAttributes.count.ifPresent(attr -> result.count = Optional.of(attr));
 
