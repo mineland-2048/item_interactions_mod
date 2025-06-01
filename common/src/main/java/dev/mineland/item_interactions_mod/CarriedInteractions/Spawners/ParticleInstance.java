@@ -30,7 +30,6 @@ public class ParticleInstance {
 
     public Optional<ColorRGBA> colorStart , colorEnd;
 
-
     public Optional<Float> brightnessStart, brightnessEnd;
 
     public Optional<Integer> count;
@@ -130,11 +129,7 @@ public class ParticleInstance {
                         }
 
 
-
-
-
                     }
-
 
                 } catch (Exception e) {
                     Item_interactions_mod.errorMessage("Failed to parse GUI particle '" + fixedPath + "': " + e);
@@ -152,14 +147,14 @@ public class ParticleInstance {
         this.frictionX = frictionX;
         this.frictionY = frictionY;
 
-        if (colorStart.isEmpty() && colorEnd.isPresent()) colorStart = colorEnd;
-        else if (colorEnd.isEmpty() && colorStart.isPresent()) colorEnd = colorStart;
+//        if (colorStart.isEmpty() && colorEnd.isPresent()) colorStart = colorEnd;
+//        else if (colorEnd.isEmpty() && colorStart.isPresent()) colorEnd = colorStart;
 
         this.colorStart = colorStart;
         this.colorEnd = colorEnd;
 
-        if (brightnessStart.isEmpty() && brightnessEnd.isPresent()) brightnessStart = brightnessEnd;
-        else if (brightnessEnd.isEmpty() && brightnessStart.isPresent()) brightnessEnd = brightnessStart;
+//        if (brightnessStart.isEmpty() && brightnessEnd.isPresent()) brightnessStart = brightnessEnd;
+//        else if (brightnessEnd.isEmpty() && brightnessStart.isPresent()) brightnessEnd = brightnessStart;
 
         this.brightnessStart = brightnessStart;
         this.brightnessEnd = brightnessEnd;
@@ -198,18 +193,99 @@ public class ParticleInstance {
         double frictionX = this.frictionX.orElse(attributes.frictionX.orElse(1f));
         double frictionY = this.frictionY.orElse(attributes.frictionY.orElse(1f));
 
-        float brightnessStart = this.brightnessStart.orElse(attributes.brightnessStart.orElse(1f));
-        float brightnessEnd = this.brightnessEnd.orElse(attributes.brightnessEnd.orElse(1f));
+
+//        Color calculations
+//        Order: (colorStart | colorEnd | white) -> varianceColor -> brightness
+
+        int[] pcStart;
+        int[] pcEnd;
 
 
-        int[] colorStart = MiscUtils.int2Array(this.colorStart.orElse(attributes.colorStart.orElse(new ColorRGBA(0xffffffff))).rgba());
-        int[] colorEnd = MiscUtils.int2Array(this.colorEnd.orElse(attributes.colorEnd.orElse(new ColorRGBA(0xffffffff))).rgba());
+        int[] colorStart = MiscUtils.int2Array(
+                this.colorStart
+                .orElse(attributes.colorStart
+                .orElse(this.colorEnd
+                .orElse(attributes.colorEnd
+                .orElse(new ColorRGBA(0xffffffff)))))
+                    .rgba()
+        );
 
-        int[] colorStartVar = MiscUtils.int2Array(attributes_variance.colorStart.orElse(new ColorRGBA(0)).rgba());
-        int[] colorEndVar = MiscUtils.int2Array(attributes_variance.colorEnd.orElse(new ColorRGBA(0)).rgba());
+        int colorVarianceStart = attributes_variance.colorStart.orElse(new ColorRGBA(0)).rgba();
 
-        colorStart = MiscUtils.applyBrightness(colorStart, MiscUtils.randomVariance(brightnessStart, brightnessStartVar));
-        colorEnd = MiscUtils.applyBrightness(colorEnd, MiscUtils.randomVariance(brightnessEnd, brightnessEndVar));
+        float brightnessStart =
+                this.brightnessStart
+                .orElse(attributes.brightnessStart
+                .orElse(this.brightnessEnd
+                .orElse(attributes.brightnessEnd
+                .orElse(1f))));
+
+        float brightnessVarianceStart = attributes_variance.brightnessStart.orElse(0f);
+
+        pcStart = MiscUtils.colorVariance(colorStart, MiscUtils.int2Array(colorVarianceStart));
+        int[] colorVarianced = pcStart;
+
+        pcStart = MiscUtils.applyBrightness(pcStart,
+                MiscUtils.randomVariance(brightnessStart, brightnessVarianceStart)
+        );
+
+
+        int[] colorEnd
+        = MiscUtils.int2Array(
+                this.colorEnd
+                .orElse(attributes.colorEnd
+                .orElse(this.colorStart
+                .orElse(attributes.colorStart
+                .orElse(new ColorRGBA(0xffffffff)))))
+            .rgba()
+        );
+
+        boolean inherit = false;
+        if (this.colorEnd.isPresent())
+            pcEnd = MiscUtils.int2Array(this.colorEnd.get().rgba());
+        else if (attributes.colorEnd.isPresent())
+            pcEnd = MiscUtils.int2Array(attributes.colorEnd.get().rgba());
+        else {
+            pcEnd = colorStart;
+            inherit = true;
+        }
+        if (attributes_variance.colorEnd.isPresent()) pcEnd = MiscUtils.colorVariance(pcEnd, MiscUtils.int2Array(attributes_variance.colorEnd.get().rgba()));
+        else pcEnd = inherit ? colorVarianced : pcEnd;
+
+
+        if (this.brightnessEnd.isPresent() || attributes.brightnessEnd.isPresent())
+            pcEnd = MiscUtils.applyBrightness(
+                    pcEnd,
+                    MiscUtils.randomVariance(
+                            this.brightnessEnd.orElse(attributes.brightnessEnd.orElse(1f)),
+                            attributes_variance.brightnessEnd.orElse(0f)
+                    ));
+        else pcEnd = inherit ? pcStart : pcEnd;
+
+
+
+
+
+
+
+//        float brightnessEnd =
+//                this.brightnessEnd
+//                .orElse(attributes.brightnessEnd
+//                .orElse(this.brightnessStart
+//                .orElse(attributes.brightnessStart
+//                .orElse(brightnessStart))));
+
+//        int[] colorStartVar = MiscUtils.int2Array(attributes_variance.colorStart.orElse(new ColorRGBA(0)).rgba());
+
+//        int[] colorEnd = MiscUtils.int2Array(this.colorEnd.orElse(attributes.colorEnd.orElse(new ColorRGBA(0xffffffff))).rgba());
+
+//        int[] colorEndVar = MiscUtils.int2Array(attributes_variance.colorEnd.orElse(new ColorRGBA(0)).rgba());
+
+//        colorStart = MiscUtils.applyBrightness(colorStart, MiscUtils.randomVariance(brightnessStart, brightnessStartVar));
+//        colorEnd = MiscUtils.applyBrightness(colorEnd, MiscUtils.randomVariance(brightnessEnd, brightnessEndVar));
+
+
+
+
 
 //        Y axis is negated since guiGraphics is from top to bottom instead of bottom to top
         double pX = MiscUtils.randomVariance(spawnX + x, xVar) ;
@@ -221,13 +297,6 @@ public class ParticleInstance {
         double pFrictX = MiscUtils.clamp(MiscUtils.randomVariance(frictionX, frictionXVar), 0, 1) ;
         double pFrictY = MiscUtils.clamp(MiscUtils.randomVariance(frictionY, frictionYVar), 0, 1) ;
 
-        int[] pcStart = new int[4];
-        int[] pcEnd = new int[4];
-
-        for (int i = 0; i < colorStartVar.length; i++) {
-            pcStart[i] = (int) MiscUtils.clamp(MiscUtils.randomVariance(colorStart[i], colorStartVar[i]), 0, 255);
-            pcEnd[i] = (int) MiscUtils.clamp(MiscUtils.randomVariance(colorEnd[i], colorEndVar[i]), 0, 255);
-        }
 
 
 //        int count = count.orElse(1);

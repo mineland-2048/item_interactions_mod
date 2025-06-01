@@ -59,10 +59,8 @@ public class TexturedParticle extends BaseParticle {
     }
 
     public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, ResourceLocation particleLocation, TextureType textureType,  int tintStart, int tintEnd) {
-        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeTime);
+        super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, tintStart, tintEnd, lifeTime);
 
-        this.tintStart = tintStart;
-        this.tintEnd = tintEnd;
         this.particleLocation = particleLocation;
         this.textureType = textureType;
 
@@ -206,15 +204,12 @@ public class TexturedParticle extends BaseParticle {
             }
         }
 
-        int finalColor = MiscUtils.colorLerp((float) MiscUtils.clamp(lifeTime / maxTick, 0f, 1f), this.tintStart, this.tintEnd);
+        int finalColor = MiscUtils.colorLerp((float) MiscUtils.clamp(lifeTime / maxTick, 0f, 1f), this.colorStart, this.colorEnd);
 
         this.guiGraphics.pose().pushPose();
 //        This is just as close to the tooltip layer as the particles could go without overlapping.
 //        h
         this.guiGraphics.pose().translate(0, 0, 399);
-
-
-
         GuiRendererHelper.blit(this.guiGraphics.pose(), this.frames.get(textureIndex),
                 (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
                 0f, yStart,

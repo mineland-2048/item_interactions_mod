@@ -3,6 +3,7 @@ package dev.mineland.item_interactions_mod.CarriedInteractions;
 import dev.mineland.item_interactions_mod.*;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -150,12 +151,14 @@ public class GuiParticleSpawnersLogic {
 
         }
 
+        int i = 0;
         for (BaseParticle particle : GlobalDirt.particleList) {
             if (shouldTickParticles) {
                 particle.tick();
                 if (particle.shouldDelete) shouldDelete.add(particle);
             }
             particle.render();
+
         }
 
 
