@@ -124,8 +124,8 @@ public class GuiParticleSpawner {
         this.attributes = parent.attributes;
         this.attributes_variance = parent.attributes_variance;
         this.events = parent.events;
-
     }
+
     public GuiParticleSpawner(
             Optional<ResourceLocation> parent,
             Optional<List<ResourceLocation>> children,

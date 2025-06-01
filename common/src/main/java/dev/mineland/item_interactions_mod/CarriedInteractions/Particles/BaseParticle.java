@@ -2,6 +2,7 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -13,11 +14,7 @@ public class BaseParticle {
     double accelerationX, accelerationY;
     double frictionX, frictionY;
 
-    int r, g, b;
-    float a;
-
-    int rEnd, gEnd, bEnd;
-    float aEnd;
+    int colorStart, colorEnd;
 
     double lifeTime;
 
@@ -27,7 +24,7 @@ public class BaseParticle {
     int id;
 
 
-    public BaseParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime) {
+    public BaseParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, int colorStart, int colorEnd, double lifeTime) {
         this.guiGraphics = guiGraphics;
         this.x = x;
         this.y = y;
@@ -37,6 +34,10 @@ public class BaseParticle {
         this.accelerationY = accelerationY;
         this.frictionX = frictionX;
         this.frictionY = frictionY;
+
+        this.colorStart = colorStart;
+        this.colorEnd = colorEnd;
+
         this.maxTick = lifeTime;
 
         this.id = GlobalDirt.particleList.size();
@@ -54,10 +55,14 @@ public class BaseParticle {
             int l = (int) this.y + 2;
             this.guiGraphics.fill (i,j,k,l, 0xFFFF0000);
 
-            String debugString = String.format("""
-                    %d: x: %.2f, y: %.2f, %.5f
-                    """, this.id, this.x, this.y, this.lifeTime);
-            this.guiGraphics.drawString(Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, 0xFFFF0000);
+            int color = MiscUtils.colorLerp((float) (lifeTime / maxTick), colorStart, colorEnd);
+            int[] colorArr = MiscUtils.int2Array(color);
+            String debugString = String.format(
+                    "%d: %d, %d, %d",
+                    this.id, colorArr[1], colorArr[2], colorArr[3]
+            );
+
+            this.guiGraphics.drawString(Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, color);
 
             GlobalDirt.particleCount++;
         }
@@ -75,4 +80,8 @@ public class BaseParticle {
 
 
     public int getId() { return this.id; }
+
+    public int getColorStart() { return this.colorStart;}
+
+    public int getColorEnd() { return colorEnd; }
 }
