@@ -153,6 +153,8 @@ public class ParticleEvent {
                 localAttributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
                 localAttributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
                 localAttributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+                localAttributes.brightnessStart.ifPresent(attr -> newAttributes.brightnessStart = Optional.of(attr));
+                localAttributes.brightnessEnd.ifPresent(attr -> newAttributes.brightnessEnd = Optional.of(attr));
                 localAttributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
                 localAttributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
@@ -176,6 +178,8 @@ public class ParticleEvent {
                 localAttributesVariance.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
                 localAttributesVariance.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
                 localAttributesVariance.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+                localAttributesVariance.brightnessStart.ifPresent(attr -> newAttributes.brightnessStart = Optional.of(attr));
+                localAttributesVariance.brightnessEnd.ifPresent(attr -> newAttributes.brightnessEnd = Optional.of(attr));
                 localAttributesVariance.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
                 localAttributesVariance.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
@@ -188,6 +192,8 @@ public class ParticleEvent {
         if (this.interval.isEmpty()) this.interval = parent.left().get().interval;
         if (this.interval_variance.isEmpty()) this.interval_variance = parent.left().get().interval_variance;
         this.use = Optional.empty();
+
+        parent.left().get().use.ifPresent(s -> inheritFromParent(eventMap, eventMap.get(s)));
 
     }
 
