@@ -1,0 +1,28 @@
+{
+    "applies": [{"id": "decorated_pot"}],
+    "attributes": {
+        "speedY": 32,
+        "accelerationY": -2,
+        "frictionY": 0.7,
+        "frictionX": 0.7,
+        "y": 8,
+        "duration": 40,
+        "count": 4,
+        "brightness_start": 0.8
+    },
+    "attributes_variance": {
+        "y": 4,
+        "speedX": 32,
+        "speedY": 8,
+        "duration": 5,
+        "brightness_start": 0.2
+    },
+
+    "events": {
+        "onPickup": {
+            "particles": [
+                { "id": "dust"}
+            ]
+        }
+    }
+}

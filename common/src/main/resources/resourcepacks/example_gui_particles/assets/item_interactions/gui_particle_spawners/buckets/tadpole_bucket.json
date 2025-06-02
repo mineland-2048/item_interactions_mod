@@ -1,0 +1,8 @@
+{
+    "parent": "item_interactions:buckets/living_water_buckets",
+    "applies": [{"id": "tadpole_bucket"}],
+    "attributes": {
+        "color_start": "#FF3A796D",
+        "color_end": "#00387569"
+    }
+}

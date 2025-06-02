@@ -1,0 +1,26 @@
+{
+    "applies": [{"id": "note_block"}],
+
+    "attributes": {
+        "duration": 20,
+        "count": 1,
+        "y": 8,
+        "speedY": 32,
+        "frictionY": 0.7,
+        "frictionX": 0.7,
+        "color_start": "#FF00FF00"
+    },
+
+    "attributes_variance": {
+        "color_start": "#00FFFFFF",
+        "color_end": "#00000000"
+    },
+
+    "events": {
+        "onPickup": {
+            "particles": [
+                { "id": "note"}
+            ]
+        }
+    }
+}

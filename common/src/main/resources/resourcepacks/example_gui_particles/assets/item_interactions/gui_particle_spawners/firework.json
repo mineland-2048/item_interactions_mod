@@ -1,0 +1,62 @@
+{
+    "applies": [{"id": "firework_rocket"}, 
+        {
+            "id": "firework_rocket", 
+            "components": {
+                "fireworks": {
+                    "flight_duration": 2
+                }
+            }
+        },
+        {
+            "id": "firework_rocket", 
+            "components": {
+                "fireworks": {
+                    "flight_duration": 3
+                }
+            }
+        }
+    ],
+
+    "attributes": {
+        "duration": 100,
+        "speedY": -64,
+        "accelerationY": -4,
+        "frictionY": 0.8,
+        "y": -4,
+        "color_start": "#FFFFFFFF",
+        "color_end": "#80FFFFFF"
+    },
+    "attributes_variance": {
+        "speedY": 5,
+        "speedX": 8,
+        "duration": 20
+    },
+    "events": {
+        "onCarried": {
+        "interval": 4,
+        "interval_variance": 1,
+            "particles": [
+                {"id": "firework"}
+            ]
+        },
+        "onPut": {
+            "attributes": {
+                "speedY": 0,
+                "accelerationY": 0,
+                "frictionY": 1,
+                "color_start": "#FFFFFFFF",
+                "color_end": "#FFFFFFFF",
+                "count": 2
+            },
+            "attributes_variance": {
+                "speedX": 4,
+                "speedY": 4,
+                "brightness_start": 0.2
+            },
+            "particles": [
+                {"id": "dust"}
+            ]
+        }
+    }
+}

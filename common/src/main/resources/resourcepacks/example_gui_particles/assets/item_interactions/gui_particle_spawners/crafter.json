@@ -1,0 +1,8 @@
+{
+    "parent": "item_interactions:dispenser_dropper",
+    "attributes": {
+        "brightness_start": 0.9,
+        "color_start": "#FFf8f0FF"
+    },
+    "applies": [{"id": "crafter"}]
+}

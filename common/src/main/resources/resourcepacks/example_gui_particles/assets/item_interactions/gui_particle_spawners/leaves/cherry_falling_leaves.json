@@ -1,22 +1,16 @@
 {
-  "attributes": {
-    "color_start": "#FFE899C2",
-    "color_end": "#FFE899C2",
-
-    "x": 0,
-    "y": 0,
-
-    "speedX": 0.0,
+"attributes": {
     "speedY": -16,
 
-    "accelerationX": 0.0,
-    "accelerationY": 0.0,
-
     "frictionX": 0.99,
-    "frictionY": 1,
 
-    "duration": 20
+    "duration": 20,
+
+    "color_start": "#FFFBCAE6",
+    "color_end": "#FFE899C2"
+
   },
+
   "attributes_variance": {
     "x": 8,
     "y": 2,
@@ -26,9 +20,10 @@
 
     "duration": 4
   },
+  
 
   "events": {
-    "onIdle": {
+    "onCarried": {
       "particles": [
         { "id": "item_interactions:gui/falling_leaf_light" }
       ],
@@ -38,47 +33,50 @@
     },
 
     "onPut": {
+      "attributes": {
+        "frictionX": 1,
+        "accelerationY": -1,
+        "frictionY": 0.995,
+        "speedY": 16
+      },
+
+      "attributes_variance": {
+        "speedX": 4,
+        "x": 0
+      },
       "particles": [
         {
           "id": "item_interactions:gui/falling_leaf_light",
           "x": 2,
           "y": 2,
-          "speedX": 5,
-          "speedY": 5,
-          "duration": 40
+          "speedX": 8
         },
         {
           "id": "item_interactions:gui/falling_leaf_light",
           "x": -2,
           "y": 2,
-          "speedX": -5,
-          "speedY": 5,
-          "duration": 40
+          "speedX": -8
         },
         {
           "id": "item_interactions:gui/falling_leaf_light",
-          "x": 2,
+          "x": 0,
           "y": -2,
-          "speedX": 5,
-          "speedY": -5,
-          "duration": 40
+          "speedX": 8
         },
         {
           "id": "item_interactions:gui/falling_leaf_light",
-          "x": -2,
+          "x": -0,
           "y": -2,
-          "speedX": -5,
-          "speedY": -5,
-          "duration": 40
+          "speedX": -8
         }
       ]
     },
 
-    "onCarried": "onIdle",
+
     "onPickup": "onPut",
+    "onShake": { "use": "onPut", "interval": 2 },
 
-
-    "onShake": { "use": "onPut", "interval": 2 }
+    "onIdle": "onCarried"
   },
 
   "applies": [{ "id": "cherry_leaves" }]

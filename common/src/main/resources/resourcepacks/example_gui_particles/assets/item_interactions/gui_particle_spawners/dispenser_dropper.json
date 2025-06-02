@@ -1,0 +1,29 @@
+{
+    "attributes": {
+        "duration": 40,
+        "count": 10,
+        "x": 8,
+        "y": -8,
+        "speedX": 10,
+        "speedY": -4,
+        "accelerationY": 1.5,
+        "frictionY": 0.9,
+        "brightness_start": 0.2
+    },
+    "attributes_variance": {
+        "duration": 10,
+        "x": 4,
+        "y": 4,
+        "count": 5,
+        "brightness_start": 0.1
+    },
+
+    "events": {
+        "onPickup": {
+            "particles": [
+                { "id": "dust"}
+            ]
+        }
+    },
+    "applies": [{"id": "dispenser"}, {"id": "dropper"}]
+}

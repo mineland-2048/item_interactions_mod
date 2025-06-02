@@ -22,6 +22,28 @@
           "count": 3
         }
       ]
+    },
+
+    "onPickup": "splash",
+    "onPut": "splash",
+
+    "splash": {
+      "attributes": {
+        "count": 3
+      },
+      "particles": [
+        {
+          "id":  "falling_water",
+          "x": -2,
+          "speedX": -5
+        },
+
+        {
+          "id": "falling_water",
+          "x": 2,
+          "speedX": 5
+        }
+      ]
     }
   }
 }

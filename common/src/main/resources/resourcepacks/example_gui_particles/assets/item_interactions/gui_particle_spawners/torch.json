@@ -1,0 +1,20 @@
+{
+    "children": ["item_interactions:torch_smoke"],
+    "attributes": {
+        "x": 0,
+        "y": 3
+    },
+    "events": {
+        "onCarried": {
+            "interval": 80,
+            "interval_variance": 20,
+            "particles": [
+                { "id": "flame" }
+            ]
+        },
+
+        "onIdle": "onCarried"
+    },
+
+    "applies": [{"id": "torch"}]
+}
