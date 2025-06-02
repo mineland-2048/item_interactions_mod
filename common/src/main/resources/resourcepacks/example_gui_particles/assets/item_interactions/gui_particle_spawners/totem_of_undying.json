@@ -1,0 +1,30 @@
+{
+    "applies": [{ "id": "totem_of_undying" }],
+    "attributes": {
+        "x": 0,
+        "y": 0,
+        "duration": 40,
+        "frictionX": 0.9,
+        "frictionY": 0.9,
+        "accelerationY": -1,
+        "speedY": 16,
+        "count": 5,
+        "color_start": "#FF40FF00"
+    },
+    "attributes_variance": {
+        "x": 8,
+        "y": 8,
+        "duration": 4,
+        "count": 2,
+        "speedX": 5,
+        "color_start": "#00FF4000"
+    },
+
+    "events": {
+        "onPut": {
+            "particles": [
+                { "id": "totem_of_undying" }
+            ]
+        }
+    }
+}

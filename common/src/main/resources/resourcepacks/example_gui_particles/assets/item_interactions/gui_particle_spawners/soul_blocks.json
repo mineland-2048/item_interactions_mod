@@ -1,0 +1,36 @@
+{
+    "applies": [{"id": "soul_sand"}, {"id": "soul_soil"}],
+    "attributes": {
+        "duration": 40,
+        "speedY": 8,
+        "y": 8,
+        "count": 1,
+        "frictionX": 0.9,
+        "frictionY": 0.9
+    },
+    "attributes_variance": {
+        "x": 4,
+        "Y": 4,
+        "count":1,
+        "duration": 20
+    },
+    "events": {
+        "onShake": {
+            "interval": 8,
+            "interval_variance": 1,
+            "particles": [
+                {"id": "soul"}
+            ]
+        },
+
+        "onPickup": "onPut",
+
+        "onPut": {
+            "attributes": {"count": 2},
+            "attributes_variance": {"count": 1, "x": 8, "y": 4},
+            "particles": [
+                {"id": "soul"}
+            ]
+        }
+    }
+}

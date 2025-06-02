@@ -1,5 +1,5 @@
 {
-  "parent": "item_interactions:bucket_template",
+  "parent": "item_interactions:buckets/bucket_template",
   "attributes": {
     "color_start": "#ff446EE9",
     "color_end": "#00446EE9"

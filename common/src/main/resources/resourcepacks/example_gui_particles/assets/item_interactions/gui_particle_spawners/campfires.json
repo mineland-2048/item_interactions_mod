@@ -1,0 +1,31 @@
+{
+  "attributes": {
+    "x": 0,
+    "y": 0,
+    "speedY": 10,
+    "duration": 40
+  },
+  "attributes_variance": {
+    "x": 6,
+    "speedX": 2,
+    "speedY": 2,
+    "duration": 5
+  },
+  "events": {
+    "onCarried": {
+      "interval": 20,
+      "interval_variance": 2,
+      "particles": [{ "id": "campfire_signal_smoke" }]
+    },
+
+    "onIdle": {"use": "onCarried", "interval": 40, "interval_variance": 5},
+
+    "onShake": {
+      "use": "onCarried",
+      "interval": 2
+    }
+
+  },
+
+  "applies": [{ "id": "campfire" }, { "id": "soul_campfire" }]
+}
