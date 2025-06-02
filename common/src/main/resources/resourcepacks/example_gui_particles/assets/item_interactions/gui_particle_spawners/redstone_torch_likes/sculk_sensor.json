@@ -1,0 +1,21 @@
+{
+    "parent": "item_interactions:redstone_torch_likes/redstone_torch_template",
+    "applies": [{ "id": "sculk_sensor" }, {"id": "calibrated_sculk_sensor"}],   
+    "attributes": {
+        "color_start": "#FF00FFFF",
+        "color_end": "#FFFF0000"
+    },
+    "attributes_variance": {
+        "color_start": "#00001010",
+        "color_end": "#00800000"
+    },
+
+    "events": {
+        "onCarried": {
+            "use": "reddust",
+            "interval": 20,
+            "interval_variance": 5
+
+        }
+    }
+}

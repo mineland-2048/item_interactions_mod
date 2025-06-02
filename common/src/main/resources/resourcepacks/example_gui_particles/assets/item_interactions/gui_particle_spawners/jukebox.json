@@ -1,0 +1,11 @@
+{
+    "parent": "item_interactions:noteblock",
+    "applies": [{ "id": "jukebox" }],
+    "events": {
+        "onCarried": {
+            "use": "onPickup",
+            "interval": 20,
+            "interval_variance": 5
+        }
+    }
+}

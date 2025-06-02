@@ -1,0 +1,27 @@
+{
+    "attributes": {
+        "duration": 10,
+        "count": 5,
+        "brightness_start": 0.8
+    },
+    "attributes_variance": {
+        "x": 16,
+        "y": 16,
+        "duration": 5,
+        "count": 2,
+        "brightness_start": 0.2
+    },
+    "events": {
+        "onPut": {
+            "particles": [
+                { "id": "explosion"}
+            ]
+        }
+    },
+    "applies": [
+        {"id": "tnt"}, 
+        {"id": "tnt_minecart"}, 
+        {"id": "fire_charge"}, 
+        {"id": "end_crystal"}
+    ]
+}

@@ -1,0 +1,4 @@
+{
+    "parent": "item_interactions:torch_smoke",
+    "applies": [{ "id": "brewing_stand" }, {"id": "fire_charge"}]
+}

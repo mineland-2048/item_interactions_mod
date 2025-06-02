@@ -1,10 +1,10 @@
 {
-  "parent": "item_interactions:bucket_template",
+  "parent": "item_interactions:buckets/bucket_template",
   "attributes": {
     "color_start": "#FFFFFFFF",
     "color_end": "#00FFFFFF"
   },
-  "attribtues_variance": {
+  "attributes_variance": {
     "color_start": "#00201010"
   },
 

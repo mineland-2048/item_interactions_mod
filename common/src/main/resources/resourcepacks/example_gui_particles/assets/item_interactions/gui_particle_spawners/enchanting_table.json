@@ -1,0 +1,33 @@
+{
+    "attributes": {
+        "duration": 100,
+        "color_start": "#80FFFFFF",
+        "color_end": "#00FFFFFF",
+        "count": 1
+    },
+    "attributes_variance": {
+        "speedX": 8,
+        "speedY": 8,
+        "count": 2
+    },
+
+    "events": {
+        "onCarried": {
+            "interval": 5,
+            "interval_variance": 2,
+            
+            "particles": [
+                {"id": "enchant"}
+            ]
+        },
+
+        "onIdle": {
+            "use": "onCarried",
+            "interval": 40,
+            "interval_variance": 20
+        }
+    },
+    "applies": [
+        {"id": "enchanting_table"}
+    ]
+}

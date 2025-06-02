@@ -1,0 +1,30 @@
+{
+    "applies": [{"id": "end_rod"}],
+    "attributes": {
+        "duration": 40,
+        "speedY": -4,
+        "color_start": "#FFFFFFFF",
+        "color_end": "#a0DECCB9"
+    },
+    "attributes_variance": {
+        "speedX": 2,
+        "duration": 5
+    },
+    "events": {
+        "onCarried": {
+            "interval": 100,
+            "interval_variance": 40,
+            "particles": [
+                {"id": "end_rod"}
+            ]
+        },
+
+        "onIdle": "onCarried",
+
+        "onShake": {
+            "use": "onCarried",
+            "interval": 50,
+            "interval_variance": 20
+        }
+    }
+}

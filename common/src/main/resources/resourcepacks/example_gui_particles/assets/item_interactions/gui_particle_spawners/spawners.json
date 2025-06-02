@@ -1,0 +1,33 @@
+{
+    "attributes": {
+        "color_start": "#FFFFFFFF",
+        "duration": 20,
+        "count": 2
+    },
+
+    "attributes_variance": {
+        "duration": 10,
+        "x": 4,
+        "y": 4,
+        "count": 2
+    },
+    
+    "events": {
+        "onCarried": {
+            "interval": 20,
+            "interval_variance": 5,
+            "particles": [
+                {"id": "smoke", "speedY": 4, "color_start": "#FF000000"},
+                {"id": "flame", "count": 4}
+            ]
+        },
+
+        "onShake": {
+            "use": "onCarried",
+            "interval": 2
+        }
+    },
+    "applies": [
+        {"id": "spawner"}, {"id": "vault"}, {"id": "trial_spawner"}
+    ]
+}

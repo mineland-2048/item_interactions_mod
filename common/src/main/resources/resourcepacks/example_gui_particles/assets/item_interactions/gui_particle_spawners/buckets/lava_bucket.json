@@ -1,6 +1,6 @@
 {
-  "parent": "item_interactions:living_water_buckets",
-  "children": [ "item_interactions:smoke"],
+  "parent": "item_interactions:buckets/living_water_buckets",
+  "children": [ "item_interactions:torch_smoke"],
   "attributes": {
     "color_start": "#FFFFFF00",
     "color_end": "#00FF2000"

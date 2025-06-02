@@ -1,0 +1,28 @@
+{
+    "attributes": {
+        "y": 4,
+        "speedY": 16,
+        "color_start": "#FFFFFFFF",
+        "brightness_start": 0.2,
+        "duration": 40
+    },
+    "attributes_variance": {
+        "duration": 30,
+        "speedY": 4,
+        "x": 4,
+        "speedX": 2,
+
+        "brightness_start": 0.1
+    },
+
+    "events": {
+        "onCarried": {
+            "interval": 5,
+            "interval_variance": 5,
+            "particles": [
+                {"id": "smoke"}
+            ]
+        }
+    },
+    "applies": [ {"id": "tnt"}, {"id": "tnt_minecart"}]
+}

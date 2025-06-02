@@ -12,12 +12,11 @@
   },
 
   "events": {
-    "onIdle": {
+    "onCarried": {
       "interval": 50,
       "particles": [{ "id": "firefly" }]
     },
     "onPut": {
-      "interval": 0,
       "particles": [
         {
           "id": "firefly",
@@ -25,7 +24,23 @@
         }
       ]
     },
-    "onCarried": "onIdle"
+    "onShake": {
+      "interval": 5,
+      "attributes_variance": {
+        "x": 8
+      },
+      "particles": [
+        {
+          "id": "firefly",
+          "count": 2
+        }
+      ]
+    },
+    "onIdle": {
+      "use": "onCarried",
+      "interval": 40,
+      "interval_variance": 20
+    }
   },
 
   "applies": [{ "id": "firefly_bush" }]
