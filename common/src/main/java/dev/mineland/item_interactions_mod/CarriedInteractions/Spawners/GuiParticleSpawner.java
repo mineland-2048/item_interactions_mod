@@ -373,6 +373,8 @@ public class GuiParticleSpawner {
             attributes.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
             attributes.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
             attributes.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+            attributes.brightnessStart.ifPresent(attr -> newAttributes.brightnessStart = Optional.of(attr));
+            attributes.brightnessEnd.ifPresent(attr -> newAttributes.brightnessEnd = Optional.of(attr));
             attributes.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
             attributes.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
@@ -398,6 +400,8 @@ public class GuiParticleSpawner {
             attributes_variance.frictionY.ifPresent(attr -> newAttributes.frictionY = Optional.of(attr));
             attributes_variance.colorStart.ifPresent(attr -> newAttributes.colorStart = Optional.of(attr));
             attributes_variance.colorEnd.ifPresent(attr -> newAttributes.colorEnd = Optional.of(attr));
+            attributes_variance.brightnessStart.ifPresent(attr -> newAttributes.brightnessStart = Optional.of(attr));
+            attributes_variance.brightnessEnd.ifPresent(attr -> newAttributes.brightnessEnd = Optional.of(attr));
             attributes_variance.duration.ifPresent(attr -> newAttributes.duration = Optional.of(attr));
             attributes_variance.count.ifPresent(attr -> newAttributes.count = Optional.of(attr));
 
