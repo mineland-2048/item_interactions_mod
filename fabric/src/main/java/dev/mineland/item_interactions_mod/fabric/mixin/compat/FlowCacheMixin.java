@@ -16,12 +16,12 @@ public class FlowCacheMixin {
 
     @Inject(method = "cacheScreen", at = @At("HEAD"))
     private static void cacheScreenMixinHead(AbstractContainerScreen<?> screenToCache, GuiGraphics ctx, float tickDelta, int mouseX, int mouseY, CallbackInfo ci) {
-        GlobalDirt.dontUpdateTimer = true;
+//        GlobalDirt.dontUpdateTimer = true;
 //        GlobalDirt.shouldTickParticles = false;
     }
     @Inject(method = "cacheScreen", at = @At("TAIL"))
     private static void cacheScreenMixinTail(AbstractContainerScreen<?> screenToCache, GuiGraphics ctx, float tickDelta, int mouseX, int mouseY, CallbackInfo ci) {
-        GlobalDirt.dontUpdateTimer = false;
+//        GlobalDirt.dontUpdateTimer = false;
     }
 
 }
