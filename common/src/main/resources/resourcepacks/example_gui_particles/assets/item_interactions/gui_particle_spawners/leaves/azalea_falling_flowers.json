@@ -34,7 +34,7 @@
   },
 
   "events": {
-    "onIdle": {
+    "onCarried": {
       "particles": [
         {"id":  "minecraft:cherry_leaves"}
       ],
@@ -67,7 +67,6 @@
       ]
     },
 
-    "onCarried": "onIdle",
 
     "onShake": {"use":  "onPut", "interval":  4}
 

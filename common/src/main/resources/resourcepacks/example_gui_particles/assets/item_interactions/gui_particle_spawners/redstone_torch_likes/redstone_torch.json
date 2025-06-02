@@ -1,0 +1,13 @@
+{
+    "parent": "item_interactions:redstone_torch_likes/redstone_torch_template",
+    "applies": [{ "id": "redstone_torch" }],
+    "events": {
+        "onIdle": "reddust",
+        "onCarried": "reddust",
+        "onShake": {
+            "use": "reddust",             
+            "interval": 2,
+            "interval_variance": 0
+        }
+    }
+}

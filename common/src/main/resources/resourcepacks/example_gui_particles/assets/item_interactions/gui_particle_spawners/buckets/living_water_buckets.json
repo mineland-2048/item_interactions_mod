@@ -1,0 +1,23 @@
+{
+  "parent": "item_interactions:buckets/water_bucket",
+  "events": {
+    "onCarried": {
+      "interval": 40,
+      "interval_variance": 20,
+      "use": "splash"
+    },
+
+    "onIdle": {
+      "use": "splash",
+      "interval": 80,
+      "interval_variance": 40
+    }
+  },
+  "applies": [
+    {"id":  "cod_bucket"},
+    {"id":  "salmon_bucket"},
+    {"id":  "tropical_fish_bucket"},
+    {"id":  "pufferfish_bucket"},
+    {"id":  "axolotl_bucket"}
+  ]
+}

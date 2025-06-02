@@ -1,0 +1,35 @@
+{
+  "attributes": {
+    "color_start": "#FFB000D0",
+    "y": -4,
+    "speedY": -4,
+    "duration": 40,
+    "count": 2
+  },
+  "attributes_variance": {
+    "color_start": "#00200020",
+    "x": 4,
+    "y": 2,
+    "count": 1
+  },
+  "events": {
+    "onCarried": {
+      "interval": 5,
+      "particles": [{ "id": "dust" }]
+    },
+
+    "onPut": {
+      "attributes": {
+        "x": 0,
+        "y": 0
+      },
+      "attributes_variance": {
+        "speedX": 20,
+        "speedY": 20
+      },
+      "particles": [{ "id": "dust", "count": 20 }]
+    }
+  },
+
+  "applies": [{ "id": "ender_eye" }]
+}

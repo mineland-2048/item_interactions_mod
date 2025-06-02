@@ -1,0 +1,28 @@
+{
+    "attributes": {
+        "color_start": "#FFFF0000",
+        "color_end": "#FFFF0000",
+        "duration": 30,
+        "speedY": 4
+    },
+
+    "attributes_variance": {
+        "color_start": "#00400000",
+        "duration": 20,
+        "speedX": 8,
+        "speedY": 4,
+        "count": 1
+    },
+
+    "events": {
+        "reddust": {
+            "interval": 40,
+            "interval_variance": 20,
+            "particles": [
+                {"id": "dust"}
+            ]
+        }
+    }
+
+
+}
