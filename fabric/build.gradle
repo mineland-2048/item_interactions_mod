@@ -34,7 +34,7 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:$project.fabric_api_version"
     modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
-    modCompileOnly "maven.modrinth:flow:2.2.0+1.21"
+    modCompileOnly "maven.modrinth:flow:2.2.0+1.20.1"
 
 
 //    modImplementation("com.terraformersmc:modmenu:11.0.3")

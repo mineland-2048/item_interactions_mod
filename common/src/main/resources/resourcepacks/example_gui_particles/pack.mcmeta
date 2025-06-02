@@ -1,10 +1,6 @@
 {
   "pack": {
     "description": "Example particle for the item interactions mod \n-mineland",
-    "pack_format": 34,
-    "supported_formats": {
-      "min_inclusive": 34,
-      "max_inclusive": 70
-    }
+    "pack_format": 15
   }
 }
