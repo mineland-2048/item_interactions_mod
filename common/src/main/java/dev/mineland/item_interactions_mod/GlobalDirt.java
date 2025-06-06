@@ -170,7 +170,7 @@ public class GlobalDirt {
     public static float spawnerTickDelta = 0;
 //    public static float shortFPS = 0;
 
-    public static float drag = 0.8f;
+    public static double drag = 0.8f;
 
     public static int particleCount = 0;
 
@@ -249,10 +249,9 @@ public class GlobalDirt {
 //        frameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
         spawnerTickDelta = tickScale;
 
-        drag = (float) Math.pow(
-                    ( (2*ItemInteractionsConfig.mouseDeceleration) * tickScale/1000),
-                    frameDelta * tickScale * ItemInteractionsConfig.mouseDeceleration * 2
-        );
+        double decay = 16 * (ItemInteractionsConfig.mouseDeceleration * ItemInteractionsConfig.mouseDeceleration);
+        drag = Math.exp(-decay * frameDelta);
+
 
         mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
