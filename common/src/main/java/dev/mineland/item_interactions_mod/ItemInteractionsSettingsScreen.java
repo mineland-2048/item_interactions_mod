@@ -19,9 +19,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Environment(EnvType.CLIENT)
 public class ItemInteractionsSettingsScreen extends Screen {
-
 
 
     private final Screen parent;
@@ -35,7 +37,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     public Button doneButton;
 
     private Button debugButton;
-    private CycleButton<ItemInteractionsConfig.animation> animationCycleButton;
+    private CycleButton<String> animationCycleButton;
     private SteppedSliderButton scaleSpeed;
     private SteppedSliderButton scaleAmount;
     private SteppedSliderButton mouseSpeedMult;
@@ -57,7 +59,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
 
-    ItemInteractionsConfig.animation oldAnimationConfig = ItemInteractionsConfig.animationConfig;
+    String oldAnimationConfig   = ItemInteractionsConfig.animationConfig;
     double oldScaleSpeed        = ItemInteractionsConfig.scaleSpeed        ;
     double oldScaleAmount       = ItemInteractionsConfig.scaleAmount       ;
     double oldMouseDeceleration = ItemInteractionsConfig.mouseDeceleration ;
@@ -90,6 +92,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 Type of animation that will play when carrying an item
                 Speed: tilts based off the mouse speed
                 Scale: scales the item up on cycles
+                Physics: speen
                 None: no animation""")));
 
         scaleSpeed.setTooltip(Tooltip.create(Component.literal("Speed of the scaling animation measured in seconds/cycle.")));
@@ -108,9 +111,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     inventoryPreview.setItem(hotbar, item);
 
                     if (!item.isEmpty()) hadItems = true;
-
-
-
             }
         }
 
@@ -122,8 +122,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             inventoryPreview.setItem(6,  new ItemStack(Items.FLINT_AND_STEEL));
             inventoryPreview.setItem(7,  new ItemStack(Items.ZOMBIE_HEAD));
             inventoryPreview.setItem(8,  new ItemStack(Items.EGG));
-
-
         }
 
 
@@ -147,16 +145,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         switch (animationCycleButton.getValue()) {
-            case ANIM_SCALE -> {
+            case "scale" -> {
                 scaleAnimLayout.visitWidgets(widget -> widget.visible = true);
-
             }
 
-            case ANIM_SPEED -> {
+            case "speed" -> {
                 speedAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
 
-            case NONE -> {
+            default -> {
                 scaleAnimLayout.visitWidgets(widget -> widget.visible = false);
                 speedAnimLayout.visitWidgets(widget -> widget.visible = false);
             }
@@ -168,20 +165,19 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.layout.addTitleHeader(this.title, Minecraft.getInstance().font);
 
 
+        List<String> anims = new ArrayList<>(ItemInteractionsConfig.animations.keySet());
+        anims.add("none");
         animationCycleButton = leftColumnLayout.addChild(
-                CycleButton.<ItemInteractionsConfig.animation>builder(animationSetting ->
-                                animationSetting.component.copy().withStyle(
-                                        animationSetting == ItemInteractionsConfig.animation.NONE ?
+                CycleButton.<String>builder(animationSetting ->
+                                Component.literal(animationSetting).withStyle(
+                                        animationSetting.equals("none") ?
                                                 ChatFormatting.RED : ChatFormatting.YELLOW)
                         )
-                        .withValues(
-                                ItemInteractionsConfig.animation.ANIM_SPEED,
-                                ItemInteractionsConfig.animation.ANIM_SCALE,
-                                ItemInteractionsConfig.animation.NONE)
+                        .withValues(anims)
                         .withInitialValue(ItemInteractionsConfig.animationConfig)
-                        .create(Component.literal("Animation"),
-                                (arg, arg2) -> {
-                                    ItemInteractionsConfig.animationConfig = arg2;
+                        .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
+                                (button, string) -> {
+                                    ItemInteractionsConfig.animationConfig = string;
                                     updateVisible();
                                 }
                         )
@@ -223,7 +219,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.scaleAmount = Math.clamp((double) this.value, this.minValue, this.maxValue);
+                ItemInteractionsConfig.scaleAmount = Math.clamp(this.value, this.minValue, this.maxValue);
 
             }
 

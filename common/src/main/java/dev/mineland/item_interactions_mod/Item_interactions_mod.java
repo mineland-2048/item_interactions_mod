@@ -1,19 +1,21 @@
 package dev.mineland.item_interactions_mod;
 
 
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimPhysics;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Item_interactions_mod {
     public static final String MOD_ID = "item_interactions_mod";
     final static Logger logger = LoggerFactory.getLogger(MOD_ID);
-    //    public static List<Particle> UIParticles;
 
     public enum LOADER_ENUM {
         FABRIC,
         NEOFORGE,
         UNKNOWN
-    };
+    }
 
     public static LOADER_ENUM LOADER;
 
@@ -23,15 +25,16 @@ public final class Item_interactions_mod {
         logger.info("Initializing item interactions mod!");
         LOADER = LOADER_ENUM.UNKNOWN;
 
+        registerAnimations();
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
-//        ItemInteractionsResources.onReload();
-
         ReloadListenerHelper.registerReloadListener(new GuiParticlesReloadListener());
+    }
 
-
-
-//        animationSetting = ItemInteractionsConfig.animationConfig;
+    static void registerAnimations() {
+        ItemInteractionsConfig.addAnimation(new AnimSpeed());
+        ItemInteractionsConfig.addAnimation(new AnimScale());
+        ItemInteractionsConfig.addAnimation(new AnimPhysics());
 
     }
 
@@ -47,7 +50,6 @@ public final class Item_interactions_mod {
     public static void errorMessage(String message) {
         logger.error(message);
         if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
-
     }
 
 

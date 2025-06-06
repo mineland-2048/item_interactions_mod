@@ -1,19 +1,21 @@
 package dev.mineland.item_interactions_mod;
 
-//import dev.architectury.transformer.shadowed.impl.com.google.gson.GsonBuilder;
-import net.minecraft.network.chat.Component;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 //import static dev.mineland.item_interactions_mod.GlobalDirt.deceleration;
 
 public class ItemInteractionsConfig {
     private static final Path configPath = Path.of("config", "item_interactions.cfg");
-    public static animation animationConfig;
+    public static String animationConfig;
 
     public static double scaleSpeed;
     public static double scaleAmount;
@@ -24,15 +26,25 @@ public class ItemInteractionsConfig {
     public static boolean enableGuiParticles;
     public static boolean debugDraws;
 
+    public static HashMap<String, AnimTemplate> animations = new HashMap<>();
+    public static List<AnimTemplate> animationList = new ArrayList<>();
 
-    /*  Default settings:
-            animation = speed
-            scale_speed = 4
-            scale_amount = 0.1
-    */
+    public static void addAnimation(AnimTemplate anim) {
+        animationList.add(anim);
+    }
 
+    public static void refreshAnimList() {
+        animations.clear();
+
+        animationList.forEach(t -> {
+            animations.put(t.id, t);
+        });
+    }
 
     public static void init() {
+
+        refreshAnimList();
+
         animationConfig = DefaultValues.animationConfig;
         scaleSpeed = DefaultValues.scaleSpeed;
         scaleAmount = DefaultValues.scaleAmount;
@@ -41,34 +53,14 @@ public class ItemInteractionsConfig {
         enableGuiParticles = DefaultValues.enableGuiParticles;
     }
 
-    public static animation getAnimationSetting() {
-        return animationConfig;
+    public static AnimTemplate getAnimationSetting() {
+        return animations.getOrDefault(animationConfig, null);
     }
 
-    public static String getAnimationSettingString(animation anim) {
-        return switch (anim) {
-            case ANIM_SCALE -> "scale";
-            case ANIM_SPEED -> "speed";
-            case null, default -> "none";
-        };
-    }
 
-    public enum animation {
-        ANIM_SCALE("scale"),
-        ANIM_SPEED("speed"),
-        NONE("none");
-
-        public final String name;
-        public final Component component;
-        private animation(String name) {
-            this.name = name;
-            component = Component.literal(this.name);
-
-        }
-    }
 
     static class DefaultValues {
-        public static final animation animationConfig = animation.ANIM_SPEED;
+        public static final String animationConfig = "speed";
         public static final double scaleSpeed = 1;
         public static final double scaleAmount = 0.1;
         public static final double mouseDeceleration = 1;
@@ -106,23 +98,11 @@ public class ItemInteractionsConfig {
 
                 switch (arg) {
                     case "animation":
-                        switch (value) {
-                            case "scale":
-                                animationConfig = animation.ANIM_SCALE;
-                                break;
-
-                            case "speed":
-                                animationConfig = animation.ANIM_SPEED;
-                                break;
-
-                            case "none":
-                                animationConfig = animation.NONE;
-                                break;
-
-                            default:
-                                Item_interactions_mod.warnMessage("Unknown animation setting. Using Default (speed)");
-                                animationConfig = DefaultValues.animationConfig;
-                                break;
+                        if (!animations.containsKey(value)) {
+                            Item_interactions_mod.warnMessage("Unknown animation setting '" + value + "'. Using Default (" + DefaultValues.animationConfig + ")" );
+                            animationConfig = DefaultValues.animationConfig;
+                        } else {
+                            animationConfig = value;
                         }
                         break;
 
@@ -222,7 +202,7 @@ public class ItemInteractionsConfig {
                 gui_particles = %s
                 debug = %s
                 """,
-                animationConfig.name,
+                animationConfig,
                 scaleSpeed,
                 scaleAmount,
                 mouseDeceleration,

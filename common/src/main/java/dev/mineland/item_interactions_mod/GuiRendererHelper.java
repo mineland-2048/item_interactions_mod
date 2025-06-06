@@ -1,8 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
+import com.mojang.blaze3d.vertex.*;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -14,30 +13,20 @@ import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
 public class GuiRendererHelper {
 
-    public static ItemStackRenderState currentItemStackRenderer;
-    public static PoseStack currentPose;
+    public static ItemStack prevItem = ItemStack.EMPTY;
     public static void renderItem(GuiGraphics guiGraphics, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, int initialX, int initialY, int initialZ) {
-        PoseStack newPose = new PoseStack();
+        AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
+        if (anim == null) return;
 
-        int x = initialX;
-        int y = initialY;
-
-        switch (ItemInteractionsConfig.getAnimationSetting()) {
-            case ItemInteractionsConfig.animation.ANIM_SCALE -> {
-                newPose = AnimScale.makePose(x+16, y+16, 0);
-            }
-
-            case ItemInteractionsConfig.animation.ANIM_SPEED -> {
-                newPose = AnimSpeed.makePose(x+8, y+8, 150, speedX, speedY, isCurrentItem3d);
-            }
+        if (prevItem.isEmpty() && !itemStack.isEmpty()) {
+            anim.reset();
         }
+        prevItem = itemStack;
+
+        PoseStack newPose = anim.makePose(initialX, initialY,0, speedX, speedY, isCurrentItem3d);
         newPose.pushPose();
 
         guiGraphics.pose().mulPose(newPose.last().pose());
-
-
-
-
 
     }
 }
