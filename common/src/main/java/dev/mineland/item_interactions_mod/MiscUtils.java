@@ -2,6 +2,7 @@ package dev.mineland.item_interactions_mod;
 
 import net.minecraft.Util;
 import net.minecraft.util.ColorRGBA;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,29 +10,29 @@ import java.util.List;
 public class MiscUtils {
 
     //    I dont know if java has any counting function for strings, so i made this. Aeugh
-        public static int count(String s, String match) {
-            int length = match.length();
-            int result = 0;
-            for (int i = 0; i <= s.length() - length; i++) {
-                if (s.substring(i, i+length).equals(match)) result++;
-            }
-            return result;
+    public static int count(String s, String match) {
+        int length = match.length();
+        int result = 0;
+        for (int i = 0; i <= s.length() - length; i++) {
+            if (s.substring(i, i+length).equals(match)) result++;
         }
+        return result;
+    }
 
 
-        public static String preNumberCharacter(int number, String characters) {
-            if (number < 0) {
-                return new StringBuilder().append(number).insert(1, characters).toString();
-            }
-            return characters + number;
+    public static String preNumberCharacter(int number, String characters) {
+        if (number < 0) {
+            return new StringBuilder().append(number).insert(1, characters).toString();
         }
+        return characters + number;
+    }
 
-        public static String preNumberCharacter(double number, String characters) {
-            if (number < 0) {
-                return new StringBuilder().append(number).insert(1, characters).toString();
-            }
-            return characters + number;
+    public static String preNumberCharacter(double number, String characters) {
+        if (number < 0) {
+            return new StringBuilder().append(number).insert(1, characters).toString();
         }
+        return characters + number;
+    }
 
     public static String preNumberCharacter(float number, String characters) {
         if (number < 0) {
@@ -81,6 +82,7 @@ public class MiscUtils {
                 (i) & 0xFF
         };
     }
+
     public static int array2Int(int[] i) {
         return  (i[0] << 24) +
                 (i[1] << 16) +
@@ -104,4 +106,13 @@ public class MiscUtils {
 
         return new int[]{colorArray[0], r, g, b};
     }
+
+    public static boolean isNumber(String s) {
+        return NumberUtils.isParsable(s);
+    }
+
+    public static boolean isBoolean(String s) {
+        return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
+    }
+
 }

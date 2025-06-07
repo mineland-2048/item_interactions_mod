@@ -47,8 +47,8 @@ public final class Item_interactions_mod {
         if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
     }
 
-    public static void errorMessage(String message) {
-        logger.error(message);
+    public static void errorMessage(String message, Object... args) {
+        logger.error(message, args);
         if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
     }
 

@@ -2,6 +2,7 @@ package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPreview;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -58,13 +60,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
 
+    static HashMap<String, Object> previousSettingsMap = new HashMap<>(ItemInteractionsConfig.settingsMap);
 
-    String oldAnimationConfig   = ItemInteractionsConfig.animationConfig;
-    double oldScaleSpeed        = ItemInteractionsConfig.scaleSpeed        ;
-    double oldScaleAmount       = ItemInteractionsConfig.scaleAmount       ;
-    double oldMouseDeceleration = ItemInteractionsConfig.mouseDeceleration ;
-    double oldMouseSpeedMult    = ItemInteractionsConfig.mouseSpeedMult    ;
-    boolean oldParticleEnabled  = ItemInteractionsConfig.enableGuiParticles;
+
+//    String oldAnimationConfig   = ItemInteractionsConfig.getAnimationSetting().id;
+//    double oldScaleSpeed        = (double) ItemInteractionsConfig.getSetting("scale_speed");
+//    double oldScaleAmount       = (double) ItemInteractionsConfig.getSetting("scale_amount");
+//    double oldMouseDeceleration = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
+//    double oldMouseSpeedMult    = (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier");
+//    boolean oldParticleEnabled  = (boolean) ItemInteractionsConfig.getSetting("gui_particles");
 //    public static double scaleSpeed;
 //    public static float scaleAmount;
 //    public static double mouseSpeedMult = 1;
@@ -77,6 +81,12 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
 
+    private final static String animTooltipString = """
+                Type of animation that will play when carrying an item
+                Speed: tilts based off the mouse speed
+                Scale: scales the item up on cycles
+                Physics: speen
+                None: no animation""";
 
     public ItemInteractionsSettingsScreen(Screen parent){
         super(Component.literal("Item interactions mod settings"));
@@ -88,12 +98,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         createLayout();
 
-        animationCycleButton.setTooltip(Tooltip.create(Component.literal("""
-                Type of animation that will play when carrying an item
-                Speed: tilts based off the mouse speed
-                Scale: scales the item up on cycles
-                Physics: speen
-                None: no animation""")));
+        animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
         scaleSpeed.setTooltip(Tooltip.create(Component.literal("Speed of the scaling animation measured in seconds/cycle.")));
         scaleAmount.setTooltip(Tooltip.create(Component.literal("How much the item will scale up. \n0.1 = +1/10 \n1 = +1 (Double the item size)")));
@@ -137,11 +142,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         scaleAnimLayout.visitWidgets(widget -> widget.visible = false);
         speedAnimLayout.visitWidgets(widget -> widget.visible = false);
 
-        animationCycleButton.setTooltip(Tooltip.create(Component.literal("""
-                Type of animation that will play when carrying an item
-                -speed: tilts based off the mouse speed
-                -scale: scales the item up on cycles
-                -none: no animation""")));
+        animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
 
         switch (animationCycleButton.getValue()) {
@@ -166,7 +167,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         List<String> anims = new ArrayList<>(ItemInteractionsConfig.animations.keySet());
-        anims.add("none");
         animationCycleButton = leftColumnLayout.addChild(
                 CycleButton.<String>builder(animationSetting ->
                                 Component.literal(animationSetting).withStyle(
@@ -174,10 +174,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                                 ChatFormatting.RED : ChatFormatting.YELLOW)
                         )
                         .withValues(anims)
-                        .withInitialValue(ItemInteractionsConfig.animationConfig)
+                        .withInitialValue((String) ItemInteractionsConfig.getSetting("animation"))
                         .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
                                 (button, string) -> {
-                                    ItemInteractionsConfig.animationConfig = string;
+                                    ItemInteractionsConfig.setSetting("animation",  string);
                                     updateVisible();
                                 }
                         )
@@ -185,47 +185,47 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
 
-        scaleSpeed = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, ItemInteractionsConfig.scaleSpeed, 0, 4, 40, false) {
+        scaleSpeed = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_speed"), 0, 4, 40, false) {
             {
-                this.value = ItemInteractionsConfig.scaleSpeed;
+                this.value = (double) ItemInteractionsConfig.getSetting("scale_speed");
                 this.applyValue();
                 this.updateMessage();
             }
 
             @Override
             protected void updateMessage() {
-                this.setMessage(Component.literal("Scale speed: " + ItemInteractionsConfig.scaleSpeed));
+                this.setMessage(Component.literal("Scale speed: " + ItemInteractionsConfig.getSetting("scale_speed")));
             }
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.scaleSpeed = value;
+                ItemInteractionsConfig.setSetting("scale_speed", value);
 
             }
 
         });
 
-        scaleAmount = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, ItemInteractionsConfig.scaleAmount, 0, 2, 20, false) {
+        scaleAmount = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_amount"), 0, 2, 20, false) {
             {
-                this.value = ItemInteractionsConfig.scaleAmount;
+                this.value = (double) ItemInteractionsConfig.getSetting("scale_amount");
                 this.applyValue();
                 this.updateMessage();
             }
 
             @Override
             protected void updateMessage() {
-                this.setMessage(Component.literal("Scale amount: " + ItemInteractionsConfig.scaleAmount));
+                this.setMessage(Component.literal("Scale amount: " + ItemInteractionsConfig.getSetting("scale_amount")));
             }
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.scaleAmount = Math.clamp(this.value, this.minValue, this.maxValue);
+                ItemInteractionsConfig.setSetting("scale_amount", Math.clamp(this.value, this.minValue, this.maxValue));
 
             }
 
         });
 
-        mouseSpeedMult = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, ItemInteractionsConfig.mouseSpeedMult, -2, 2, 40) {
+        mouseSpeedMult = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier"), -2, 2, 40) {
             {
                 this.updateMessage();
             }
@@ -234,7 +234,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             protected void updateMessage() {
 
 
-                Component message = Component.literal("Mouse speed: " + ItemInteractionsConfig.mouseSpeedMult + "x");
+                Component message = Component.literal("Mouse speed: " + ItemInteractionsConfig.getSetting("mouse_speed_multiplier") + "x");
 
 
                 this.setMessage(message);
@@ -243,28 +243,29 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             @Override
             protected void applyValue() {
+                ItemInteractionsConfig.setSetting("mouse_speed_multiplier", value);
                 ItemInteractionsConfig.mouseSpeedMult = value;
 
             }
 
         });
 
-        mouseDeceleration = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, ItemInteractionsConfig.mouseDeceleration, 0, 1, 10) {
+        mouseDeceleration = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_deceleration"), 0, 1, 10) {
             {
-                this.value = ItemInteractionsConfig.mouseDeceleration;
+                this.value = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
                 this.applyValue();
                 this.updateMessage();
             }
 
             @Override
             protected void updateMessage() {
-                this.setMessage(Component.literal("Mouse deceleration: " + ItemInteractionsConfig.mouseDeceleration));
+                this.setMessage(Component.literal("Mouse deceleration: " + ItemInteractionsConfig.getSetting("mouse_deceleration")));
             }
 
             @Override
             protected void applyValue() {
+                ItemInteractionsConfig.setSetting("mouse_deceleration", value);
                 ItemInteractionsConfig.mouseDeceleration = value;
-
             }
         });
 
@@ -281,15 +282,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             debugButton = leftColumnLayout.addChild(
                     Button.builder(debugButtonInitialText, (self) -> {
-                        ItemInteractionsConfig.debugDraws = !ItemInteractionsConfig.debugDraws;
+                        ItemInteractionsConfig.setSetting("debug", ! (boolean) ItemInteractionsConfig.getSetting("debug"));
 
-                        ChatFormatting color = ItemInteractionsConfig.debugDraws ?
+                        ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("debug") ?
                                 ChatFormatting.GREEN : ChatFormatting.RED;
 
 
                         self.setMessage(
                                 Component.literal("debug: ")
-                                        .append(Component.literal(""+ItemInteractionsConfig.debugDraws)
+                                        .append(Component.literal(""+ItemInteractionsConfig.getSetting("debug"))
                                                 .withStyle(color)
                                         )
                         );
@@ -305,15 +306,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         Component debugButtonInitialText = Component.literal("Inventory particles: ")
-                .append(Component.literal(""+ItemInteractionsConfig.enableGuiParticles)
-                        .withStyle(ItemInteractionsConfig.enableGuiParticles ? ChatFormatting.GREEN : ChatFormatting.RED)
+                .append(Component.literal(""+ItemInteractionsConfig.getSetting("gui_particles"))
+                        .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 );
 
         guiParticlesButton = rightColumnLayout.addChild(
                 Button.builder(debugButtonInitialText, (self) -> {
                     ItemInteractionsConfig.enableGuiParticles = !ItemInteractionsConfig.enableGuiParticles;
+                    ItemInteractionsConfig.setSetting("gui_particles", ItemInteractionsConfig.enableGuiParticles);
 
-                    ChatFormatting color = ItemInteractionsConfig.enableGuiParticles ?
+                    ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("gui_particles") ?
                             ChatFormatting.GREEN : ChatFormatting.RED;
 
 
@@ -358,7 +360,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
         int firstY = speedAnimLayout.getY();
         scaleAnimLayout.setY(firstY);
 
-
     }
 
     @Override
@@ -369,24 +370,27 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
     public void onCancel() {
-        ItemInteractionsConfig.animationConfig = oldAnimationConfig;
-        ItemInteractionsConfig.scaleSpeed = oldScaleSpeed;
-        ItemInteractionsConfig.scaleAmount = oldScaleAmount;
-        ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
-        ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
-        ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
+//        ItemInteractionsConfig.animationConfig = oldAnimationConfig;
+//        ItemInteractionsConfig.scaleSpeed = oldScaleSpeed;
+//        ItemInteractionsConfig.scaleAmount = oldScaleAmount;
+//        ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
+//        ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
+//        ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
+
+        ItemInteractionsConfig.settingsMap = previousSettingsMap;
         this.minecraft.setScreen(parent);
     }
 
     public void resetToDefaults() {
-        animationCycleButton.setValue(ItemInteractionsConfig.DefaultValues.animationConfig);
-        scaleSpeed.setValue(ItemInteractionsConfig.DefaultValues.scaleSpeed);
-        scaleAmount.setValue(ItemInteractionsConfig.DefaultValues.scaleAmount);
-        mouseSpeedMult.setValue(ItemInteractionsConfig.DefaultValues.mouseSpeedMult);
-        mouseDeceleration.setValue(ItemInteractionsConfig.DefaultValues.mouseDeceleration);
+        animationCycleButton.setValue((String) ItemInteractionsConfig.getDefaultSetting("animation"));
+        scaleSpeed.setValue((double) ItemInteractionsConfig.getDefaultSetting("scale_speed"));
+        scaleAmount.setValue((double) ItemInteractionsConfig.getDefaultSetting("scale_amount"));
+        mouseSpeedMult.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_speed_multiplier"));
+        mouseDeceleration.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_deceleration"));
+
         guiParticlesButton.setMessage(
                 Component.literal("Inventory particles: ").append(
-                Component.literal("" + ItemInteractionsConfig.DefaultValues.enableGuiParticles).withStyle(ChatFormatting.GREEN)
+                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_particles")).withStyle(ChatFormatting.GREEN)
         ));
 
         ItemInteractionsConfig.init();

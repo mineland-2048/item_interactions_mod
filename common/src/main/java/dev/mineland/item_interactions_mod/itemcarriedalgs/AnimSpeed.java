@@ -1,6 +1,7 @@
 package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 
@@ -8,9 +9,12 @@ import org.joml.Quaternionf;
 public class AnimSpeed extends AnimTemplate {
     public AnimSpeed() {
         super("speed");
+        addSetting("mouse_speed_multiplier", 1.0);
+        addSetting("mouse_deceleration", 1.0);
+
     }
 
-    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d) {
+    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
 
         PoseStack newPose = new PoseStack();
 
