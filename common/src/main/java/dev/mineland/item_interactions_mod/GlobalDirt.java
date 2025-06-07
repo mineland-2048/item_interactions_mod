@@ -235,6 +235,8 @@ public class GlobalDirt {
 
 //        System.out.println("Updating Timer");
         double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+        double mouseSpeedMult = ItemInteractionsConfig.mouseSpeedMult;
+        double mouseDeceleration = ItemInteractionsConfig.mouseDeceleration;
 
         currentMilis = Util.getMillis();
 
@@ -249,15 +251,16 @@ public class GlobalDirt {
 //        frameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
         spawnerTickDelta = tickScale;
 
-        double decay = 16 * (ItemInteractionsConfig.mouseDeceleration * ItemInteractionsConfig.mouseDeceleration);
+        double decay = 16 * (mouseDeceleration * mouseDeceleration);
         drag = Math.exp(-decay * frameDelta);
 
 
         mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
 
-        speedX = Math.clamp((speedX + (mouseDeltaX * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
-        speedY = Math.clamp((speedY + (mouseDeltaY * ItemInteractionsConfig.mouseSpeedMult)) * drag,-40f,  40f);
+
+        speedX = Math.clamp((speedX + (mouseDeltaX * mouseSpeedMult)) * drag,-40f,  40f);
+        speedY = Math.clamp((speedY + (mouseDeltaY * mouseSpeedMult)) * drag,-40f,  40f);
         absSpeed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
 
         shakeSpeed = (shakeSpeed + absSpeed) / 2;
