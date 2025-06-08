@@ -149,6 +149,7 @@ public class GlobalDirt {
 
     public static double absSpeed = 0;
     public static double shakeSpeed = 0;
+    public static double shakeThreshold = 40;
 
     public static boolean isShaking = false;
 //    public static int shakeTimer = 0;
@@ -208,6 +209,10 @@ public class GlobalDirt {
         topPos = 0;
         leftPos = 0;
 
+        absSpeed = 0;
+        shakeSpeed = 0;
+
+
         particleList.clear();
         slotSpawners.clear();
 
@@ -251,7 +256,7 @@ public class GlobalDirt {
 //        frameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
         spawnerTickDelta = tickScale;
 
-        double decay = 16 * (mouseDeceleration * mouseDeceleration);
+        double decay = 16; //* (mouseDeceleration * mouseDeceleration);
         drag = Math.exp(-decay * frameDelta);
 
 
@@ -259,13 +264,13 @@ public class GlobalDirt {
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
 
 
-        speedX = Math.clamp((speedX + (mouseDeltaX * mouseSpeedMult)) * drag,-40f,  40f);
-        speedY = Math.clamp((speedY + (mouseDeltaY * mouseSpeedMult)) * drag,-40f,  40f);
+        speedX = Math.clamp((speedX + (mouseDeltaX)) * drag,-40f,  40f);
+        speedY = Math.clamp((speedY + (mouseDeltaY)) * drag,-40f,  40f);
         absSpeed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
 
-        shakeSpeed = (shakeSpeed + absSpeed) / 2;
+        shakeSpeed = Math.clamp((shakeSpeed + (absSpeed * 0.5)) - 5, 0, shakeThreshold + 10);
         boolean wasShaking = isShaking;
-        isShaking = (shakeSpeed > 20);
+        isShaking = (shakeSpeed > shakeThreshold);
 
         if (isShaking && !wasShaking) {
             Collections.fill(carriedGuiParticleSpawnerTimer, 0f);

@@ -70,14 +70,16 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
         GlobalDirt.updateTimer();
 
         if (ItemInteractionsConfig.debugDraws) {
-            guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF0000FF);
-            guiGraphics.drawString(font, String.format("""
-                x: %d
-                y: %d
-                width: %d
-                height: %d
-                f: %f""", getX(), getY(), getWidth(), getHeight(), f),
-                    0, 0,0xFFFFFFFF);
+//            guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF0000FF);
+//            guiGraphics.drawString(font, String.format("""
+//                x: %d
+//                y: %d
+//                width: %d
+//                height: %d
+//                f: %f""", getX(), getY(), getWidth(), getHeight(), f),
+//                    0, 0,0xFFFFFFFF);
+
+
         }
 
 

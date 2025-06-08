@@ -1,9 +1,6 @@
 package dev.mineland.item_interactions_mod;
 
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.joml.Vector3f;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +13,6 @@ import java.util.Scanner;
 
 import java.lang.Double;
 import java.lang.Boolean;
-//import static dev.mineland.item_interactions_mod.GlobalDirt.deceleration;
 
 public class ItemInteractionsConfig {
     private static final Path configPath = Path.of("config", "item_interactions.cfg");
@@ -160,6 +156,7 @@ public class ItemInteractionsConfig {
             mouseDeceleration = (double) settingsMap.getOrDefault("mouse_deceleration", 1.0);
             mouseSpeedMult = (double) settingsMap.getOrDefault("mouse_speed_multiplier", 1.0);
             enableGuiParticles = (boolean) settingsMap.getOrDefault("gui_particles", true);
+            debugDraws = (boolean) settingsMap.getOrDefault("debug", false);
 
             writeConfig(configFile);
 

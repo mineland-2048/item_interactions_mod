@@ -4,10 +4,14 @@ import com.mojang.blaze3d.vertex.*;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 import static dev.mineland.item_interactions_mod.GuiRendererHelper.setPixel;
@@ -20,7 +24,7 @@ public class GuiRendererHelper {
         if (anim == null) return;
 
         if (prevItem.isEmpty() && !itemStack.isEmpty()) {
-            anim.reset();
+            anim.reset(initialX, initialY, initialZ);
         }
         prevItem = itemStack;
 
@@ -37,9 +41,93 @@ public class GuiRendererHelper {
     }
 
     public static void renderLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
-        LineAlgs.plotLine(guiGraphics, x0,y0,x1,y1, color);
+        renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
+    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
+        if (pixelated) {
+            if (x0 == x1 || y0 == y1) {
+                int px = 0, py = 0;
+                if (y0 != y1) {
+                    px = 1;
+                }
+
+                if (x0 != x1) {
+                    py = 1;
+                }
+
+                guiGraphics.fill((int) x0, (int) y0, (int) x1 + px, (int) y1+py, color);
+                return;
+
+            }
+
+            LineAlgs.plotLine(guiGraphics, (int) x0, (int) y0, (int) x1, (int) y1, color);
+            return;
+        }
+
+        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.gui());
+        Matrix4f matrix4f = guiGraphics.pose().last().pose();
+
+//        if (x0 > x1) {
+//            float o = x0;
+//            x0 = x1;
+//            x1 = o;
+//        }
+//
+//        if (y0 < y1) {
+//            float o = y0;
+//            y0 = y1;
+//            y1 = o;
+//        }
+
+        Vector2f p0 = new Vector2f(x0, y0);
+        Vector2f p1 = new Vector2f(x1, y1);
+
+        float angle = (float) Math.atan2(y1 - y0, x1 - x0);
+        float mag = p0.distance(p1);
+
+        Vector2f line = new Vector2f(angle, mag);
+
+
+
+
+
+
+
+
+        Vector2f[] points = new Vector2f[] {new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()};
+
+        points[0] = MiscUtils.pointAtFrom(new Vector2f((float) (+ (Math.PI*0.5)) + angle, 0.5f), p0);
+        points[1] = MiscUtils.pointAtFrom(new Vector2f((float) (+ (Math.PI*0.5)) + angle, 0.5f), p1);
+        points[2] = MiscUtils.pointAtFrom(new Vector2f((float) (- (Math.PI*0.5)) + angle, 0.5f), p1);
+        points[3] = MiscUtils.pointAtFrom(new Vector2f((float) (- (Math.PI*0.5)) + angle, 0.5f), p0);
+
+        float brX = points[0].x();
+        float brY = points[0].y();
+
+        float trX = points[1].x();
+        float trY = points[1].y();
+
+        float tlX  = points[2].x();
+        float tlY  = points[2].y();
+
+        float blX  = points[3].x();
+        float blY  = points[3].y();
+
+
+        vertexConsumer.addVertex(matrix4f, brX, brY, (float) 0).setColor(color);
+        vertexConsumer.addVertex(matrix4f, trX, trY, (float) 0).setColor(color);
+        vertexConsumer.addVertex(matrix4f, tlX, tlY, (float) 0).setColor(color);
+        vertexConsumer.addVertex(matrix4f, blX, blY, (float) 0).setColor(color);
+
+
+
+//        guiGraphics.drawString(Minecraft.getInstance().font, ""+line, 0, 0, 0xFFFFFFFF);
+//        System.out.println(line);
+
+
+
+    }
 // Source: https://zingl.github.io/Bresenham.pdf
     void plotLine3D (GuiGraphics guiGraphics, int x0, int y0, int z0, int x1, int y1, int z1, int color) {
         int dx = Math.abs(x1-x0), sx = x0<x1 ? 1:-1;

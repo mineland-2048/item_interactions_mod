@@ -1,12 +1,13 @@
 package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPreview;
+import dev.mineland.item_interactions_mod.CustomGuiComponents.GraphOverTimeWidget;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -44,6 +45,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private SteppedSliderButton scaleAmount;
     private SteppedSliderButton mouseSpeedMult;
     private SteppedSliderButton mouseDeceleration;
+    private Button isRope;
     private Button guiParticlesButton;
 
 
@@ -57,8 +59,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     LinearLayout speedAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout scaleAnimLayout = LinearLayout.vertical().spacing(4);
+    LinearLayout physAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
+    GraphOverTimeWidget speedXGraph = new GraphOverTimeWidget(GlobalDirt.shakeThreshold + 20, 60, true);
 
     static HashMap<String, Object> previousSettingsMap = new HashMap<>(ItemInteractionsConfig.settingsMap);
 
@@ -66,9 +70,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
 //    String oldAnimationConfig   = ItemInteractionsConfig.getAnimationSetting().id;
 //    double oldScaleSpeed        = (double) ItemInteractionsConfig.getSetting("scale_speed");
 //    double oldScaleAmount       = (double) ItemInteractionsConfig.getSetting("scale_amount");
-//    double oldMouseDeceleration = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
-//    double oldMouseSpeedMult    = (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier");
-//    boolean oldParticleEnabled  = (boolean) ItemInteractionsConfig.getSetting("gui_particles");
+    double oldMouseDeceleration = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
+    double oldMouseSpeedMult    = (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier");
+    boolean oldParticleEnabled  = (boolean) ItemInteractionsConfig.getSetting("gui_particles");
 //    public static double scaleSpeed;
 //    public static float scaleAmount;
 //    public static double mouseSpeedMult = 1;
@@ -131,6 +135,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         updateVisible();
+        speedXGraph.putMarker(GlobalDirt.shakeThreshold, 0xFFFF0000);
 
 
     }
@@ -141,6 +146,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     void updateVisible() {
         scaleAnimLayout.visitWidgets(widget -> widget.visible = false);
         speedAnimLayout.visitWidgets(widget -> widget.visible = false);
+        physAnimLayout.visitWidgets(widget -> widget.visible = false);
 
         animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
@@ -152,6 +158,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             case "speed" -> {
                 speedAnimLayout.visitWidgets(widget -> widget.visible = true);
+            }
+
+            case "physics" -> {
+                physAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
 
             default -> {
@@ -181,6 +191,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                     updateVisible();
                                 }
                         )
+
         );
 
 
@@ -269,9 +280,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
+        isRope = physAnimLayout.addChild(Button.builder(Component.literal("is rope"), (self) -> {
+                boolean value = (boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
+                ItemInteractionsConfig.setSetting("rope_is_rope", !value);
+                self.setMessage(Component.literal ("is rope: ").append(Component.literal(""+ value).withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED)) );
+            }).build()
+        );
 
         leftColumnLayout.addChild(speedAnimLayout);
         leftColumnLayout.addChild(scaleAnimLayout);
+        leftColumnLayout.addChild(physAnimLayout);
 
 
         if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
@@ -336,10 +354,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.layout.addToFooter(footerLayout);
 
         updateVisible();
-
-
     }
 
+
+    @Override
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        super.render(guiGraphics, i, j, f);
+        if (speedXGraph.visible) {
+            speedXGraph.plotPoint(GlobalDirt.shakeSpeed);
+        }
+    }
 
     @Override
     public void mouseMoved(double d, double e) {
@@ -360,6 +384,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
         int firstY = speedAnimLayout.getY();
         scaleAnimLayout.setY(firstY);
 
+        this.addRenderableWidget(speedXGraph);
+        this.speedXGraph.setPosition(8, 8+speedXGraph.getHeight());
+
     }
 
     @Override
@@ -369,13 +396,14 @@ public class ItemInteractionsSettingsScreen extends Screen {
         ItemInteractionsConfig.createConfig();
     }
 
+
     public void onCancel() {
 //        ItemInteractionsConfig.animationConfig = oldAnimationConfig;
 //        ItemInteractionsConfig.scaleSpeed = oldScaleSpeed;
 //        ItemInteractionsConfig.scaleAmount = oldScaleAmount;
-//        ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
-//        ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
-//        ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
+        ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
+        ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
+        ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
 
         ItemInteractionsConfig.settingsMap = previousSettingsMap;
         this.minecraft.setScreen(parent);
