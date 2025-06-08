@@ -1,9 +1,13 @@
 package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
+
+import static dev.mineland.item_interactions_mod.GlobalDirt.frameDelta;
 
 
 public class AnimSpeed extends AnimTemplate {
@@ -14,15 +18,25 @@ public class AnimSpeed extends AnimTemplate {
 
     }
 
+    float speedX = 0, speedY = 0;
     public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
 
         PoseStack newPose = new PoseStack();
 
+
         int posX = x + 8;
         int posY = y + 8;
         int posZ = 150;
-        float speedY = (float) (doubleSpeedY);
-        float speedX = (float) (doubleSpeedX);
+
+        double drag = Math.exp(-(16 * ItemInteractionsConfig.mouseDeceleration * ItemInteractionsConfig.mouseDeceleration) * frameDelta);
+        double mouseSpeedMultiplier = ItemInteractionsConfig.mouseSpeedMult;
+
+        speedX = (float) Math.clamp((speedX + (doubleSpeedX * mouseSpeedMultiplier)) * drag, -100, 100);
+        speedY = (float) Math.clamp((speedY + (doubleSpeedY * mouseSpeedMultiplier)) * drag, -100, 100);
+
+
+
+
         float zPlane = (232.0f + 150f);
         if (is3d) {
 

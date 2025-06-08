@@ -14,6 +14,10 @@ public class AnimTemplate {
         return new PoseStack();
     }
 
+    public PoseStack makePoseNoUpdate(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
+        return makePose(x,y,z,doubleSpeedX,doubleSpeedY,is3d,guiGraphics);
+    }
+
     public AnimTemplate(String id) {
         this.id = id;
     }
@@ -24,7 +28,7 @@ public class AnimTemplate {
 
     public AnimTemplate() {}
 
-    public void reset() {}
+    public void reset(int initialX, int initialY, int initialZ) {}
 
     public HashMap<String, Object> getSettingsList() {
         return settings;

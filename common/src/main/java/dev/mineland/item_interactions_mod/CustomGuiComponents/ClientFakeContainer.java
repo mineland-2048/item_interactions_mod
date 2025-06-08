@@ -89,23 +89,23 @@ public class ClientFakeContainer implements Container {
     public void renderSlots(GuiGraphics guiGraphics) {
         GlobalDirt.slotCount = 0;
         for (Slot slot : slots) {
-            if (ItemInteractionsConfig.debugDraws) {
-                int slotX = (int) ((slot.x - this.x) * 2);
-                int slotY = (int) 40 + ((slot.y - this.y) * 2);
 
-
-                guiGraphics.drawString(Minecraft.getInstance().font, "i: " + slot.index, (slotX), (slotY),  0xFFFFFFFF);
-                guiGraphics.drawString(Minecraft.getInstance().font, "x: " + slot.x, (slotX), (slotY + 10), 0xFFFFFFFF);
-                guiGraphics.drawString(Minecraft.getInstance().font, "y: " + slot.y, (slotX), (slotY + 20), 0xFFFFFFFF);
-
-                guiGraphics.fill(slot.x, slot.y, slot.x + 18, slot.y + 18, 0x20FF0000);
-                guiGraphics.renderOutline(slot.x, slot.y, 18, 18, 0x80FFFF00);
-
-                guiGraphics.renderOutline(this.x, this.y, 18*3, 18*3, 0xFF00FFFF);
-
-
-            }
-
+//            if (ItemInteractionsConfig.debugDraws) {
+//                int slotX = (int) ((slot.x - this.x) * 2);
+//                int slotY = (int) 40 + ((slot.y - this.y) * 2);
+//
+//
+//                guiGraphics.drawString(Minecraft.getInstance().font, "i: " + slot.index, (slotX), (slotY),  0xFFFFFFFF);
+//                guiGraphics.drawString(Minecraft.getInstance().font, "x: " + slot.x, (slotX), (slotY + 10), 0xFFFFFFFF);
+//                guiGraphics.drawString(Minecraft.getInstance().font, "y: " + slot.y, (slotX), (slotY + 20), 0xFFFFFFFF);
+//
+//                guiGraphics.fill(slot.x, slot.y, slot.x + 18, slot.y + 18, 0x20FF0000);
+//                guiGraphics.renderOutline(slot.x, slot.y, 18, 18, 0x80FFFF00);
+//
+//                guiGraphics.renderOutline(this.x, this.y, 18*3, 18*3, 0xFF00FFFF);
+//
+//
+//            }
 
             if (slot.getItem().isEmpty()) {
                 GlobalDirt.slotCount++;
@@ -123,19 +123,7 @@ public class ClientFakeContainer implements Container {
                 GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
                 GlobalDirt.slotCount++;
             }
-
-
         }
-
-
-
-
-        if (ItemInteractionsConfig.debugDraws) {
-            guiGraphics.drawString(Minecraft.getInstance().font, "x: " + this.x + ", y: " + this.y, 0, 200, 0xFFFFFFFF);
-        }
-
-
-
     }
 
     public void renderMouseItem(GuiGraphics guiGraphics, int x, int y) {

@@ -3,6 +3,8 @@ package dev.mineland.item_interactions_mod;
 import net.minecraft.Util;
 import net.minecraft.util.ColorRGBA;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +99,9 @@ public class MiscUtils {
     public static float lerp(float t, float a, float b) {
             return (a + ((b-a) * t));
     }
+    public static double lerp(double t, double a, double b) {
+            return (a + ((b-a) * t));
+    }
 
     public static int[] applyBrightness(int[] colorArray, double brightness) {
         double clampedBrightness = Math.clamp(brightness, 0, 1);
@@ -105,6 +110,10 @@ public class MiscUtils {
         int b = (int) (colorArray[3] * clampedBrightness);
 
         return new int[]{colorArray[0], r, g, b};
+
+    }
+    public static int applyBrightness(int color, double brightness) {
+        return array2Int(applyBrightness(int2Array(color), brightness));
     }
 
     public static boolean isNumber(String s) {
@@ -114,5 +123,50 @@ public class MiscUtils {
     public static boolean isBoolean(String s) {
         return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
     }
+
+    public static String numberMaxDigits(double num, int digits) {
+        return num < 0 ? String.valueOf(num).substring(0, digits+1) : String.valueOf(num).substring(0, digits);
+    }
+
+    public static String numberMaxDecimal(double num, int digits) {
+        String numString = String.valueOf(num);
+        if (numString.contains(".")) {
+            numString = numString.substring(0, Math.clamp(numString.indexOf(".") + digits, 0, numString.length()-1) );
+        }
+        if (numString.endsWith(".")) return numString.substring(0, numString.length()-1);
+
+        return numString;
+    }
+    public static String numberMaxDecimal(int num, int digits) {
+        String numString = String.valueOf(num);
+        if (numString.contains(".")) {
+            return numString.substring(0, Math.clamp(numString.indexOf(".") + digits, 0, numString.length()-1) );
+        }
+        return numString;
+    }
+
+
+    public static Vector2f pointAtFrom(Vector2f angleVector, Vector2f posVector) {
+
+        float x = posVector.x();
+        float y = posVector.y();
+
+        x += (float) Math.cos(angleVector.x()) * angleVector.y();
+        y += (float) Math.sin(angleVector.x()) * angleVector.y();
+        return new Vector2f(x, y);
+    }
+
+    public static Vector3f pointAtFrom(Vector3f angleVector, Vector3f posVector) {
+
+        float x = posVector.x();
+        float y = posVector.y();
+
+        x += (float) Math.cos(angleVector.x()) * angleVector.y();
+        y += (float) Math.sin(angleVector.x()) * angleVector.y();
+        return new Vector3f(x, y, posVector.z);
+    }
+
+
+
 
 }
