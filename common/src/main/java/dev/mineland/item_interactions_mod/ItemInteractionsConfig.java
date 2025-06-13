@@ -1,6 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
+import org.joml.Vector3f;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -46,7 +47,7 @@ public class ItemInteractionsConfig {
             return;
         }
         if (!value.getClass().equals(settingsMap.get(setting).getClass())) {
-            Item_interactions_mod.errorMessage("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName());
+            Item_interactions_mod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
             return;
         }
 
@@ -138,6 +139,11 @@ public class ItemInteractionsConfig {
                     }
                     else if (MiscUtils.isBoolean(value))  {
                         boolean a = Boolean.parseBoolean(value);
+                        settingsMap.put(arg, a);
+                    }
+
+                    else if (MiscUtils.isVector(value)) {
+                        Vector3f a = MiscUtils.parseVector3f(value);
                         settingsMap.put(arg, a);
                     }
 //                    else if (arg.equals("animation")) { settingsMap.put("animation", animations.getOrDefault(value, animations.get("speed"))); }

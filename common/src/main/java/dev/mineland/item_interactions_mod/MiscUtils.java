@@ -1,13 +1,11 @@
 package dev.mineland.item_interactions_mod;
 
-import net.minecraft.Util;
-import net.minecraft.util.ColorRGBA;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 public class MiscUtils {
 
@@ -103,6 +101,26 @@ public class MiscUtils {
             return (a + ((b-a) * t));
     }
 
+    public static double lerpRotation(double t, double a, double b) {
+        var shortest_angle=((((b - a) % Math.PI) + (Math.PI * 1.5)) % Math.PI) - (Math.PI/2);
+        return a + shortest_angle * t;
+//        double d = ((b - a + (Math.PI * 1.5)) % Math.PI) - (Math.PI*0.5);
+//        return a + d * t;
+    }
+
+    public static Vector3f lerpVector3f(float t, Vector3f a, Vector3f b) {
+        return new Vector3f(
+                MiscUtils.lerp(t, a.x(), b.x()),
+                MiscUtils.lerp(t, a.y(), b.y()),
+                MiscUtils.lerp(t, a.z(), b.z())
+            );
+    }
+
+    public static double lerpRotationDegrees(double t, double a, double b) {
+        double d = ((b - a + 540) % 360) - 180;
+        return a + d * t;
+    }
+
     public static int[] applyBrightness(int[] colorArray, double brightness) {
         double clampedBrightness = Math.clamp(brightness, 0, 1);
         int r = (int) (colorArray[1] * clampedBrightness);
@@ -117,11 +135,50 @@ public class MiscUtils {
     }
 
     public static boolean isNumber(String s) {
-        return NumberUtils.isParsable(s);
+        return NumberUtils.isParsable(s) || NumberUtils.isCreatable(s);
     }
 
     public static boolean isBoolean(String s) {
         return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
+    }
+
+    public static boolean isVector(String s) {
+        if (s.isEmpty()) return false;
+        if (!s.startsWith("(") || !s.endsWith(")")) return false;
+
+
+        s = s.replace("(", "").replace(")", "").trim().replace("  ", " ");
+        String[] rawValues = s.split(" ");
+
+        for (String rawValue : rawValues) {
+            if (!isNumber(rawValue)) return false;
+        }
+
+        return true;
+    }
+
+    private static float[] parseVectorGetArray(String s) {
+        if (s.isEmpty()) throw(new NumberFormatException("String is empty"));
+        if (!s.startsWith("(") || !s.endsWith(")")) throw new NumberFormatException("String is not enclosed in (braces)");
+
+
+        s = s.replace("(", "").replace(")", "").trim().replace("  ", " ");
+        String[] rawValues = s.split(" ");
+
+        float[] numValues = new float[s.length()];
+        int i = 0;
+        for (String rawValue : rawValues) {
+            if (isNumber(rawValue)) {
+                numValues[i] = Float.parseFloat(rawValue);
+                i++;
+            } else throw new NumberFormatException("Value '" + rawValues[i] + "' is not a valid number");
+        }
+
+        return numValues;
+    }
+    public static Vector3f parseVector3f(String s) {
+        float[] numValues = parseVectorGetArray(s);
+        return new Vector3f(numValues);
     }
 
     public static String numberMaxDigits(double num, int digits) {
@@ -165,7 +222,6 @@ public class MiscUtils {
         y += (float) Math.sin(angleVector.x()) * angleVector.y();
         return new Vector3f(x, y, posVector.z);
     }
-
 
 
 

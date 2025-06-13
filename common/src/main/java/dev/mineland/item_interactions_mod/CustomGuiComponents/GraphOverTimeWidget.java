@@ -35,6 +35,12 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
     String[] yAxisMarkers;
 
+    private int colorLineNew = 0xFFFFFFFF;
+    private int colorLineOld = 0xFFFFFFFF;
+
+    private int colorBackground = 0xc0000000;
+
+
     int fontHeight = Minecraft.getInstance().font.lineHeight;
 
     HashMap<String, Marker> markers = new HashMap();
@@ -49,6 +55,10 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
     public GraphOverTimeWidget(double graphHeight, int graphWidth, int graphDivisions) {
         this(0, 0, 0, 0, 0, graphHeight, graphWidth, true, graphDivisions, Component.empty());
+    }
+
+    public GraphOverTimeWidget(double graphHeight, int graphWidth, int graphDivisions, boolean showYAxis) {
+        this(0, 0, 0, 0, 0, graphHeight, graphWidth, showYAxis, graphDivisions, Component.empty());
     }
 
     public GraphOverTimeWidget(double minGraphY, double maxGraphY, int graphWidth) {
@@ -101,12 +111,32 @@ public class GraphOverTimeWidget extends AbstractWidget {
         dead = false;
     }
 
+    public void setBackgroundColor(int color) {
+        colorBackground = color;
+    }
+
+    public void setColor(int color) {
+        setColor(color, color);
+    }
+
+    public void setColor(int colStart, int colEnd) {
+        setColorFresh(colStart);
+        setColorOld(colEnd);
+    }
+
+    public void setColorFresh(int col) {
+        this.colorLineNew = col;
+    }
+
+    public void setColorOld(int col) {
+        this.colorLineOld = col;
+    }
 
     boolean dead;
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (!this.visible) return;
-        guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xc0000000);
+        guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), colorBackground);
         guiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFF808080);
 
         try {
@@ -154,7 +184,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
                 int posX = (int) Math.floor((float) i * getGraphWidth() / graphDataLength);
                 int posY = (int) (((points[entry] - minGraphY) * getGraphHeight() / graphDataHeight)) + 1;
-                int color = 0xFFFFFF00 + (255*i/points.length);
+                int color = MiscUtils.colorLerp( (float) (i/points.length), colorLineNew, colorLineOld);
 
 
 //                color = i == 0 ? 0xFFFF0000 : color;
@@ -222,6 +252,14 @@ public class GraphOverTimeWidget extends AbstractWidget {
         putMarker(yPos, color, "m" + markers.size());
     }
 
+    public int getGraphDataLength() {
+        return graphDataLength;
+    }
+
+    public double getGraphDataHeight() {
+        return graphDataHeight;
+    }
+
 
     private static class Marker {
         public double val;
@@ -233,4 +271,6 @@ public class GraphOverTimeWidget extends AbstractWidget {
             this.label = label;
         }
     }
+
+
 }

@@ -1,9 +1,13 @@
 package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.CommonInputs;
@@ -15,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SteppedSliderButton extends AbstractWidget {
     private static final ResourceLocation SLIDER_SPRITE = ResourceLocation.withDefaultNamespace("widget/slider");
@@ -155,7 +160,9 @@ public abstract class SteppedSliderButton extends AbstractWidget {
                 boolean leftKeyPressed = i == 263;
                 if (leftKeyPressed || i == 262) {
                     int f = leftKeyPressed ? -1 : 1;
-                    this.setValueStep(this.selectedStep + f);
+                    if (this.steps == 0) {
+                      this.setValue(Math.clamp(this.value + f/range, minValue, maxValue));
+                    } else this.setValueStep(this.selectedStep + f);
                     return true;
                 }
             }
@@ -176,7 +183,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     }
 
     private void setValueInternal(double d) {
-        double currentValue = (double) this.value;
+        double currentValue = this.value;
         int targetStep = -1;
         double targetValue = d ;
 
@@ -187,7 +194,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
         if (currentValue != targetValue) {
 //            why is
-            this.value = (double) Math.round(targetValue * 10) / 10;
+            this.value = (double) Math.round(targetValue * 100) / 100;
             this.selectedStep = targetStep;
             this.applyValue();
         }
@@ -221,7 +228,6 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
     protected abstract void updateMessage();
     protected abstract void applyValue();
-
 
 
 }
