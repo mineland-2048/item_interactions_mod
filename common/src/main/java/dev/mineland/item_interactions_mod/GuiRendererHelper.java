@@ -12,16 +12,14 @@ import net.minecraft.client.gui.render.state.pip.GuiEntityRenderState;
 import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
-import static dev.mineland.item_interactions_mod.GuiRendererHelper.setPixel;
+import static dev.mineland.item_interactions_mod.GuiRendererHelper.outOfBoundsPoint;
 
 public class GuiRendererHelper {
 
@@ -106,31 +104,11 @@ public class GuiRendererHelper {
         VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
-//        if (x0 > x1) {
-//            float o = x0;
-//            x0 = x1;
-//            x1 = o;
-//        }
-//
-//        if (y0 < y1) {
-//            float o = y0;
-//            y0 = y1;
-//            y1 = o;
-//        }
 
         Vector2f p0 = new Vector2f(x0, y0);
         Vector2f p1 = new Vector2f(x1, y1);
 
         float angle = (float) Math.atan2(y1 - y0, x1 - x0);
-        float mag = p0.distance(p1);
-
-        Vector2f line = new Vector2f(angle, mag);
-
-
-
-
-
-
 
 
         Vector2f[] points = new Vector2f[] {new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()};
@@ -166,19 +144,155 @@ public class GuiRendererHelper {
 
 
     }
-// Source: https://zingl.github.io/Bresenham.pdf
-    void plotLine3D (GuiGraphics guiGraphics, int x0, int y0, int z0, int x1, int y1, int z1, int color) {
-        int dx = Math.abs(x1-x0), sx = x0<x1 ? 1:-1;
-        int dy = Math.abs(y1-y0), sy = y0<y1 ? 1:-1;
-        int dz = Math.abs(z1-z0), sz = z0<z1 ? 1:-1;
-        int dm = Math.max(Math.max(dx,dy) ,dz), i = dm; /* maximum difference */
-        for (x1 = y1 = z1 = i/2; i-- >= 0; ) { /* loop */
-            setPixel(guiGraphics, x0,y0,color);
-            x1 -= dx; if (x1 < 0) { x1 += dm; x0 += sx; }
-            y1 -= dy; if (y1 < 0) { y1 += dm; y0 += sy; }
-            z1 -= dz; if (z1 < 0) { z1 += dm; z0 += sz; }
+
+
+//    TODO:
+//     - add line colors per length
+//     - add line color gradients
+
+    public static void renderLines_RepeatColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+        int pointsLength = points.length;
+        int colorsLength = colors.length;
+
+        int length = Math.max(pointsLength, colorsLength);
+        int[] newColors = new int[length + 1];
+
+        for (int i = 0; i <= length; i++) {
+            newColors[i] = colors[i%colors.length];
         }
+
+        renderLines(guiGraphics, points, newColors, pixelated);
     }
+
+    public static void renderLine_ColorPattern(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int[] colors, int repeats, boolean pixelated) {
+        if (repeats < 1) repeats = 1;
+        if (samePoint(x0,y0,x1,y1)) return;
+        if (colors.length == 0) return;
+
+        int length = repeats * colors.length;
+        float[][] points = new float[1 + length][2];
+
+        for (int i = 0; i <= length; i++) {
+            float x, y;
+            float progress = (float) i / length;
+
+            x = MiscUtils.lerp(progress, x0, x1);
+            y = MiscUtils.lerp(progress, y0, y1);
+
+            points[i] = new float[]{x, y};
+        }
+
+        renderLines_RepeatColors(guiGraphics, points, colors, pixelated);
+
+
+
+    }
+
+//    TODO: maybe add lerped colored lines.
+//    public static void renderLines_LerpColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+//        int[] newColors = new int[points.length];
+//
+//        for (int i = 0; i < newColors.length; i++) {
+//            newColors[i] =
+//        }
+//
+//    }
+
+    private static void renderLines(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+        if (points.length == 0) return;
+
+        if (pixelated) renderPixelatedLines(guiGraphics, points, colors);
+        else renderSmoothLines(guiGraphics, points, colors);
+    }
+
+    private static void renderPixelatedLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
+
+        if (points.length == 1) setPixel(guiGraphics, (int) points[0][0], (int) points[0][1], colors[0]);
+        int i = 0;
+        for (; i < points.length - 1; i++) {
+            float[] currentPoint = points[i];
+            float[] nextPoint = points[i+1];
+            if (samePoint( (int) currentPoint[0], (int) currentPoint[1],
+                           (int) nextPoint[0], (int) nextPoint[1])
+            ) {
+                continue;
+            }
+
+            if (outOfBoundsPoint(currentPoint[0], currentPoint[1])) break;
+
+            renderLine(guiGraphics, currentPoint[0], currentPoint[1], nextPoint[0], nextPoint[1], colors[i], true);
+        }
+
+
+    }
+
+    private static void renderSmoothLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
+        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.gui());
+        Matrix4f matrix4f = guiGraphics.pose().last().pose();
+
+        for (int i=0; i < points.length-1; i++) {
+            float x0 = points[i][0],    y0 = points[i][1];
+            float x1 = points[i+1][0],  y1 = points[i+1][1];
+
+
+            Vector2f p0 = new Vector2f(x0, y0);
+            Vector2f p1 = new Vector2f(x1, y1);
+
+            float angle = (float) Math.atan2(y1 - y0, x1 - x0);
+
+
+            Vector2f[] quadPoints = new Vector2f[] {new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()};
+
+            quadPoints[0] = MiscUtils.pointAtFrom(new Vector2f((float) (+ (Math.PI*0.5)) + angle, 0.5f), p0);
+            quadPoints[1] = MiscUtils.pointAtFrom(new Vector2f((float) (+ (Math.PI*0.5)) + angle, 0.5f), p1);
+            quadPoints[2] = MiscUtils.pointAtFrom(new Vector2f((float) (- (Math.PI*0.5)) + angle, 0.5f), p1);
+            quadPoints[3] = MiscUtils.pointAtFrom(new Vector2f((float) (- (Math.PI*0.5)) + angle, 0.5f), p0);
+
+            float brX = quadPoints[0].x();
+            float brY = quadPoints[0].y();
+
+            float trX = quadPoints[1].x();
+            float trY = quadPoints[1].y();
+
+            float tlX  = quadPoints[2].x();
+            float tlY  = quadPoints[2].y();
+
+            float blX  = quadPoints[3].x();
+            float blY  = quadPoints[3].y();
+
+
+            vertexConsumer.addVertex(matrix4f, brX, brY, (float) 0).setColor(colors[i]);
+            vertexConsumer.addVertex(matrix4f, trX, trY, (float) 0).setColor(colors[i]);
+            vertexConsumer.addVertex(matrix4f, tlX, tlY, (float) 0).setColor(colors[i]);
+            vertexConsumer.addVertex(matrix4f, blX, blY, (float) 0).setColor(colors[i]);
+
+        }
+
+
+
+    }
+
+
+    public static boolean outOfBoundsPoint(int x, int y) {
+        return
+                (x < 0 || x > Minecraft.getInstance().getWindow().getWidth())
+                        || (y < 0 || y > Minecraft.getInstance().getWindow().getHeight());
+    }
+
+    public static boolean outOfBoundsPoint(float x, float y) {
+        return outOfBoundsPoint((int) x, (int) y);
+    }
+
+    public static boolean samePoint(float x0, float y0, float x1, float y1) {
+        return x0 == x1 && y0 == y1;
+    }
+
+    public static boolean samePoint(float[] p0, float[] p1) {
+        return samePoint(p0[0], p0[1], p1[0], p1[1]);
+    }
+
+
+
 }
 
 
@@ -196,14 +310,31 @@ class LineAlgs {
         int D = (2 * dy) - dx;
         int y = y0;
 
+        int l = x0, r = x0;
+
+
         for (int x = x0; x < x1; x++) {
-            setPixel(guiGraphics, x, y, color);
+//            setPixel(guiGraphics, x, y, color);
             if (D > 0) {
+
+                r = x;
+                guiGraphics.fill(l, y, r, y+1, color);
+                l = x;
+
                 y = y + yi;
                 D = D + (2 * (dy - dx));
             } else D = D + 2 * dy;
 
+            if (outOfBoundsPoint(x, y)) {
+                guiGraphics.fill(l, y, x, y+1, color);
+                return;
+            }
+
         }
+
+        guiGraphics.fill(l, y, x1, y+1, color);
+
+
 
     }
 
@@ -219,16 +350,26 @@ class LineAlgs {
 
         int D = (2 * dx) - dy;
         int x = x0;
-
+        int t = y0, b = y0;
         for (int y = y0; y < y1; y++) {
-            setPixel(guiGraphics, x, y, color);
+//            setPixel(guiGraphics, x, y, color);
             if (D > 0) {
+                t = y;
+                guiGraphics.fill(x, t, x+1, b, color);
+                b = y;
                 x = x + xi;
                 D = D + (2 * (dx - dy));
             } else D = D + 2 * dx;
 
+            if (outOfBoundsPoint(x, y)) {
+                guiGraphics.fill(x, t, x+1, b, color);
+                return;
+            }
         }
+        guiGraphics.fill(x, t, x+1, y1, color);
+
     }
+
 
     public static void plotLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
         if (Math.abs(y1 - y0) < Math.abs(x1-x0)) {

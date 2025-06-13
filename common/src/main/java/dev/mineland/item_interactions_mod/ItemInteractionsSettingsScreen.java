@@ -3,6 +3,7 @@ package dev.mineland.item_interactions_mod;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPreview;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.GraphOverTimeWidget;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimPhysics;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -20,6 +21,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +48,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private SteppedSliderButton mouseSpeedMult;
     private SteppedSliderButton mouseDeceleration;
     private Button isRope;
+    private SteppedSliderButton ropeElasticity;
+    private SteppedSliderButton ropeLength;
+    private SteppedSliderButton ropeGravity;
+    private SteppedSliderButton ropeStress;
     private Button guiParticlesButton;
 
 
@@ -54,7 +60,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     LinearLayout linearLayout = this.layout.addToContents(LinearLayout.vertical().spacing(8));
     LinearLayout bodyLayout = linearLayout.addChild(LinearLayout.horizontal(), LayoutSettings::alignHorizontallyCenter).spacing(8);
-    LinearLayout leftColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
+    LinearLayout leftColumnLayout = bodyLayout.addChild(LinearLayout.vertical(), LayoutSettings::alignVerticallyTop ).spacing(8);
 
 
     LinearLayout speedAnimLayout = LinearLayout.vertical().spacing(4);
@@ -62,7 +68,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout physAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
-    GraphOverTimeWidget speedXGraph = new GraphOverTimeWidget(GlobalDirt.shakeThreshold + 20, 60, true);
+    GraphOverTimeWidget rotationAngleGraph = new GraphOverTimeWidget(Math.PI*2, 60, 3);
+    GraphOverTimeWidget rotationRawGraph = new GraphOverTimeWidget(Math.PI*2, 60, 3);
 
     static HashMap<String, Object> previousSettingsMap = new HashMap<>(ItemInteractionsConfig.settingsMap);
 
@@ -91,6 +98,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 Scale: scales the item up on cycles
                 Physics: speen
                 None: no animation""";
+
 
     public ItemInteractionsSettingsScreen(Screen parent){
         super(Component.literal("Item interactions mod settings"));
@@ -135,7 +143,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
         updateVisible();
-        speedXGraph.putMarker(GlobalDirt.shakeThreshold, 0xFFFF0000);
+//        rotationAngleGraph.putMarker(GlobalDirt.shakeThreshold, 0xFFFF0000);
+        rotationAngleGraph.setColor(0xFFFFFFFF, 0xFFFF0000);
+        rotationRawGraph.setColor(0x80FF0000);
+        rotationRawGraph.setBackgroundColor(0);
 
 
     }
@@ -195,101 +206,20 @@ public class ItemInteractionsSettingsScreen extends Screen {
         );
 
 
+        addScaleAnimSettings();
 
-        scaleSpeed = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_speed"), 0, 4, 40, false) {
-            {
-                this.value = (double) ItemInteractionsConfig.getSetting("scale_speed");
-                this.applyValue();
-                this.updateMessage();
-            }
+        addSpeedAnimSettings();
 
-            @Override
-            protected void updateMessage() {
-                this.setMessage(Component.literal("Scale speed: " + ItemInteractionsConfig.getSetting("scale_speed")));
-            }
-
-            @Override
-            protected void applyValue() {
-                ItemInteractionsConfig.setSetting("scale_speed", value);
-
-            }
-
-        });
-
-        scaleAmount = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_amount"), 0, 2, 20, false) {
-            {
-                this.value = (double) ItemInteractionsConfig.getSetting("scale_amount");
-                this.applyValue();
-                this.updateMessage();
-            }
-
-            @Override
-            protected void updateMessage() {
-                this.setMessage(Component.literal("Scale amount: " + ItemInteractionsConfig.getSetting("scale_amount")));
-            }
-
-            @Override
-            protected void applyValue() {
-                ItemInteractionsConfig.setSetting("scale_amount", Math.clamp(this.value, this.minValue, this.maxValue));
-
-            }
-
-        });
-
-        mouseSpeedMult = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier"), -2, 2, 40) {
-            {
-                this.updateMessage();
-            }
-
-            @Override
-            protected void updateMessage() {
+        addPhysAnimSettings();
 
 
-                Component message = Component.literal("Mouse speed: " + ItemInteractionsConfig.getSetting("mouse_speed_multiplier") + "x");
+//        leftColumnLayout.addChild(speedAnimLayout);
+//        leftColumnLayout.addChild(scaleAnimLayout);
+//        leftColumnLayout.addChild(physAnimLayout);
 
-
-                this.setMessage(message);
-
-            }
-
-            @Override
-            protected void applyValue() {
-                ItemInteractionsConfig.setSetting("mouse_speed_multiplier", value);
-                ItemInteractionsConfig.mouseSpeedMult = value;
-
-            }
-
-        });
-
-        mouseDeceleration = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_deceleration"), 0, 1, 10) {
-            {
-                this.value = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
-                this.applyValue();
-                this.updateMessage();
-            }
-
-            @Override
-            protected void updateMessage() {
-                this.setMessage(Component.literal("Mouse deceleration: " + ItemInteractionsConfig.getSetting("mouse_deceleration")));
-            }
-
-            @Override
-            protected void applyValue() {
-                ItemInteractionsConfig.setSetting("mouse_deceleration", value);
-                ItemInteractionsConfig.mouseDeceleration = value;
-            }
-        });
-
-        isRope = physAnimLayout.addChild(Button.builder(Component.literal("is rope"), (self) -> {
-                boolean value = (boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
-                ItemInteractionsConfig.setSetting("rope_is_rope", !value);
-                self.setMessage(Component.literal ("is rope: ").append(Component.literal(""+ value).withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED)) );
-            }).build()
-        );
-
-        leftColumnLayout.addChild(speedAnimLayout);
-        leftColumnLayout.addChild(scaleAnimLayout);
-        leftColumnLayout.addChild(physAnimLayout);
+        this.layout.addToContents(speedAnimLayout);
+        this.layout.addToContents(scaleAnimLayout);
+        this.layout.addToContents(physAnimLayout);
 
 
         if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
@@ -356,12 +286,189 @@ public class ItemInteractionsSettingsScreen extends Screen {
         updateVisible();
     }
 
+    private void addPhysAnimSettings() {
+        boolean isRope = (boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
+        double elasticity = (double) ItemInteractionsConfig.getSetting("rope_elasticity");
+        double length = (double) ItemInteractionsConfig.getSetting("rope_length");
+        var gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
+        double stress = (double) ItemInteractionsConfig.getSetting("rope_stress");
+
+        System.out.println(gravity);
+
+        this.isRope = physAnimLayout.addChild(Button.builder(Component.literal("is rope").append(Component.literal( ""+ isRope).withStyle(isRope ? ChatFormatting.GREEN : ChatFormatting.RED)), (self) -> {
+            final boolean rope = !(boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
+            ItemInteractionsConfig.setSetting("rope_is_rope", rope);
+                self.setMessage(Component.literal ("is rope: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
+            }).build()
+        );
+
+        ropeElasticity = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
+            {
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                Component message = Component.literal("Elasticity: " + value);
+                this.setMessage(message);
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("rope_elasticity", value);
+            }
+        });
+
+        ropeLength = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, length, 0, 64, 64, false) {
+            {
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                Component message = Component.literal("Length: " + (int) value);
+                this.setMessage(message);
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("rope_length", value);
+            }
+        });
+
+        ropeGravity = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, gravity.y(), -1, 1) {
+            {
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                Component message = Component.literal("Gravity: " + value);
+                this.setMessage(message);
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("rope_gravity", new Vector3f(0, (float) value, 0));
+            }
+        });
+
+        ropeStress = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, stress, 0, 1, 20) {
+            {
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                Component message = Component.literal("Stress: " + value);
+                this.setMessage(message);
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("rope_stress", value);
+            }
+        });
+    }
+
+    private void addSpeedAnimSettings() {
+        mouseSpeedMult = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier"), -2, 2, 40) {
+            {
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+
+
+                Component message = Component.literal("Mouse speed: " + ItemInteractionsConfig.getSetting("mouse_speed_multiplier") + "x");
+
+
+                this.setMessage(message);
+
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("mouse_speed_multiplier", value);
+                ItemInteractionsConfig.mouseSpeedMult = value;
+
+            }
+
+        });
+
+        mouseDeceleration = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_deceleration"), 0, 1, 10) {
+            {
+                this.value = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
+                this.applyValue();
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Component.literal("Mouse deceleration: " + ItemInteractionsConfig.getSetting("mouse_deceleration")));
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("mouse_deceleration", value);
+                ItemInteractionsConfig.mouseDeceleration = value;
+            }
+        });
+    }
+    private void addScaleAnimSettings() {
+
+        scaleSpeed = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_speed"), 0, 4, 40, false) {
+            {
+                this.value = (double) ItemInteractionsConfig.getSetting("scale_speed");
+                this.applyValue();
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Component.literal("Scale speed: " + ItemInteractionsConfig.getSetting("scale_speed")));
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("scale_speed", value);
+
+            }
+
+        });
+
+        scaleAmount = scaleAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("scale_amount"), 0, 2, 20, false) {
+            {
+                this.value = (double) ItemInteractionsConfig.getSetting("scale_amount");
+                this.applyValue();
+                this.updateMessage();
+            }
+
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Component.literal("Scale amount: " + ItemInteractionsConfig.getSetting("scale_amount")));
+            }
+
+            @Override
+            protected void applyValue() {
+                ItemInteractionsConfig.setSetting("scale_amount", Math.clamp(this.value, this.minValue, this.maxValue));
+
+            }
+
+        });
+    }
+
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         super.render(guiGraphics, i, j, f);
-        if (speedXGraph.visible) {
-            speedXGraph.plotPoint(GlobalDirt.shakeSpeed);
+        if (rotationAngleGraph.visible) {
+            if (ItemInteractionsConfig.getSetting("animation").equals("physics")){
+                rotationAngleGraph.plotPoint(((AnimPhysics) ItemInteractionsConfig.getAnimationSetting()).rotationAngle);
+                rotationRawGraph.plotPoint(((AnimPhysics) ItemInteractionsConfig.getAnimationSetting()).angle);
+
+            }
         }
     }
 
@@ -381,11 +488,21 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         this.layout.arrangeElements();
 
-        int firstY = speedAnimLayout.getY();
-        scaleAnimLayout.setY(firstY);
+        leftColumnLayout.setY(rightColumnLayout.getY());
+        int firstY = leftColumnLayout.getY() + Button.DEFAULT_HEIGHT + Button.DEFAULT_SPACING;
 
-        this.addRenderableWidget(speedXGraph);
-        this.speedXGraph.setPosition(8, 8+speedXGraph.getHeight());
+        speedAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
+        scaleAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
+        physAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
+
+        this.addRenderableWidget(rotationAngleGraph);
+        this.rotationAngleGraph.setSize(rotationAngleGraph.getGraphDataLength(), (int) rotationAngleGraph.getGraphDataHeight()*10);
+        this.rotationAngleGraph.setPosition(8, 8);
+
+        this.addRenderableWidget(rotationRawGraph);
+        this.rotationRawGraph.setSize(rotationRawGraph.getGraphDataLength(), (int) rotationRawGraph.getGraphDataHeight()*10);
+        this.rotationRawGraph.setPosition(8, 8);
+
 
     }
 
@@ -415,6 +532,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
         scaleAmount.setValue((double) ItemInteractionsConfig.getDefaultSetting("scale_amount"));
         mouseSpeedMult.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_speed_multiplier"));
         mouseDeceleration.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_deceleration"));
+
+        isRope.setMessage(Component.literal("Is rope: ").append(
+                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("rope_is_rope")).withStyle(ChatFormatting.RED)
+        ));
+
+        ropeElasticity.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_elasticity"));
+        ropeLength.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_length"));
+        ropeGravity.setValue(((Vector3f) ItemInteractionsConfig.getDefaultSetting("rope_gravity")).y());
+        ropeStress.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_stress"));
+
 
         guiParticlesButton.setMessage(
                 Component.literal("Inventory particles: ").append(
