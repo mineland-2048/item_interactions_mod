@@ -1,14 +1,20 @@
 package dev.mineland.item_interactions_mod;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MiscUtils {
 
+    public static void setGuiGraphics(GuiGraphics gg) {
+        GlobalDirt.globalGuiGraphics = gg;
+    }
     //    I dont know if java has any counting function for strings, so i made this. Aeugh
     public static int count(String s, String match) {
         int length = match.length();
@@ -18,7 +24,6 @@ public class MiscUtils {
         }
         return result;
     }
-
 
     public static String preNumberCharacter(int number, String characters) {
         if (number < 0) {
@@ -224,5 +229,122 @@ public class MiscUtils {
     }
 
 
+    public static boolean outOfBoundsPoint(int x, int y, int top, int left, int bottom, int right  ) {
+        return
+                (x < left || x > right)
+             || (y < top || y > bottom);
 
+    }
+
+    public static boolean outOfBoundsPoint(float x, float y, float top, float left, float bottom, float right  ) {
+        return
+                (x < left || x > right)
+             || (y < top || y > bottom);
+
+    }
+
+    public static boolean outOfBoundsPoint(int x, int y) {
+        return outOfBoundsPoint(x, y, 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
+    }
+
+    public static boolean outOfBoundsPoint(float x, float y) {
+        return outOfBoundsPoint((int) x, (int) y);
+    }
+
+    public static boolean samePoint(float x0, float y0, float x1, float y1) {
+        return x0 == x1 && y0 == y1;
+    }
+
+    public static boolean samePoint(float[] p0, float[] p1) {
+        return samePoint(p0[0], p0[1], p1[0], p1[1]);
+    }
+
+
+    public static void displayErrorInUi(String s) {
+        ErrorDisplay.addMessage(s);
+    }
+
+    public static int max(int... numbers) {
+        int res = numbers[0];
+        for (int n : numbers) {
+            res = Math.max(n, res);
+        }
+
+        return res;
+    }
+
+
+    public static class ErrorDisplay {
+        static List<Message> messages = new ArrayList<>();
+
+        static int maxTime = 5;
+
+        public static void addMessage(String s) {
+            int i = -1;
+            for (Message m : messages) {
+                i++;
+                if (s.equals(m.string)) {
+                    messages.get(i).time = 0;
+                    break;
+                }
+            }
+
+            if (i == -1) messages.add(new Message(s));
+        }
+        public static void drawMessages() {
+            int padding = 4;
+            int currentHeight = 0;
+            Font font = Minecraft.getInstance().font;
+            GuiGraphics g = GlobalDirt.getGlobalGuiGraphics();
+
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 100);
+
+            int maxLength = 0;
+            for (int messageIndex = 0; messageIndex < messages.size(); messageIndex++) {
+                Message message = messages.get(messageIndex);
+                String[] lines = message.string.split(String.format("%n"));
+                for (String line : lines) {
+                    maxLength = Math.max(maxLength, font.width(line));
+                    g.drawString(
+                            font,
+                            line,
+                            padding, currentHeight + padding,
+                            MiscUtils.colorLerp(message.time / maxTime, 0xFFFF0000, 0xFFFFFFFF)
+                    );
+
+                    currentHeight += font.lineHeight;
+
+                }
+                currentHeight += font.lineHeight + 4;
+                message.time += GlobalDirt.msTickDelta;
+
+                if (message.time >= maxTime) {
+                    messages.remove(messageIndex);
+                }
+
+                messageIndex++;
+            }
+            g.pose().translate(0, 0, -1);
+            g.fill(0, 0, maxLength + padding*2, currentHeight - font.lineHeight + padding, 0xd0000000);
+            g.pose().popPose();
+
+
+        }
+
+        public static boolean hasMessages() {
+            return !messages.isEmpty();
+        }
+
+        static class Message {
+            public Message(String s) {
+                this.string = s;
+                this.time = 0;
+            }
+            String string;
+            float time;
+
+        }
+
+    }
 }

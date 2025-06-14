@@ -1,16 +1,14 @@
 package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
+import it.unimi.dsi.fastutil.Hash;
 import org.joml.Vector3f;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import java.lang.Double;
 import java.lang.Boolean;
@@ -37,6 +35,7 @@ public class ItemInteractionsConfig {
     public static List<AnimTemplate> animationList = new ArrayList<>();
 
 
+    private static AnimTemplate currentAnimationSelected;
     public static Object getSetting(String setting) {
         return settingsMap.getOrDefault(setting, getDefaultSetting(setting));
     }
@@ -54,6 +53,11 @@ public class ItemInteractionsConfig {
         settingsMap.put(setting, value);
     }
 
+    public static void setAnimationSetting(String id) {
+        setSetting("animation", id);
+        currentAnimationSelected = animations.getOrDefault(id, animations.get("speed"));
+    }
+
     public static Object getDefaultSetting(String setting) {
         return defaultSettingsMap.get(setting);
     }
@@ -67,10 +71,10 @@ public class ItemInteractionsConfig {
         animations.clear();
 
         animationList.forEach(t -> {
-            animations.put(t.id, t);
+            animations.put(t.getId(), t);
             settingsMap.putAll(t.getSettingsList());
         });
-        animations.put("none", null);
+        animations.put("none", new AnimTemplate("none"));
     }
 
     public static void init() {
@@ -98,7 +102,7 @@ public class ItemInteractionsConfig {
     }
 
     public static AnimTemplate getAnimationSetting() {
-        return animations.getOrDefault((String) getSetting("animation"), animations.get("speed"));
+        return currentAnimationSelected;
     }
 
 
@@ -131,7 +135,6 @@ public class ItemInteractionsConfig {
 
                     var og = settingsMap.get(arg);
 
-                    System.out.printf("%s (%s): %s%n", arg, og != null ? og.getClass().getName() : "*null*", value);
 
                     if (MiscUtils.isNumber(value)) {
                         double a = Double.parseDouble(value);
@@ -146,7 +149,6 @@ public class ItemInteractionsConfig {
                         Vector3f a = MiscUtils.parseVector3f(value);
                         settingsMap.put(arg, a);
                     }
-//                    else if (arg.equals("animation")) { settingsMap.put("animation", animations.getOrDefault(value, animations.get("speed"))); }
                     else { settingsMap.put(arg, value); }
 
                 }
@@ -159,36 +161,50 @@ public class ItemInteractionsConfig {
             }
 
 
-            mouseDeceleration = (double) settingsMap.getOrDefault("mouse_deceleration", 1.0);
-            mouseSpeedMult = (double) settingsMap.getOrDefault("mouse_speed_multiplier", 1.0);
-            enableGuiParticles = (boolean) settingsMap.getOrDefault("gui_particles", true);
-            debugDraws = (boolean) settingsMap.getOrDefault("debug", false);
-
             writeConfig(configFile);
-
         } catch (IOException e) {
             Item_interactions_mod.warnMessage("Failed to refresh the config! \n" + e.getMessage());
-
             Item_interactions_mod.warnMessage("Using the defaults");
             init();
         }
 
+        setValuesAfterRefresh();
+        getAnimationSetting().refreshSettings();
+
+
 
     }
 
+
+
+    private static void setValuesAfterRefresh() {
+        mouseDeceleration = (double) getSetting("mouse_deceleration");
+        mouseSpeedMult = (double) getSetting("mouse_speed_multiplier");
+        enableGuiParticles = (boolean) getSetting("gui_particles");
+        debugDraws = (boolean) getSetting("debug");
+        currentAnimationSelected = animations.getOrDefault((String) getSetting("animation"), animations.get("speed"));
+
+    }
     private static void writeConfig(File configFile) throws IOException {
 
         FileWriter obj = new FileWriter(configFile);
 
-        final String[] configFileString = {""};
+        final StringBuilder configFileString = new StringBuilder();
+
+        List<String> stringList = new ArrayList<>(20);
+
+
+        SortedMap<String, Object> h = new TreeMap<>(settingsMap);
 
 
 
-        settingsMap.forEach((k, v) -> {
-            configFileString[0] += String.format("%s = %s%n", k, v);
+        h.forEach((k, v) -> {
+            stringList.add(String.format("%s = %s%n", k, v));
         });
 
-
+        for(String s : stringList) {
+            configFileString.append(s);
+        }
 
 //        String configFileString = String.format("""
 //                animation = %s
@@ -208,7 +224,7 @@ public class ItemInteractionsConfig {
 //                debugDraws ? "true" : "false"
 //                );
 
-        obj.write(configFileString[0]);
+        obj.write(configFileString.toString());
         obj.flush();
     }
 

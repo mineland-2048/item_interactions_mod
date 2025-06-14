@@ -1,21 +1,28 @@
 package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 
-import static dev.mineland.item_interactions_mod.GlobalDirt.frameDelta;
+import static dev.mineland.item_interactions_mod.GlobalDirt.msTickDelta;
 
 
 public class AnimSpeed extends AnimTemplate {
+    double mouseDeceleration;
+    double mouseSpeedMult;
+
+    @Override
+    public void refreshSettings() {
+        mouseSpeedMult = (double) getSetting("mouse_speed_multiplier");
+        mouseDeceleration = (double) getSetting("mouse_deceleration");
+
+    }
+
     public AnimSpeed() {
         super("speed");
         addSetting("mouse_speed_multiplier", 1.0);
         addSetting("mouse_deceleration", 1.0);
-
     }
 
     float speedX = 0, speedY = 0;
@@ -28,8 +35,8 @@ public class AnimSpeed extends AnimTemplate {
         int posY = y + 8;
         int posZ = 150;
 
-        double drag = Math.exp(-(16 * ItemInteractionsConfig.mouseDeceleration * ItemInteractionsConfig.mouseDeceleration) * frameDelta);
-        double mouseSpeedMultiplier = ItemInteractionsConfig.mouseSpeedMult;
+        double drag = Math.exp(-(16 * mouseDeceleration * mouseDeceleration) * msTickDelta);
+        double mouseSpeedMultiplier = mouseSpeedMult;
 
         speedX = (float) Math.clamp((speedX + (doubleSpeedX * mouseSpeedMultiplier)) * drag, -100, 100);
         speedY = (float) Math.clamp((speedY + (doubleSpeedY * mouseSpeedMultiplier)) * drag, -100, 100);

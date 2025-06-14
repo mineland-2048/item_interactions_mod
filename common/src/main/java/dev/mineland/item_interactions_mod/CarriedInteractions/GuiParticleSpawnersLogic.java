@@ -109,6 +109,7 @@ public class GuiParticleSpawnersLogic {
     }
 
 
+//    Logic for the carried spawner and particle ticking
 //    Is ran once per frame
     public static void mainLogic(GuiGraphics guiGraphics) {
         List<BaseParticle> shouldDelete = new ArrayList<>();
@@ -120,6 +121,11 @@ public class GuiParticleSpawnersLogic {
 
     //        if there is a carried item
             else if (carriedItem != null && !carriedItem.isEmpty()) {
+                double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+                        y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y(),
+                        speedX = GlobalDirt.speedX,
+                        speedY = GlobalDirt.speedY;
+
 
 
     //            if its a different item from the previous tick
@@ -132,7 +138,13 @@ public class GuiParticleSpawnersLogic {
     //                    carriedGuiParticleSpawnerTimers.clear();
                         Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
-                        GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
+                        GlobalDirt.slotSpawners.tickSpawners(
+                                -1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics,
+                                (float) lastMouseX,
+                                (float) lastMouseY,
+                                (float) GlobalDirt.speedX,
+                                (float) GlobalDirt.speedY
+                        );
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
 
@@ -142,7 +154,9 @@ public class GuiParticleSpawnersLogic {
                 }
 
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(isShaking ? "onShake" : "onCarried"));
-                GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics, (float) lastMouseX, (float) lastMouseY, (float) mouseDeltaX, (float) mouseDeltaY);
+                GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics,
+                        (float) lastMouseX, (float) lastMouseY,
+                        (float) mouseDeltaX, (float) mouseDeltaY);
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
             }

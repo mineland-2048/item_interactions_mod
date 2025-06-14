@@ -2,42 +2,35 @@ package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import java.util.Vector;
 
 public class AnimPhysics extends AnimTemplate {
 
-
-    static double itemSpeedX = 0;
-    static double itemSpeedY = 0;
-    static double itemSpeedZ = 0;
-
     public double length = 16;
     public double elasticity = 1;
-    public Vector3f gravity = new Vector3f(0, -1, 0);
-
-    public int ropeSegmentLength = 16;
-
-    static Vector3f itemPos = new Vector3f(0, 0, 0);
-    static Vector3f itemVel = new Vector3f(0,0,0);
-    private Vector2f[] ropeSegments = new Vector2f[ropeSegmentLength];
+    public Vector3f gravity = new Vector3f(0, -0.1f, 0);
 
     public boolean isRope = false;
-    private double rotationSpeed = 0;
-
+    public double stress;
 
     public double currentStress = 0;
 
     public float rotationAngle;
 
     static Quaternionf rotation = new Quaternionf();
+
+    @Override
+    public void refreshSettings() {
+        this.length = (double) getSetting("rope_length");
+        this.elasticity = (double) getSetting("rope_elasticity");
+        this.stress = (double) getSetting("rope_stress");
+        this.isRope = (boolean) getSetting("rope_is_rope");
+        this.gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
+
+    }
 
     public AnimPhysics() {
         super("physics");
@@ -48,55 +41,63 @@ public class AnimPhysics extends AnimTemplate {
         addSetting("rope_is_rope", false);
     }
 
-    static Vector3f rope = new Vector3f(0,0,0);
-
     public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
 
         PoseStack pose = new PoseStack();
 
         if (!(boolean) ItemInteractionsConfig.getSetting("rope_is_rope")) {
-            GuiRendererHelper.renderLine(guiGraphics, x + 8, y + 8, x+8 + (float) itemSpeedX, y+8 + (float) itemSpeedY, 0xFFFF0000, ItemInteractionsConfig.enableGuiParticles);
-            itemSpeedX = (itemSpeedX + (doubleSpeedX * 0.05)) * 0.95;
-            itemSpeedY = (itemSpeedY + (doubleSpeedY * 0.05)) * 0.95;
 
-            rotation.rotateLocalX((float) -itemSpeedY * Mth.DEG_TO_RAD);
-            rotation.rotateLocalY((float) itemSpeedX * Mth.DEG_TO_RAD);
+            itemSpeed.set(
+                    (float) ((itemSpeed.x() + (doubleSpeedX * 0.05)) * 0.95),
+                    (float) ((itemSpeed.y() + (doubleSpeedY * 0.05)) * 0.95),
+                    itemSpeed.z()
+            );
 
+            rotation.rotateLocalX(-itemSpeed.y() * Mth.DEG_TO_RAD);
+            rotation.rotateLocalY( itemSpeed.x() * Mth.DEG_TO_RAD);
 
             pose.rotateAround(rotation, x+8, y+8, z+150);
 
-        } else {
+            if (ItemInteractionsConfig.debugDraws)  GuiRendererHelper.renderLine(guiGraphics, x + 8, y + 8, x+8 + itemSpeed.x(), y+8 + itemSpeed.y(), 0xFFFF0000, ItemInteractionsConfig.enableGuiParticles);
 
-            ropeSim(guiGraphics, pose, x, y, z);
-
-        }
+        } else { ropeSim(guiGraphics, pose, x, y, z); }
 
         return pose;
     }
 
+    @Override
     public void reset(int initialX, int initialY, int initialZ) {
-        rotation = new Quaternionf();
-        itemSpeedX = 0;
-        itemSpeedY = 0;
-        itemSpeedZ = 0;
+        isDead = false;
+        resetValues(initialX,initialY,initialZ);
+    }
 
-        itemPos = new Vector3f(initialX, initialY, initialZ);
-        itemVel = new Vector3f(0,0,0);
+    private void resetValues(int initialX, int initialY, int initialZ) {
+        super.reset(initialX,initialY,initialZ);
         rotation = new Quaternionf();
         rotationAngle = 0;
         oldAngle = 0;
-        rotationSpeed = 0;
+        oldMousePos.set(0,0,0);
     }
 
-    boolean isStill = false;
-    private float actualX = 0, actualY = 0;
+
     public float angle = 0;
+
+    private boolean isStill = false;
+    private float actualX = 0, actualY = 0;
     private float oldAngle = 0;
+
+
+
+    Vector3f newPos = new Vector3f();
+    Vector3f mousePos = new Vector3f();
+    private final Vector3f oldMousePos = new Vector3f();
+
     private void ropeSim(GuiGraphics guiGraphics, PoseStack pose, int x, int y, int z) {
 
         try {
-            Vector3f newPos = new Vector3f(itemPos);
-            Vector3f mousePos = new Vector3f(x, y, itemPos.z());
+
+            newPos.set(itemPos);
+            mousePos.set(x, y, itemPos.z());
             if (!GlobalDirt.skipCalcs){
                 actualX = x; actualY = y;
 //                guiGraphics.drawString(Minecraft.getInstance().font, newPos.toString(), 0, 0, 0xFFFFFFFF);
@@ -104,12 +105,8 @@ public class AnimPhysics extends AnimTemplate {
 //                guiGraphics.drawString(Minecraft.getInstance().font, "" + newPos.distance(mousePos), 0, +18, 0xFFFFFFFF);
 
 
-                Vector3f grav = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
-                length = (double) ItemInteractionsConfig.getSetting("rope_length");
                 float distance = newPos.distance(mousePos);
                 angle = (float) Math.atan2(newPos.y() - mousePos.y(), newPos.x() - mousePos.x());
-                elasticity = (double) ItemInteractionsConfig.getSetting("rope_elasticity");
-                double stress = (double) ItemInteractionsConfig.getSetting("rope_stress");
 
 
                 Vector3f disVec = new Vector3f(
@@ -127,7 +124,7 @@ public class AnimPhysics extends AnimTemplate {
                             0f
                     );
 
-                    itemVel.sub(vel.mul((float) ((1 - (elasticity*elasticity)) * 0.3)));
+                    itemSpeed.sub(vel.mul((float) ((1 - (elasticity*elasticity)) * 0.3)));
 
 //                    float cappedX = (float) (Math.cos(angle) * length*2);
 //                    float cappedY = (float) (Math.sin(angle) * length*2);
@@ -141,25 +138,25 @@ public class AnimPhysics extends AnimTemplate {
 
 
                 var stressFactor = stress*stress;
-                itemVel.mul((float) ((0.9 + (stressFactor*0.1))));
+                itemSpeed.mul((float) ((0.9 + (stressFactor*0.1))));
 
-                itemVel.add(new Vector3f(grav).mul((float) (1.1 - (stressFactor*0.1))));
+                itemSpeed.add(new Vector3f(gravity).mul((float) (1.1 - (stressFactor*0.1))));
 
 
 //            pose.translate(new Vec3(newPos));
-                newPos.add(itemVel).sub(new Vector3f().sub(itemVel).mul(0) );
+                newPos.add(itemSpeed);
                 distance = newPos.distance(mousePos);
 
                 double elasticLength = length * (1 + elasticity);
                 if (distance > elasticLength) {
                     newPos.set(
-                            mousePos.x() + itemVel.x()+ (float) Math.cos(angle) * ((elasticLength) ),
-                            mousePos.y() + itemVel.y()+ (float) Math.sin(angle) * ((elasticLength) ),
+                            mousePos.x() + itemSpeed.x()+ (float) Math.cos(angle) * ((elasticLength) ),
+                            mousePos.y() + itemSpeed.y()+ (float) Math.sin(angle) * ((elasticLength) ),
                             mousePos.z());
                 }
 
 
-                itemPos = newPos;
+                itemPos.set(newPos);
             }
 
 //            GuiRendererHelper.renderLine(guiGraphics,
@@ -168,23 +165,24 @@ public class AnimPhysics extends AnimTemplate {
 //                    y + newPos.y() - actualY + 8, MiscUtils.colorLerp((float) currentStress, 0xFFFFFFFF, 0xFFFF0000), true);
 //
 
-            int[] colors = new int[]{0xFFFFFFFF, 0xFFa0a0a0};
+            int[] colors = new int[]{0xFFFFFFFF, 0xFFc0c0c0};
             GuiRendererHelper.renderLine_ColorPattern(guiGraphics,
                     x + 8,
                     y + 8,
                     x + newPos.x() - actualX + 8,
-                    y + newPos.y() - actualY + 8,colors,
+                    y + newPos.y() - actualY + 8, colors,
                     (int) (length/8), ItemInteractionsConfig.enableGuiParticles
             );
+
 //            guiGraphics.drawString(Minecraft.getInstance().font, ""+currentStress, 0, 0, 0xFFFFFFFF);
 
             rotationAngle = (float) MiscUtils.lerpRotation(Math.clamp(currentStress, 0, 1), rotationAngle, angle);
-            float h = rotationAngle - oldAngle;
+            float rotationDelta = rotationAngle - oldAngle;
 
 //            rotationSpeed = (rotationSpeed + h) * 0.9;
 
 
-            if (h == 0 && !isStill) {
+            if (rotationDelta == 0 && !isStill) {
                 isStill = true;
                 rotationAngle = (float) (rotationAngle%Math.PI);
 
@@ -195,7 +193,7 @@ public class AnimPhysics extends AnimTemplate {
             oldAngle = rotationAngle;
 
 
-            rotation.rotateZ((float) (h));
+            rotation.rotateZ(rotationDelta);
 
 
 
@@ -208,13 +206,25 @@ public class AnimPhysics extends AnimTemplate {
             pose.rotateAround(rotation, x+8, y+8, z+150);
 
 
-//  175 -> -175
-//
+            isDead = true;
         } catch (Exception e) {
-            guiGraphics.drawString(Minecraft.getInstance().font, e.toString(), 0, 0, 0xFFFF0000);
+//            System.out.println();
+            resetValues(x, y, z);
+            if (ItemInteractionsConfig.debugDraws && isDead) {
+                String error = "(" + this.getClass().getName() + ") \n" + e;
+                isDead = false;
+                Item_interactions_mod.errorMessage(error);
+                MiscUtils.displayErrorInUi(error);
+            }
         }
 
+
+
     }
+
+    boolean isDead = false;
+
+
 
 
 

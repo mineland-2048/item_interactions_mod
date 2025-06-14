@@ -19,7 +19,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
-import static dev.mineland.item_interactions_mod.GuiRendererHelper.outOfBoundsPoint;
+import static dev.mineland.item_interactions_mod.MiscUtils.outOfBoundsPoint;
+import static dev.mineland.item_interactions_mod.MiscUtils.samePoint;
 
 public class GuiRendererHelper {
 
@@ -208,8 +209,8 @@ public class GuiRendererHelper {
     private static void renderPixelatedLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
 
         if (points.length == 1) setPixel(guiGraphics, (int) points[0][0], (int) points[0][1], colors[0]);
-        int i = 0;
-        for (; i < points.length - 1; i++) {
+
+        for (int i = 0; i < points.length - 1; i++) {
             float[] currentPoint = points[i];
             float[] nextPoint = points[i+1];
             if (samePoint( (int) currentPoint[0], (int) currentPoint[1],
@@ -272,27 +273,6 @@ public class GuiRendererHelper {
 
     }
 
-
-    public static boolean outOfBoundsPoint(int x, int y) {
-        return
-                (x < 0 || x > Minecraft.getInstance().getWindow().getWidth())
-                        || (y < 0 || y > Minecraft.getInstance().getWindow().getHeight());
-    }
-
-    public static boolean outOfBoundsPoint(float x, float y) {
-        return outOfBoundsPoint((int) x, (int) y);
-    }
-
-    public static boolean samePoint(float x0, float y0, float x1, float y1) {
-        return x0 == x1 && y0 == y1;
-    }
-
-    public static boolean samePoint(float[] p0, float[] p1) {
-        return samePoint(p0[0], p0[1], p1[0], p1[1]);
-    }
-
-
-
 }
 
 
@@ -327,7 +307,7 @@ class LineAlgs {
 
             if (outOfBoundsPoint(x, y)) {
                 guiGraphics.fill(l, y, x, y+1, color);
-                return;
+                break;
             }
 
         }
@@ -363,7 +343,7 @@ class LineAlgs {
 
             if (outOfBoundsPoint(x, y)) {
                 guiGraphics.fill(x, t, x+1, b, color);
-                return;
+                break;
             }
         }
         guiGraphics.fill(x, t, x+1, y1, color);
