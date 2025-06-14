@@ -3,6 +3,7 @@ package dev.mineland.item_interactions_mod.mixin;
 import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
+import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -41,6 +42,7 @@ public abstract class InventoryGuiMixin {
 
     @Inject(method = "render", at = @At("HEAD"))
     public void renderMixinHead(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
+        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
         GlobalDirt.updateTimer();
         GlobalDirt.slotCount = 0;
 

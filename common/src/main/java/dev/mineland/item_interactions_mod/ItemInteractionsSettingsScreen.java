@@ -3,7 +3,7 @@ package dev.mineland.item_interactions_mod;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPreview;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.GraphOverTimeWidget;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimPhysics;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -68,8 +68,112 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout physAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
-    GraphOverTimeWidget rotationAngleGraph = new GraphOverTimeWidget(Math.PI*2, 60, 3);
-    GraphOverTimeWidget rotationRawGraph = new GraphOverTimeWidget(Math.PI*2, 60, 3);
+    float scale = 0.5f;
+    int w = (int) (100 * scale);
+    int h = 100;
+
+    int pos = 120;
+    int i = 0;
+
+    int grid = 3;
+    GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
+            "Mouse x",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .showTitle()
+            .showYAxis()
+            .showCurrentValue()
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .build();
+
+    GraphOverTimeWidget mouseXPosGraph1 = GraphOverTimeWidget.builder(
+            "Mouse x pos",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .showTitle()
+            .showYAxis(false)
+            .showCurrentValue(false)
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .build();
+
+    GraphOverTimeWidget mouseXPosGraph2 = GraphOverTimeWidget.builder(
+            "pos x",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .showTitle(false)
+            .showYAxis()
+            .showCurrentValue(false)
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .background(0)
+            .build();
+
+    GraphOverTimeWidget mouseXPosGraph3 = GraphOverTimeWidget.builder(
+            "p4",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .showTitle(false)
+            .showYAxis(false)
+            .showCurrentValue()
+            .lineColor(0xFF00FF00, 0xFFFF0000)
+
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .build();
+
+    GraphOverTimeWidget mouseXPosGraph4 = GraphOverTimeWidget.builder(
+            "Mouse x pos",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .showTitle()
+            .showYAxis()
+            .smoothGraph()
+            .lineColor(0xFFFFFF00, 0xFFFFFFFF)
+            .showCurrentValue(false)
+            .build();
+
+    GraphOverTimeWidget mouseXPosGraph5 = GraphOverTimeWidget.builder(
+            "Mouse x pos",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .showTitle()
+            .showYAxis(false)
+            .showCurrentValue()
+            .outline(0)
+            .build();
+
+      GraphOverTimeWidget mouseXPosGraph6 = GraphOverTimeWidget.builder(
+            "Mouse x pos",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+              .showTitle(false)
+              .showYAxis()
+              .showCurrentValue()
+              .background(0, 0xFFFF0000)
+              .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .build();
+
+      GraphOverTimeWidget mouseXPosGraph7 = GraphOverTimeWidget.builder(
+            "Mouse x pos",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            true
+    )
+              .showTitle(false)
+              .showYAxis(false)
+              .showCurrentValue(false)
+              .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .build();
+
+
+
+//    GraphOverTimeWidget rotationRawGraph = new GraphOverTimeWidget(Math.PI*2, 60, 3);
 
     static HashMap<String, Object> previousSettingsMap = new HashMap<>(ItemInteractionsConfig.settingsMap);
 
@@ -144,9 +248,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         updateVisible();
 //        rotationAngleGraph.putMarker(GlobalDirt.shakeThreshold, 0xFFFF0000);
-        rotationAngleGraph.setColor(0xFFFFFFFF, 0xFFFF0000);
-        rotationRawGraph.setColor(0x80FF0000);
-        rotationRawGraph.setBackgroundColor(0);
+//        mouseXPosGraph.setColor(0xFFFFFFFF, 0xFFFF0000);
+//        rotationRawGraph.setColor(0x80FF0000);
+//        rotationRawGraph.setBackgroundColor(0);
 
 
     }
@@ -198,7 +302,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                         .withInitialValue((String) ItemInteractionsConfig.getSetting("animation"))
                         .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
                                 (button, string) -> {
-                                    ItemInteractionsConfig.setSetting("animation",  string);
+                                    ItemInteractionsConfig.setAnimationSetting(string);
                                     updateVisible();
                                 }
                         )
@@ -221,45 +325,18 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.layout.addToContents(scaleAnimLayout);
         this.layout.addToContents(physAnimLayout);
 
-
-        if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
-            Component debugButtonInitialText = Component.literal("debug: ")
-                    .append(Component.literal(""+ItemInteractionsConfig.debugDraws)
-                            .withStyle(ItemInteractionsConfig.debugDraws ? ChatFormatting.GREEN : ChatFormatting.RED)
-                    );
-
-            debugButton = leftColumnLayout.addChild(
-                    Button.builder(debugButtonInitialText, (self) -> {
-                        ItemInteractionsConfig.setSetting("debug", ! (boolean) ItemInteractionsConfig.getSetting("debug"));
-
-                        ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("debug") ?
-                                ChatFormatting.GREEN : ChatFormatting.RED;
-
-
-                        self.setMessage(
-                                Component.literal("debug: ")
-                                        .append(Component.literal(""+ItemInteractionsConfig.getSetting("debug"))
-                                                .withStyle(color)
-                                        )
-                        );
-                    }).build()
-            );
-        }
-
-
-
-
         inventoryPreview = rightColumnLayout.addChild(inventoryPreview, LayoutSettings::alignVerticallyMiddle);
         rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings::alignHorizontallyCenter);
 
 
-        Component debugButtonInitialText = Component.literal("Inventory particles: ")
+        Component guiButtonInitialText
+                = Component.literal("Inventory particles: ")
                 .append(Component.literal(""+ItemInteractionsConfig.getSetting("gui_particles"))
                         .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 );
 
         guiParticlesButton = rightColumnLayout.addChild(
-                Button.builder(debugButtonInitialText, (self) -> {
+                Button.builder(guiButtonInitialText, (self) -> {
                     ItemInteractionsConfig.enableGuiParticles = !ItemInteractionsConfig.enableGuiParticles;
                     ItemInteractionsConfig.setSetting("gui_particles", ItemInteractionsConfig.enableGuiParticles);
 
@@ -284,6 +361,35 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.layout.addToFooter(footerLayout);
 
         updateVisible();
+
+        Component debugButtonInitialText = Component.literal("debug: ")
+                .append(Component.literal(""+ItemInteractionsConfig.debugDraws)
+                        .withStyle(ItemInteractionsConfig.debugDraws ? ChatFormatting.GREEN : ChatFormatting.RED)
+                );
+
+
+        if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
+            debugButton = Button.builder(debugButtonInitialText, (self) -> {
+                boolean d = ItemInteractionsConfig.debugDraws;
+                ItemInteractionsConfig.setSetting("debug", ! d);
+                ItemInteractionsConfig.debugDraws = !d;
+
+                ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("debug") ?
+                        ChatFormatting.GREEN : ChatFormatting.RED;
+
+
+                self.setMessage(
+                        Component.literal("debug: ")
+                                .append(Component.literal(""+ItemInteractionsConfig.getSetting("debug"))
+                                        .withStyle(color)
+                                )
+                );
+            }).build();
+            debugButton.setPosition(8, 8);
+            debugButton.setSize(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT);
+            this.addRenderableWidget(debugButton);
+        }
+
     }
 
     private void addPhysAnimSettings() {
@@ -349,7 +455,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.setSetting("rope_gravity", new Vector3f(0, (float) value, 0));
+                Vector3f gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
+                ItemInteractionsConfig.setSetting("rope_gravity", new Vector3f(gravity.x, (float) value, gravity.z));
             }
         });
 
@@ -460,15 +567,18 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
 
+    int timer = 10;
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         super.render(guiGraphics, i, j, f);
-        if (rotationAngleGraph.visible) {
-            if (ItemInteractionsConfig.getSetting("animation").equals("physics")){
-                rotationAngleGraph.plotPoint(((AnimPhysics) ItemInteractionsConfig.getAnimationSetting()).rotationAngle);
-                rotationRawGraph.plotPoint(((AnimPhysics) ItemInteractionsConfig.getAnimationSetting()).angle);
+        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
+        AnimTemplate currentAnimation = ItemInteractionsConfig.getAnimationSetting();
+        if (currentAnimation != null) currentAnimation.refreshSettings();
 
-            }
+        timer--;
+        if (mouseXPosGraph.visible && timer < 0) {
+//            mouseXPosGraph.plotPoint();
+            timer = 10;
         }
     }
 
@@ -495,13 +605,26 @@ public class ItemInteractionsSettingsScreen extends Screen {
         scaleAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
         physAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
 
-        this.addRenderableWidget(rotationAngleGraph);
-        this.rotationAngleGraph.setSize(rotationAngleGraph.getGraphDataLength(), (int) rotationAngleGraph.getGraphDataHeight()*10);
-        this.rotationAngleGraph.setPosition(8, 8);
+        this.addRenderableWidget(mouseXPosGraph);
+        this.addRenderableWidget(mouseXPosGraph1);
+        this.addRenderableWidget(mouseXPosGraph2);
+        this.addRenderableWidget(mouseXPosGraph3);
+        this.addRenderableWidget(mouseXPosGraph4);
+        this.addRenderableWidget(mouseXPosGraph5);
+        this.addRenderableWidget(mouseXPosGraph6);
+        this.addRenderableWidget(mouseXPosGraph7);
+//        this.mouseXPosGraph.setSize(mouseXPosGraph.getGraphDataLength(), (int) mouseXPosGraph.getGraphDataHeight());
+//        this.mouseXPosGraph.setPosition(8, 8);
+//        this.mouseXPosGraph.displayCurrentValue(true);
 
-        this.addRenderableWidget(rotationRawGraph);
-        this.rotationRawGraph.setSize(rotationRawGraph.getGraphDataLength(), (int) rotationRawGraph.getGraphDataHeight()*10);
-        this.rotationRawGraph.setPosition(8, 8);
+//        this.addRenderableWidget(rotationRawGraph);
+//        this.rotationRawGraph.setSize(rotationRawGraph.getGraphDataLength(), (int) rotationRawGraph.getGraphDataHeight()*10);
+//        this.rotationRawGraph.setPosition(8, 8);
+
+        if (!ItemInteractionsConfig.debugDraws) {
+//            rotationRawGraph.visible = false;
+            mouseXPosGraph.visible = false;
+        }
 
 
     }

@@ -15,6 +15,7 @@ import java.util.*;
 
 public class GlobalDirt {
 
+
     public static class slotSpawners{
         private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
         private static final List<List<Float>> SPAWNER_TIMERS = new ArrayList<>(90);
@@ -144,7 +145,7 @@ public class GlobalDirt {
 
     public static boolean debugStuck = false;
 
-    public static double     lastMouseX = 0, lastMouseY = 0,
+    public static double    lastMouseX = 0, lastMouseY = 0,
                             speedX = 0, speedY = 0;
 
     public static double absSpeed = 0;
@@ -166,8 +167,8 @@ public class GlobalDirt {
 
     public static long currentMilis = 0;
     public static float tickRate = 0;
-    public static long frameTime = 0;
-    public static float frameDelta = 0;
+    public static long tickTime = 0;
+    public static float msTickDelta = 0;
     public static float spawnerTickDelta = 0;
 //    public static float shortFPS = 0;
 
@@ -193,6 +194,10 @@ public class GlobalDirt {
     public static Map<ResourceLocation, List<String>> particleErrorList = new HashMap<>();
     public static int spawnerErrorCount = 0;
     public static String currentParticleSpawner;
+
+    static GuiGraphics globalGuiGraphics;
+    public static int tickCounter;
+
 
     public static void restore() {
 //        System.out.println("Restoring global dirt");
@@ -228,12 +233,20 @@ public class GlobalDirt {
 //        System.out.println("Updating Mouse Position");
     }
 
-    public static int tickCounter;
-
-
-
 
     public static void updateTimer() {
+
+//        msFrameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
+
+        currentMilis = Util.getMillis();
+        tickTime = currentMilis - lastMilis;
+        msTickDelta = ((tickTime) / 1000f);
+
+        if (MiscUtils.ErrorDisplay.hasMessages() && ItemInteractionsConfig.debugDraws) {
+            MiscUtils.ErrorDisplay.drawMessages();
+        }
+
+
         if (dontUpdateTimer) {
             return;
         }
@@ -243,26 +256,21 @@ public class GlobalDirt {
         double mouseSpeedMult = ItemInteractionsConfig.mouseSpeedMult;
         double mouseDeceleration = ItemInteractionsConfig.mouseDeceleration;
 
-        currentMilis = Util.getMillis();
 
         tickRate = Minecraft.getInstance().level != null ?
                 Minecraft.getInstance().level.tickRateManager().tickrate() : 20;
 
         tickScale = tickRate / 20;
 
-        frameTime = currentMilis - lastMilis;
-        frameDelta = ((frameTime) / 1000f);
 
-//        frameDelta = Minecraft.getInstance().getFrameTimeNs() / 1_000_000_000f;
         spawnerTickDelta = tickScale;
 
         double decay = 16; //* (mouseDeceleration * mouseDeceleration);
-        drag = Math.exp(-decay * frameDelta);
+        drag = Math.exp(-decay * msTickDelta);
 
 
         mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
-
 
         speedX = Math.clamp((speedX + (mouseDeltaX)) * drag,-40f,  40f);
         speedY = Math.clamp((speedY + (mouseDeltaY)) * drag,-40f,  40f);
@@ -294,12 +302,20 @@ public class GlobalDirt {
     public static boolean dontUpdateTimer = false;
     public static void tailUpdateTimer() {
         if (dontUpdateTimer) return;
-        msCounter += frameDelta;
+        msCounter += msTickDelta;
         msCounter %= 1000;
         lastMilis = currentMilis;
 
     }
 
+
+    public static void setGlobalGuiGraphics(GuiGraphics gg) {
+        globalGuiGraphics = gg;
+    }
+
+    public static GuiGraphics getGlobalGuiGraphics() {
+        return globalGuiGraphics;
+    }
 }
 
 
