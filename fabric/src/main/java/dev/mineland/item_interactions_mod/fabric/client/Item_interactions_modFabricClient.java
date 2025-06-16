@@ -1,6 +1,6 @@
 package dev.mineland.item_interactions_mod.fabric.client;
 
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
@@ -13,11 +13,11 @@ public final class Item_interactions_modFabricClient implements ClientModInitial
     public void onInitializeClient() {
         // This entrypoint is suitable for setting up client-specific logic, such as rendering.
 
-        Item_interactions_mod.init();
-        Item_interactions_mod.LOADER = Item_interactions_mod.LOADER_ENUM.FABRIC;
+        ItemInteractionsMod.init();
+        ItemInteractionsMod.LOADER = ItemInteractionsMod.LOADER_ENUM.FABRIC;
 
-        FabricLoader.getInstance().getModContainer(Item_interactions_mod.MOD_ID).ifPresent(container -> {
-            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "example_gui_particles");
+        FabricLoader.getInstance().getModContainer(ItemInteractionsMod.MOD_ID).ifPresent(container -> {
+            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "example_gui_particles");
             ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
         });
     }

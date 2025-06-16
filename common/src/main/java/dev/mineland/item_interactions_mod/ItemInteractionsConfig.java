@@ -1,7 +1,6 @@
 package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
-import it.unimi.dsi.fastutil.Hash;
 import org.joml.Vector3f;
 
 import java.io.File;
@@ -41,12 +40,15 @@ public class ItemInteractionsConfig {
     }
 
     public static void setSetting(String setting, Object value) {
+        if (settingsMap.get(setting) == null) {
+            ItemInteractionsMod.errorMessage(String.format("Tried setting %s to %s but it doesn't exist", setting, value));
+        }
         if (value == null) {
-            Item_interactions_mod.errorMessage("Tried setting '%s' to *null*", setting);
+            ItemInteractionsMod.errorMessage("Tried setting '%s' to *null*", setting);
             return;
         }
         if (!value.getClass().equals(settingsMap.get(setting).getClass())) {
-            Item_interactions_mod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
+            ItemInteractionsMod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
             return;
         }
 
@@ -89,6 +91,7 @@ public class ItemInteractionsConfig {
         defaultSettingsMap.put("debug", false);
         defaultSettingsMap.put("animation", "speed");
 
+        currentAnimationSelected = animations.get("speed");
 
 
 
@@ -120,7 +123,7 @@ public class ItemInteractionsConfig {
                 String line = lector.nextLine();
                 int equalCount = MiscUtils.count(line, "=");
                 if (equalCount != 1) {
-                    Item_interactions_mod.infoMessage("Skipping line " + (lineCount+1) + ": `" + line + "`. Contains " + equalCount + " `=``");
+                    ItemInteractionsMod.infoMessage("Skipping line " + (lineCount+1) + ": `" + line + "`. Contains " + equalCount + " `=``");
                     continue;
                 }
                 line = line.trim();
@@ -163,8 +166,8 @@ public class ItemInteractionsConfig {
 
             writeConfig(configFile);
         } catch (IOException e) {
-            Item_interactions_mod.warnMessage("Failed to refresh the config! \n" + e.getMessage());
-            Item_interactions_mod.warnMessage("Using the defaults");
+            ItemInteractionsMod.warnMessage("Failed to refresh the config! \n" + e.getMessage());
+            ItemInteractionsMod.warnMessage("Using the defaults");
             init();
         }
 
@@ -232,7 +235,7 @@ public class ItemInteractionsConfig {
         try {
             writeConfig(configPath.toFile());
         } catch (Exception e) {
-            Item_interactions_mod.warnMessage("Error writing config file! \n" + e);
+            ItemInteractionsMod.warnMessage("Error writing config file! \n" + e);
         }
     }
 }

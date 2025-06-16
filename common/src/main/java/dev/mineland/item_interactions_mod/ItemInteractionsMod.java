@@ -1,13 +1,14 @@
 package dev.mineland.item_interactions_mod;
 
 
-import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimPhysics;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimRope;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
+import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Item_interactions_mod {
+public final class ItemInteractionsMod {
     public static final String MOD_ID = "item_interactions_mod";
     final static Logger logger = LoggerFactory.getLogger(MOD_ID);
 
@@ -34,7 +35,8 @@ public final class Item_interactions_mod {
     static void registerAnimations() {
         ItemInteractionsConfig.addAnimation(new AnimSpeed());
         ItemInteractionsConfig.addAnimation(new AnimScale());
-        ItemInteractionsConfig.addAnimation(new AnimPhysics());
+        ItemInteractionsConfig.addAnimation(new AnimRope());
+        ItemInteractionsConfig.addAnimation(new AnimSpin());
 
     }
 

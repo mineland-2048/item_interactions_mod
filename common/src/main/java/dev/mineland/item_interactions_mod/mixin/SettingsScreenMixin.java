@@ -1,6 +1,6 @@
 package dev.mineland.item_interactions_mod.mixin;
 
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class SettingsScreenMixin {
     @Inject(at = @At("TAIL"), method = "onClose")
     public void onCloseVideoMixin(CallbackInfo ci) {
-        Item_interactions_mod.refreshConfig();
+        ItemInteractionsMod.refreshConfig();
 
     }
 

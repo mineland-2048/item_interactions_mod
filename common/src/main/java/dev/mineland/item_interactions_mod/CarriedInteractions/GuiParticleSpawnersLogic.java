@@ -3,7 +3,6 @@ package dev.mineland.item_interactions_mod.CarriedInteractions;
 import dev.mineland.item_interactions_mod.*;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -15,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
-import static dev.mineland.item_interactions_mod.GlobalDirt.mouseDeltaY;
 
 public class GuiParticleSpawnersLogic {
 //    Is ran once per slot. It
@@ -101,7 +99,7 @@ public class GuiParticleSpawnersLogic {
             return false;
 
         } catch (Exception e) {
-            if (!dead) Item_interactions_mod.warnMessage("Error! \n" + e);
+            if (!dead) ItemInteractionsMod.warnMessage("Error! \n" + e);
             return true;
         }
 
@@ -123,8 +121,8 @@ public class GuiParticleSpawnersLogic {
             else if (carriedItem != null && !carriedItem.isEmpty()) {
                 double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
                         y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y(),
-                        speedX = GlobalDirt.speedX,
-                        speedY = GlobalDirt.speedY;
+                        speedX = GlobalDirt.speedX + ItemInteractionsConfig.getAnimationSetting().itemSpeed.x(),
+                        speedY = GlobalDirt.speedY + ItemInteractionsConfig.getAnimationSetting().itemSpeed.y();
 
 
 
@@ -140,10 +138,10 @@ public class GuiParticleSpawnersLogic {
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
                         GlobalDirt.slotSpawners.tickSpawners(
                                 -1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics,
-                                (float) lastMouseX,
-                                (float) lastMouseY,
-                                (float) GlobalDirt.speedX,
-                                (float) GlobalDirt.speedY
+                                (float) x,
+                                (float) y,
+                                (float) speedX,
+                                (float) speedY
                         );
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
@@ -155,8 +153,8 @@ public class GuiParticleSpawnersLogic {
 
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(isShaking ? "onShake" : "onCarried"));
                 GlobalDirt.slotSpawners.tickSpawners(-1, carriedGuiParticleSpawner, spawnerTickDelta, guiGraphics,
-                        (float) lastMouseX, (float) lastMouseY,
-                        (float) mouseDeltaX, (float) mouseDeltaY);
+                        (float) x, (float) y,
+                        (float) speedX, (float) speedY);
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
             }

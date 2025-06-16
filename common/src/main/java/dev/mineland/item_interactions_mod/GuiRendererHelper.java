@@ -81,6 +81,11 @@ public class GuiRendererHelper {
         renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
+    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color) {
+        renderLine(guiGraphics, x0, y0, x1, y1, color, true);
+    }
+
+
     public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
         if (pixelated) {
             if (x0 == x1 || y0 == y1) {

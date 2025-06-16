@@ -3,19 +3,13 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +86,7 @@ public class TexturedParticle extends BaseParticle {
 //                }
 //            }
 //        } catch (Exception e) {
-////            Item_interactions_mod.warnMessage("Couldnt load particle texture '" + textureLocation + "' \n" + e);
+////            ItemInteractionsMod.warnMessage("Couldnt load particle texture '" + textureLocation + "' \n" + e);
 //            this.textureMcMeta = null;
 //            this.width = Minecraft.getInstance().getTextureManager().getTexture(particleLocation).getTexture().getWidth(0);
 //            this.height = Minecraft.getInstance().getTextureManager().getTexture(particleLocation).getTexture().getHeight(0);
@@ -134,7 +128,7 @@ public class TexturedParticle extends BaseParticle {
             return finalList;
 
         } catch (Exception e) {
-//            Item_interactions_mod.warnMessage("died from getting vanilla texture (" + particleLocation + "): " + e);
+//            ItemInteractionsMod.warnMessage("died from getting vanilla texture (" + particleLocation + "): " + e);
 
             List<ResourceLocation> r = new ArrayList<>();
             r.add(ResourceLocation.parse("minecraft:textures/missingno.png"));

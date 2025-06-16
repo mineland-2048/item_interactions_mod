@@ -1,7 +1,7 @@
 package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -159,7 +158,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
     public void setItem(int id, ItemStack item) {
         if (id < 0 || id >= container.getContainerSize()) {
-            Item_interactions_mod.warnMessage("Tried setting a slot that doesnt exist!");
+            ItemInteractionsMod.warnMessage("Tried setting a slot that doesnt exist!");
             return;
         }
         container.setItem(id, item);
@@ -206,7 +205,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
     @Override
     public boolean mouseClicked(double d, double e, int i) {
-//        Item_interactions_mod.infoMessage("d: " + d + ", e" + e + ", i: " + i);
+//        ItemInteractionsMod.infoMessage("d: " + d + ", e" + e + ", i: " + i);
 
         this.container.mouseClicked(d, e, i);
 

@@ -7,7 +7,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.TexturedParticle;
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -108,7 +108,7 @@ public class ParticleInstance {
                     if (fixedPath.getPath().endsWith(".json.json")) err = "particle '" + id + " shouldn't end with .json in the spawner, just the location of the particle";
                     if (fixedPath.getPath().startsWith("particles/particles/")) err = "particle '" + id + "' shouldn't start the path with 'particles/'. Remove it";
 
-                    Item_interactions_mod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "] " + err);
+                    ItemInteractionsMod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "] " + err);
                 }
 
             } else {
@@ -123,7 +123,7 @@ public class ParticleInstance {
                             if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
 
                             GlobalDirt.particleErrorList.get(id).add("Missing texture " + textureLocation);
-                            Item_interactions_mod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "]: Missing texture '" + textureLocation + "'");
+                            ItemInteractionsMod.warnMessage("[" + GlobalDirt.currentParticleSpawner + "]: Missing texture '" + textureLocation + "'");
 
                         }
 
@@ -131,7 +131,7 @@ public class ParticleInstance {
                     }
 
                 } catch (Exception e) {
-                    Item_interactions_mod.errorMessage("Failed to parse GUI particle '" + fixedPath + "': " + e);
+                    ItemInteractionsMod.errorMessage("Failed to parse GUI particle '" + fixedPath + "': " + e);
                     return;
                 }
             }

@@ -44,7 +44,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         result = dataResult.resultOrPartial((s) -> {
             if (!spawnerErrorList.containsKey(filePath)) spawnerErrorList.put(filePath, new ArrayList<>());
             spawnerErrorList.get(filePath).add(s);
-            Item_interactions_mod.warnMessage("Errors found in '" + filePath + "\n" + s);
+            ItemInteractionsMod.warnMessage("Errors found in '" + filePath + "\n" + s);
             spawnerErrorCount++;
         }).orElseThrow();
         result.setName(id);
@@ -71,22 +71,22 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
                 Resource resource = entry.getValue();
 
                 if (ItemInteractionsConfig.debugDraws) {
-                    Item_interactions_mod.infoMessage("Loading " + id + ":" + resource);
+                    ItemInteractionsMod.infoMessage("Loading " + id + ":" + resource);
                 }
 
                 try (InputStream stream = resource.open()) {
                     JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
 
-//                    Item_interactions_mod.infoMessage("Parsing spawner: " + id);
+//                    ItemInteractionsMod.infoMessage("Parsing spawner: " + id);
                     GuiParticleSpawner a = parseSpawner(json, id, resourceManager);
 
                     SpawnerRegistry.register(a, id);
 
-//                    Item_interactions_mod.infoMessage("Parsed");
+//                    ItemInteractionsMod.infoMessage("Parsed");
 
                 } catch (Exception e) {
-                    Item_interactions_mod.errorMessage("Couldn't parse '" + id + "': \n" + e.getCause());
+                    ItemInteractionsMod.errorMessage("Couldn't parse '" + id + "': \n" + e.getCause());
                     if (!spawnerErrorList.containsKey(id)) spawnerErrorList.put(id, new ArrayList<>());
                     spawnerErrorList.get(id).add(e.getMessage());
                     spawnerErrorCount++;
@@ -98,7 +98,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     }
 
     private void loadStuff(ResourceManager resourceManager) {
-        Item_interactions_mod.infoMessage("Reloading gui particle spawners");
+        ItemInteractionsMod.infoMessage("Reloading gui particle spawners");
 
         SpawnerRegistry.clear();
 
@@ -110,7 +110,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         String errorCountString = "";
         if (spawnerErrorCount == 1) errorCountString = " (1 error)";
         else if (spawnerErrorCount > 1) errorCountString = " (" + spawnerErrorCount + " errors)";
-        Item_interactions_mod.infoMessage(String.format(spawnerString + errorCountString, SpawnerRegistry.SPAWNER_MAP.size()));
+        ItemInteractionsMod.infoMessage(String.format(spawnerString + errorCountString, SpawnerRegistry.SPAWNER_MAP.size()));
 
 
 
