@@ -5,6 +5,7 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -53,6 +54,11 @@ public abstract class GuiGraphicsMixin{//
         }
     }
 
+    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/Minecraft;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;)V")
+    private void setGlobalGuiGraphics(Minecraft minecraft, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, CallbackInfo ci) {
+        var self = (GuiGraphics) (Object) this;
+        GlobalDirt.setGlobalGuiGraphics(self);
+    }
 
     @Unique
     private static boolean iteminteractions$canAnimate() {
@@ -60,6 +66,7 @@ public abstract class GuiGraphicsMixin{//
 
         return Minecraft.getInstance().level.tickRateManager().runsNormally() || Minecraft.getInstance().isPaused();
     }
+
 
 
 }

@@ -232,7 +232,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                 prevY = posY;
             }
 
-            guiGraphics.disableScissor();
+            if (!overdraw) guiGraphics.disableScissor();
 
         } catch (Exception e) {
             MiscUtils.displayErrorInUi(e.toString());

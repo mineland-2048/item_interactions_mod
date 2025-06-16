@@ -1,6 +1,6 @@
 package dev.mineland.item_interactions_mod.fabric;
 
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +18,7 @@ public class ReloadListenerHelperImpl {
 
         IdentifiableResourceReloadListener idListener = new IdentifiableResourceReloadListener() {
             private final ResourceManagerReloadListener mainListener = listener;
-            private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "gui_particles");
+            private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles");
 
             public ResourceLocation getFabricId() {
                 return ID;

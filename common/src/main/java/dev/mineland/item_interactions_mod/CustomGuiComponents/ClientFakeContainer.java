@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
 import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -151,7 +151,7 @@ public class ClientFakeContainer implements Container {
     }
 
     public void printItemStacks() {
-        Item_interactions_mod.infoMessage(itemStacks.toString());
+        ItemInteractionsMod.infoMessage(itemStacks.toString());
     }
 
     @Override
@@ -169,7 +169,7 @@ public class ClientFakeContainer implements Container {
 
     @Override
     public ItemStack removeItem(int id, int count) {
-//        Item_interactions_mod.infoMessage("removeItem(" + i + ", " + j + ")");
+//        ItemInteractionsMod.infoMessage("removeItem(" + i + ", " + j + ")");
 //        ItemStack slotItem, takenItem;
 //        slotItem = slots.get(id).getItem();
 //
@@ -179,7 +179,7 @@ public class ClientFakeContainer implements Container {
 
     @Override
     public @NotNull ItemStack removeItemNoUpdate(int id) {
-//        Item_interactions_mod.infoMessage("removeItemNoUpdate(" + i + ")");
+//        ItemInteractionsMod.infoMessage("removeItemNoUpdate(" + i + ")");
         if (id >= slots.size() || id < 0 ) return ItemStack.EMPTY;
         ItemStack oldItem = slots.get(id).getItem();
         slots.get(id).set(ItemStack.EMPTY);
@@ -188,7 +188,7 @@ public class ClientFakeContainer implements Container {
 
     @Override
     public void setItem(int i, ItemStack itemStack) {
-//        Item_interactions_mod.infoMessage("setItem(" + i + ", " + itemStack.toString() + ")");
+//        ItemInteractionsMod.infoMessage("setItem(" + i + ", " + itemStack.toString() + ")");
         itemStacks.set(i, itemStack);
 
     }
@@ -198,19 +198,19 @@ public class ClientFakeContainer implements Container {
     @Override
     public void setChanged() {
 //        GlobalDirt.carriedItem = mouseItem;
-//        Item_interactions_mod.infoMessage("setChanged()");
+//        ItemInteractionsMod.infoMessage("setChanged()");
     }
 
     @Override
     public boolean stillValid(Player player) {
-//        Item_interactions_mod.infoMessage("stillValid() called oh no");
+//        ItemInteractionsMod.infoMessage("stillValid() called oh no");
 
         return false;
     }
 
     @Override
     public void clearContent() {
-//        Item_interactions_mod.infoMessage("clearContent()");
+//        ItemInteractionsMod.infoMessage("clearContent()");
 
     }
 
@@ -246,10 +246,10 @@ public class ClientFakeContainer implements Container {
         ) return;
 
 
-//        Item_interactions_mod.infoMessage("slotX: " + slotX + ", slotY: " + slotY + ", id: " + slotId);
+//        ItemInteractionsMod.infoMessage("slotX: " + slotX + ", slotY: " + slotY + ", id: " + slotId);
 
         mouseClicked(slotId, mouseButton);
-//        Item_interactions_mod.infoMessage(");
+//        ItemInteractionsMod.infoMessage(");
 //        int id =
     }
     public void mouseClicked(int slotId, int mouseButton) {
@@ -261,7 +261,7 @@ public class ClientFakeContainer implements Container {
 //                noMouse yesSlot
 //                take
                 if (mouseItem.isEmpty() && targetSlot.hasItem()) {
-//                    Item_interactions_mod.infoMessage("taking!");
+//                    ItemInteractionsMod.infoMessage("taking!");
                     mouseItem = targetSlot.getItem();
                     targetSlot.set(ItemStack.EMPTY);
                     break;
@@ -276,7 +276,7 @@ public class ClientFakeContainer implements Container {
                 }
 //                yesMouse
 //
-//                Item_interactions_mod.infoMessage("Safe inserting!");
+//                ItemInteractionsMod.infoMessage("Safe inserting!");
                 mouseItem = targetSlot.safeInsert(mouseItem);
 
 

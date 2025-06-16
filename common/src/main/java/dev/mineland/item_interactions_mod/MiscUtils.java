@@ -289,7 +289,10 @@ public class MiscUtils {
                 }
             }
 
-            if (i == -1) messages.add(new Message(s));
+            if (i == -1) {
+                ItemInteractionsMod.errorMessage(s);
+                messages.add(new Message(s));
+            };
         }
         public static void drawMessages() {
             int padding = 4;

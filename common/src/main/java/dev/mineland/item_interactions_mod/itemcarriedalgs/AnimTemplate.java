@@ -35,7 +35,7 @@ public class AnimTemplate {
     public AnimTemplate() {}
 
     public void reset(int initialX, int initialY, int initialZ) {
-        itemPos.set(initialX, initialY, initialZ);
+        itemPos.set(0, 0, 0);
         itemSpeed.set(0,0,0);
     }
 

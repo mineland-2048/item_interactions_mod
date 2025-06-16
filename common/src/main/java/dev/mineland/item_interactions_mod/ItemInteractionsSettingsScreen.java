@@ -47,16 +47,14 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private SteppedSliderButton scaleAmount;
     private SteppedSliderButton mouseSpeedMult;
     private SteppedSliderButton mouseDeceleration;
-    private Button isRope;
+    private Button ropePixelated;
     private SteppedSliderButton ropeElasticity;
     private SteppedSliderButton ropeLength;
     private SteppedSliderButton ropeGravity;
-    private SteppedSliderButton ropeStress;
+    private SteppedSliderButton ropeInertia;
     private Button guiParticlesButton;
 
-
     private Button resetButton;
-
 
     LinearLayout linearLayout = this.layout.addToContents(LinearLayout.vertical().spacing(8));
     LinearLayout bodyLayout = linearLayout.addChild(LinearLayout.horizontal(), LayoutSettings::alignHorizontallyCenter).spacing(8);
@@ -65,110 +63,22 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     LinearLayout speedAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout scaleAnimLayout = LinearLayout.vertical().spacing(4);
-    LinearLayout physAnimLayout = LinearLayout.vertical().spacing(4);
+    LinearLayout ropeAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
-    float scale = 0.5f;
-    int w = (int) (100 * scale);
-    int h = 100;
-
-    int pos = 120;
-    int i = 0;
-
-    int grid = 3;
     GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
             "Mouse x",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
+            (graph) -> {
+               return GlobalDirt.shakeSpeed;
+            },
             true
     )
             .showTitle()
             .showYAxis()
             .showCurrentValue()
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .build();
-
-    GraphOverTimeWidget mouseXPosGraph1 = GraphOverTimeWidget.builder(
-            "Mouse x pos",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-            .showTitle()
-            .showYAxis(false)
-            .showCurrentValue(false)
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .build();
-
-    GraphOverTimeWidget mouseXPosGraph2 = GraphOverTimeWidget.builder(
-            "pos x",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-            .showTitle(false)
-            .showYAxis()
-            .showCurrentValue(false)
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .background(0)
-            .build();
-
-    GraphOverTimeWidget mouseXPosGraph3 = GraphOverTimeWidget.builder(
-            "p4",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-            .showTitle(false)
-            .showYAxis(false)
-            .showCurrentValue()
-            .lineColor(0xFF00FF00, 0xFFFF0000)
-
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .build();
-
-    GraphOverTimeWidget mouseXPosGraph4 = GraphOverTimeWidget.builder(
-            "Mouse x pos",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .showTitle()
-            .showYAxis()
-            .smoothGraph()
-            .lineColor(0xFFFFFF00, 0xFFFFFFFF)
-            .showCurrentValue(false)
-            .build();
-
-    GraphOverTimeWidget mouseXPosGraph5 = GraphOverTimeWidget.builder(
-            "Mouse x pos",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-            .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .showTitle()
-            .showYAxis(false)
-            .showCurrentValue()
-            .outline(0)
-            .build();
-
-      GraphOverTimeWidget mouseXPosGraph6 = GraphOverTimeWidget.builder(
-            "Mouse x pos",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-              .showTitle(false)
-              .showYAxis()
-              .showCurrentValue()
-              .background(0, 0xFFFF0000)
-              .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
-            .build();
-
-      GraphOverTimeWidget mouseXPosGraph7 = GraphOverTimeWidget.builder(
-            "Mouse x pos",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-            true
-    )
-              .showTitle(false)
-              .showYAxis(false)
-              .showCurrentValue(false)
-              .size_fromInnerGraph(w, 100, scale).pos(pos * (i++ % grid), h * (i/grid)).pixelatedGraph().graphDivisions(1)
+            .size_fromInnerGraph(50, GlobalDirt.shakeThreshold, 1).pos(0, 0).pixelatedGraph().graphDivisions(1)
+            .addMarker("shake threshold", GlobalDirt.shakeThreshold)
+            .allowOverdraw()
             .build();
 
 
@@ -200,14 +110,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 Type of animation that will play when carrying an item
                 Speed: tilts based off the mouse speed
                 Scale: scales the item up on cycles
-                Physics: speen
+                Rope: ties the item in a rope
+                Spin: spins the item around
                 None: no animation""";
 
 
     public ItemInteractionsSettingsScreen(Screen parent){
         super(Component.literal("Item interactions mod settings"));
         this.parent = parent;
-//        Item_interactions_mod.infoMessage("Created screen");
+//        ItemInteractionsMod.infoMessage("Created screen");
         ItemInteractionsConfig.refreshConfig();
 
         GlobalDirt.restore();
@@ -261,7 +172,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     void updateVisible() {
         scaleAnimLayout.visitWidgets(widget -> widget.visible = false);
         speedAnimLayout.visitWidgets(widget -> widget.visible = false);
-        physAnimLayout.visitWidgets(widget -> widget.visible = false);
+        ropeAnimLayout.visitWidgets(widget -> widget.visible = false);
 
         animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
@@ -275,8 +186,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 speedAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
 
-            case "physics" -> {
-                physAnimLayout.visitWidgets(widget -> widget.visible = true);
+            case "rope" -> {
+                ropeAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
 
             default -> {
@@ -303,6 +214,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                         .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
                                 (button, string) -> {
                                     ItemInteractionsConfig.setAnimationSetting(string);
+                                    ItemInteractionsConfig.getAnimationSetting().reset((int) GlobalDirt.lastMouseX, (int) GlobalDirt.lastMouseY, 0);
                                     updateVisible();
                                 }
                         )
@@ -323,7 +235,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         this.layout.addToContents(speedAnimLayout);
         this.layout.addToContents(scaleAnimLayout);
-        this.layout.addToContents(physAnimLayout);
+        this.layout.addToContents(ropeAnimLayout);
 
         inventoryPreview = rightColumnLayout.addChild(inventoryPreview, LayoutSettings::alignVerticallyMiddle);
         rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings::alignHorizontallyCenter);
@@ -393,22 +305,17 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
     private void addPhysAnimSettings() {
-        boolean isRope = (boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
         double elasticity = (double) ItemInteractionsConfig.getSetting("rope_elasticity");
         double length = (double) ItemInteractionsConfig.getSetting("rope_length");
         var gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
-        double stress = (double) ItemInteractionsConfig.getSetting("rope_stress");
+        double inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
+        boolean pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
 
         System.out.println(gravity);
 
-        this.isRope = physAnimLayout.addChild(Button.builder(Component.literal("is rope").append(Component.literal( ""+ isRope).withStyle(isRope ? ChatFormatting.GREEN : ChatFormatting.RED)), (self) -> {
-            final boolean rope = !(boolean) ItemInteractionsConfig.getSetting("rope_is_rope");
-            ItemInteractionsConfig.setSetting("rope_is_rope", rope);
-                self.setMessage(Component.literal ("is rope: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
-            }).build()
-        );
 
-        ropeElasticity = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
+
+        ropeElasticity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
             {
                 this.updateMessage();
             }
@@ -425,7 +332,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
-        ropeLength = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, length, 0, 64, 64, false) {
+        ropeLength = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, length, 1, 64, 63, false) {
             {
                 this.updateMessage();
             }
@@ -442,7 +349,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
-        ropeGravity = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, gravity.y(), -1, 1) {
+        ropeGravity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, gravity.y(), -1, 1) {
             {
                 this.updateMessage();
             }
@@ -460,22 +367,30 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
-        ropeStress = physAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, stress, 0, 1, 20) {
+        ropeInertia = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, inertia, 0, 1, 20) {
             {
                 this.updateMessage();
             }
 
             @Override
             protected void updateMessage() {
-                Component message = Component.literal("Stress: " + value);
+                Component message = Component.literal("Inertia: " + value);
                 this.setMessage(message);
             }
 
             @Override
             protected void applyValue() {
-                ItemInteractionsConfig.setSetting("rope_stress", value);
+                ItemInteractionsConfig.setSetting("rope_inertia", value);
             }
         });
+
+        ropePixelated = ropeAnimLayout.addChild(Button.builder(Component.literal("Pixel consistent: ").append(Component.literal( ""+ pixelated).withStyle(pixelated ? ChatFormatting.GREEN : ChatFormatting.RED)), (self) -> {
+                    final boolean rope = !(boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
+                    ItemInteractionsConfig.setSetting("rope_pixelated", rope);
+                    self.setMessage(Component.literal ("Pixel consistent: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
+                }).build());
+
+
     }
 
     private void addSpeedAnimSettings() {
@@ -574,12 +489,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
         GlobalDirt.setGlobalGuiGraphics(guiGraphics);
         AnimTemplate currentAnimation = ItemInteractionsConfig.getAnimationSetting();
         if (currentAnimation != null) currentAnimation.refreshSettings();
-
-        timer--;
-        if (mouseXPosGraph.visible && timer < 0) {
-//            mouseXPosGraph.plotPoint();
-            timer = 10;
-        }
     }
 
     @Override
@@ -603,24 +512,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         speedAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
         scaleAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
-        physAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
+        ropeAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
+
 
         this.addRenderableWidget(mouseXPosGraph);
-        this.addRenderableWidget(mouseXPosGraph1);
-        this.addRenderableWidget(mouseXPosGraph2);
-        this.addRenderableWidget(mouseXPosGraph3);
-        this.addRenderableWidget(mouseXPosGraph4);
-        this.addRenderableWidget(mouseXPosGraph5);
-        this.addRenderableWidget(mouseXPosGraph6);
-        this.addRenderableWidget(mouseXPosGraph7);
-//        this.mouseXPosGraph.setSize(mouseXPosGraph.getGraphDataLength(), (int) mouseXPosGraph.getGraphDataHeight());
-//        this.mouseXPosGraph.setPosition(8, 8);
-//        this.mouseXPosGraph.displayCurrentValue(true);
-
-//        this.addRenderableWidget(rotationRawGraph);
-//        this.rotationRawGraph.setSize(rotationRawGraph.getGraphDataLength(), (int) rotationRawGraph.getGraphDataHeight()*10);
-//        this.rotationRawGraph.setPosition(8, 8);
-
         if (!ItemInteractionsConfig.debugDraws) {
 //            rotationRawGraph.visible = false;
             mouseXPosGraph.visible = false;
@@ -632,7 +527,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(parent);
-//        Item_interactions_mod.infoMessage("Exiting item screen");
+//        ItemInteractionsMod.infoMessage("Exiting item screen");
         ItemInteractionsConfig.createConfig();
     }
 
@@ -656,14 +551,14 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseSpeedMult.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_speed_multiplier"));
         mouseDeceleration.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_deceleration"));
 
-        isRope.setMessage(Component.literal("Is rope: ").append(
-                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("rope_is_rope")).withStyle(ChatFormatting.RED)
+        ropePixelated.setMessage(Component.literal("Is rope: ").append(
+                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("rope_pixelated")).withStyle(ChatFormatting.GREEN)
         ));
 
         ropeElasticity.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_elasticity"));
         ropeLength.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_length"));
         ropeGravity.setValue(((Vector3f) ItemInteractionsConfig.getDefaultSetting("rope_gravity")).y());
-        ropeStress.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_stress"));
+        ropeInertia.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_inertia"));
 
 
         guiParticlesButton.setMessage(

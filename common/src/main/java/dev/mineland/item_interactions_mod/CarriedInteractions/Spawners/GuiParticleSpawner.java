@@ -9,7 +9,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.GlobalDirt;
-import dev.mineland.item_interactions_mod.Item_interactions_mod;
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -83,7 +83,7 @@ public class GuiParticleSpawner {
         if (resourceManager.getResource(id).isEmpty()) {
             if (!GlobalDirt.spawnerErrorList.containsKey(id)) GlobalDirt.spawnerErrorList.put(id, new ArrayList<>());
             GlobalDirt.spawnerErrorList.get(id).add(id + " doesn't exist");
-            Item_interactions_mod.warnMessage("Spawner '" + id + "' is empty!");
+            ItemInteractionsMod.warnMessage("Spawner '" + id + "' is empty!");
             return null;
         };
 
@@ -100,7 +100,7 @@ public class GuiParticleSpawner {
             result = dataResult.resultOrPartial((s) -> {
                 if (!GlobalDirt.spawnerErrorList.containsKey(finalId)) GlobalDirt.spawnerErrorList.put(finalId, new ArrayList<>());
                 GlobalDirt.spawnerErrorList.get(finalId).add(warnMessage + s);
-                Item_interactions_mod.warnMessage(warnMessage + s);
+                ItemInteractionsMod.warnMessage(warnMessage + s);
             }).orElseThrow();
 
             result.setName(id);
@@ -112,7 +112,7 @@ public class GuiParticleSpawner {
             if (!GlobalDirt.spawnerErrorList.containsKey(id)) GlobalDirt.spawnerErrorList.put(id, new ArrayList<>());
             GlobalDirt.spawnerErrorList.get(id).add(e.getMessage());
 
-            Item_interactions_mod.warnMessage("Couldn't parse parent '" + id + "'!\n" + e);
+            ItemInteractionsMod.warnMessage("Couldn't parse parent '" + id + "'!\n" + e);
             GlobalDirt.spawnerErrorCount++;
             return null;
         }
