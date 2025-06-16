@@ -20,7 +20,6 @@ public class AnimTemplate {
     public Vector3f itemSpeed = new Vector3f();
 
     public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
-        itemPos.set(x, y, z);
         return new PoseStack();
     }
 
