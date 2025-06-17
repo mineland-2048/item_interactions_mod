@@ -153,8 +153,8 @@ public class GraphOverTimeWidget extends AbstractWidget {
         if (!this.visible) return;
         Font FONT = Minecraft.getInstance().font;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, zLayer);
+        guiGraphics.pose().pushMatrix();
+//        guiGraphics.pose().translate(0, 0, zLayer);
         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), colorBackground);
         guiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
 
@@ -239,7 +239,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
             if (!overdraw) guiGraphics.disableScissor();
 
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
 
         } catch (Exception e) {
             MiscUtils.displayErrorInUi(e.toString());

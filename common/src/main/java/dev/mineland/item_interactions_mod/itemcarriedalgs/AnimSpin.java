@@ -40,7 +40,7 @@ public class AnimSpin extends AnimTemplate {
             rotation.rotateLocalY( itemSpeed.x() * Mth.DEG_TO_RAD);
         }
 
-        pose.rotateAround(rotation, x+8, y+8, z+150);
+        pose.rotateAround(rotation, 0, 0, 0);
 
         if (ItemInteractionsConfig.debugDraws)  GuiRendererHelper.renderLine(guiGraphics, x + 8, y + 8, x+8 + itemSpeed.x(), y+8 + itemSpeed.y(), 0xFFFF0000, ItemInteractionsConfig.enableGuiParticles);
 

@@ -31,9 +31,9 @@ public class AnimSpeed extends AnimTemplate {
         PoseStack newPose = new PoseStack();
 
 
-        int posX = x + 8;
-        int posY = y + 8;
-        int posZ = 150;
+        int posX = 0;
+        int posY = 0;
+        int posZ = 0;
 
         double drag = Math.exp(-(16 * mouseDeceleration * mouseDeceleration) * msTickDelta);
         double mouseSpeedMultiplier = mouseSpeedMult;

@@ -7,18 +7,17 @@ import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
@@ -40,6 +39,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
     public Button button2;
 
     public Button doneButton;
+
+    private ImageButton neoWarning;
 
     private Button debugButton;
     private CycleButton<String> animationCycleButton;
@@ -65,6 +66,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout scaleAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout ropeAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
+
 
     GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
             "speed x",
@@ -171,6 +173,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         }
 
 
+
         updateVisible();
 //        rotationAngleGraph.putMarker(GlobalDirt.shakeThreshold, 0xFFFF0000);
 //        mouseXPosGraph.setColor(0xFFFFFFFF, 0xFFFF0000);
@@ -191,7 +194,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
         animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
 
-        switch (animationCycleButton.getValue()) {
+        String value = animationCycleButton.getValue();
+
+        if (ItemInteractionsMod.isNeo() && neoWarning != null) {
+            neoWarning.visible = true;
+            neoWarning.active = !value.equals("none");
+
+        }
+
+        switch (value) {
             case "scale" -> {
                 scaleAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
@@ -292,6 +303,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         this.layout.addToFooter(footerLayout);
 
+        addNeoButton();
+
         updateVisible();
 
         Component debugButtonInitialText = Component.literal("debug: ")
@@ -322,6 +335,31 @@ public class ItemInteractionsSettingsScreen extends Screen {
             this.addRenderableWidget(debugButton);
         }
 
+
+
+
+
+
+
+    }
+
+    private void addNeoButton() {
+        if (ItemInteractionsMod.isNeo() && SharedConstants.getCurrentVersion().id().equals("1.21.6")) {
+            var widgetSprites = new WidgetSprites(ResourceLocation.withDefaultNamespace("dialog/warning_button"), ResourceLocation.withDefaultNamespace("dialog/warning_button_disabled"), ResourceLocation.withDefaultNamespace("dialog/warning_button_highlighted"));
+
+            neoWarning = new ImageButton(
+                    Minecraft.getInstance().getWindow().getGuiScaledWidth() - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT,
+                    Button.DEFAULT_SPACING,
+                    SpriteIconButton.DEFAULT_HEIGHT,
+                    SpriteIconButton.DEFAULT_HEIGHT,
+                    widgetSprites,
+                    button -> {}
+            );
+
+            neoWarning.setTooltip(Tooltip.create(Component.literal("Due to some weirdness in neoforge 1.21.6, the animation settings render without light. \nThis will be fixed eventually")));
+
+//            this.addRenderableWidget(neoWarning);
+        }
     }
 
     private void addPhysAnimSettings() {
@@ -329,7 +367,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         double length = (double) ItemInteractionsConfig.getSetting("rope_length");
         var gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
         double inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
-        boolean pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
+        boolean pixelated = true; // (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
 
 
         ropeElasticity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
@@ -407,6 +445,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     self.setMessage(Component.literal ("Pixel consistent: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
                 }).build());
 
+        ropePixelated.active = false;
+
+        ropePixelated.setTooltip(Tooltip.create(Component.literal("Due to 1.21.6 changes, this is unavailable as of now.")));
 
     }
 
@@ -539,6 +580,12 @@ public class ItemInteractionsSettingsScreen extends Screen {
 //            rotationRawGraph.visible = false;
             mouseXPosGraph.visible = false;
             mouseYPosGraph.visible = false;
+        }
+
+
+        if (ItemInteractionsMod.isNeo()) {
+            neoWarning.setPosition(width - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT, Button.DEFAULT_SPACING );
+            addRenderableWidget(neoWarning);
         }
 
 

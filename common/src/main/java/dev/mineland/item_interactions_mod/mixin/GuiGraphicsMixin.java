@@ -1,22 +1,16 @@
 package dev.mineland.item_interactions_mod.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiRendererHelper;
+import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.GuiItemRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,9 +23,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = GuiGraphics.class)
 public abstract class GuiGraphicsMixin{//
     @Shadow @Final private Minecraft minecraft;
-    @Shadow @Final private PoseStack pose;
 
-//    smooth-swapping compat by doing the item tilting after their swap
+    @Shadow @Final private GuiRenderState guiRenderState;
+
+    @Shadow @Final private Matrix3x2fStack pose;
+
+    //    smooth-swapping compat by doing the item tilting after their swap
     @Inject(order = 1500, at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
     private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
@@ -42,8 +39,8 @@ public abstract class GuiGraphicsMixin{//
 
             GlobalDirt.isCurrentItem3d = scratchItemStackRenderState.usesBlockLight();
 
-            if (iteminteractions$canAnimate()) {
-                GuiRendererHelper.renderItem(self, itemStack, level, livingEntity, k, minecraft, i, j, 20000);
+            if (iteminteractions$canAnimate() && !ItemInteractionsConfig.getAnimationSetting().getId().equals("none")) {
+                GuiRendererHelper.renderItem(this.guiRenderState, itemStack, level, livingEntity, k, minecraft, i, j, 20000);
 
                 pose.pushMatrix();
                 pose.scale(0);
@@ -57,7 +54,7 @@ public abstract class GuiGraphicsMixin{//
     @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
     private void renderItemTail(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
-            if (iteminteractions$canAnimate()) {
+            if (iteminteractions$canAnimate() && !ItemInteractionsConfig.getAnimationSetting().getId().equals("none")) {
                 pose.popMatrix();
             }
 
@@ -65,7 +62,7 @@ public abstract class GuiGraphicsMixin{//
     }
 
     @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;)V")
-    private void setGlobalGuiGraphics(Minecraft minecraft, PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, CallbackInfo ci) {
+    private void setGlobalGuiGraphics(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, CallbackInfo ci) {
         var self = (GuiGraphics) (Object) this;
         GlobalDirt.setGlobalGuiGraphics(self);
     }

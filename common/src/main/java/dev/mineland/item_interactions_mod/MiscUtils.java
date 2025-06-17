@@ -301,8 +301,8 @@ public class MiscUtils {
             Font font = Minecraft.getInstance().font;
             GuiGraphics g = GlobalDirt.getGlobalGuiGraphics();
 
-            g.pose().pushPose();
-            g.pose().translate(0, 0, 100);
+            g.pose().pushMatrix();
+//            g.pose().translate(0, 0, 100);
 
             int maxLength = 0;
             for (int messageIndex = 0; messageIndex < messages.size(); messageIndex++) {
@@ -329,9 +329,9 @@ public class MiscUtils {
 
                 messageIndex++;
             }
-            g.pose().translate(0, 0, -1);
+//            g.pose().translate(0, 0, -1);
             g.fill(0, 0, maxLength + padding*2, currentHeight - font.lineHeight + padding, 0xd0000000);
-            g.pose().popPose();
+            g.pose().popMatrix();
 
 
         }

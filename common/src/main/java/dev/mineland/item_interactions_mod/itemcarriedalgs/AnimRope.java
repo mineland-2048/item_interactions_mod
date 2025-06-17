@@ -102,7 +102,7 @@ public class AnimRope extends AnimTemplate {
 
             Vector3f renderPos = new Vector3f(prevPos).lerp(newPos, accumulator*30);
 
-            guiGraphics.pose().translate(0, 0, 500);
+//            guiGraphics.pose().translate(0, 0);
 
             GuiRendererHelper.renderLine_ColorPattern(guiGraphics,
                     x + 8,
@@ -123,7 +123,7 @@ public class AnimRope extends AnimTemplate {
 
             }
 
-            guiGraphics.pose().translate(0, 0, -500);
+//            guiGraphics.pose().translate(0, 0, -500);
 
             rotationAngle = (float) MiscUtils.lerpRotation(Math.clamp(currentStress, 0, 1), rotationAngle, angle);
             float rotationDelta = rotationAngle - oldAngle;
@@ -143,10 +143,10 @@ public class AnimRope extends AnimTemplate {
 
             rotation.rotateZ(rotationDelta);
             globalItemPos.set(newPos);
-            itemPos.set(newPos.x() - actualX, newPos.y - actualY, globalItemPos.z());
-            pose.translate(renderPos.x - actualX, renderPos.y - actualY, 0);
+            itemPos.set((renderPos.x() - actualX) / 16, (renderPos.y - actualY) / 16, globalItemPos.z());
+//            pose.translate(itemPos.x, itemPos.y, 0);
             pose.pushPose();
-            pose.rotateAround(rotation, x+8, y+8, z+150);
+            pose.rotateAround(rotation, 0, 0, 16);
 
 
 

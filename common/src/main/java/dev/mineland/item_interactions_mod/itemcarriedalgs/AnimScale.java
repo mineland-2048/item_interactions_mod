@@ -17,6 +17,7 @@ public class AnimScale extends AnimTemplate {
     public void refreshSettings() {
         scaleSpeed = (double) getSetting("scale_speed");
         scaleAmount = (double) getSetting("scale_amount");
+//        scaleAmount = 10;
     }
 
     public AnimScale() {
@@ -30,8 +31,8 @@ public class AnimScale extends AnimTemplate {
 
         scale = (float) ( Math.abs(Math.cos(Math.PI * (msCounter / ((tickScale) / scaleSpeed)))) * scaleAmount);
 
-        int posX = x + 16;
-        int posY = y + 16;
+        int posX = 8;
+        int posY = 8;
         PoseStack newPose = new PoseStack();
         newPose.translate(-itemOffset -(posX * scale),-itemOffset -(posY * scale), 0);
         newPose.scale(1 + scale, 1 + scale, 1 + scale);
