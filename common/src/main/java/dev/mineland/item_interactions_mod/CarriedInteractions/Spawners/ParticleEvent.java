@@ -54,25 +54,6 @@ public class ParticleEvent {
 //        attributes_variance = ParticleInstance.defaultVariance();
     }
 
-    public ParticleEvent(float a, String use) {
-        System.out.println(a);
-        System.out.println(use);
-    }
-
-    public ParticleEvent(float interval, float interval_variance, ParticleInstance attributes, ParticleInstance attributes_variance, List<ParticleInstance> particles, String use) {
-//        this.name = name;
-//        System.out.println("eventing");
-        this.interval = Optional.of(interval);
-        this.interval_variance = Optional.of(interval_variance);
-        this.attributes = Optional.of(attributes);
-        this.attributes_variance = Optional.of(attributes_variance);
-        this.particles = Optional.of(particles);
-        this.use = Optional.of(use);
-    }
-
-    public ParticleEvent(String use) {
-
-    }
 
     public ParticleEvent(Optional<Float> interval, Optional<Float> interval_variance, Optional<ParticleInstance> attributes, Optional<ParticleInstance> attributes_variance, Optional<List<ParticleInstance>> particles, Optional<String> use) {
         this.interval = interval;

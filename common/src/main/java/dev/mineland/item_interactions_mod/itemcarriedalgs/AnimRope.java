@@ -8,11 +8,11 @@ import org.joml.Vector3f;
 
 public class AnimRope extends AnimTemplate {
 
+    public double elasticity = 0.4;
     public double length = 16;
-    public double elasticity = 1;
-    public Vector3f gravity = new Vector3f(0, -0.1f, 0);
-    public double inertia;
-    public boolean pixelated;
+    public Vector3f gravity = new Vector3f(0, 6f, 0);
+    public double inertia = 0.8;
+    public boolean pixelated = true;
 
     int[] colors = new int[]{0xFFAD7249, 0xFF844416};
 
@@ -30,10 +30,16 @@ public class AnimRope extends AnimTemplate {
     private float actualX = 0, actualY = 0;
     private float oldAngle = 0;
 
+    Vector3f prevPos = new Vector3f();
     Vector3f newPos = new Vector3f();
     Vector3f mousePos = new Vector3f();
     private final Vector3f oldMousePos = new Vector3f();
     boolean isDead = false;
+
+
+    private final Vector3f smoothedMousePos = new Vector3f();
+    private boolean firstTick = true;
+
 
     @Override
     public void refreshSettings() {
@@ -47,10 +53,10 @@ public class AnimRope extends AnimTemplate {
 
     public AnimRope() {
         super("rope");
-        addSetting("rope_elasticity", 0.26);
+        addSetting("rope_elasticity", 0.4);
         addSetting("rope_length", 16.0);
-        addSetting("rope_gravity", new Vector3f(0, 0.2f, 0));
-        addSetting("rope_inertia", 0.75);
+        addSetting("rope_gravity", new Vector3f(0, 6f, 0));
+        addSetting("rope_inertia", 0.8);
         addSetting("rope_pixelated", true);
     }
 
@@ -72,10 +78,13 @@ public class AnimRope extends AnimTemplate {
     private void resetValues(int initialX, int initialY, int initialZ) {
         super.reset(initialX,initialY,initialZ);
         globalItemPos.set(initialX, initialY, initialZ);
+        prevPos.set(globalItemPos);
         rotation = new Quaternionf();
         rotationAngle = 0;
         oldAngle = 0;
         oldMousePos.set(0,0,0);
+        smoothedMousePos.set(initialX, initialY, initialZ);
+        firstTick = true;
     }
 
 
@@ -84,86 +93,41 @@ public class AnimRope extends AnimTemplate {
 
         try {
             newPos.set(globalItemPos);
-            mousePos.set(x, y, globalItemPos.z());
+
             if (!GlobalDirt.skipCalcs){
+                mousePos.set(x, y, globalItemPos.z());
                 actualX = x; actualY = y;
-//                guiGraphics.drawString(Minecraft.getInstance().font, newPos.toString(), 0, 0, 0xFFFFFFFF);
-//                guiGraphics.drawString(Minecraft.getInstance().font, itemVel.toString(), 0, +9, 0xFFFFFFFF);
-//                guiGraphics.drawString(Minecraft.getInstance().font, "" + newPos.distance(mousePos), 0, +18, 0xFFFFFFFF);
-
-
-                float distance = newPos.distance(mousePos);
-                angle = (float) Math.atan2(newPos.y() - mousePos.y(), newPos.x() - mousePos.x());
-
-
-                Vector3f disVec = new Vector3f(
-                        newPos.x() - (float) (mousePos.x +  Math.cos(angle) * (length)),
-                        newPos.y() - (float) (mousePos.y +  Math.sin(angle) * (length)),
-                        newPos.z() - globalItemPos.z());
-
-
-                currentStress = Math.max(0, ( newPos.distance(mousePos) - length) / length);
-
-                if (distance > length) {
-                    Vector3f vel = new Vector3f(
-                            disVec.x(),
-                            disVec.y(),
-                            0f
-                    );
-
-                    itemSpeed.sub(vel);
-                }
-
-
-                var stressFactor = inertia * inertia;
-                itemSpeed.mul((float) ((0.9 + (stressFactor*0.1))));
-
-                itemSpeed.add(new Vector3f(gravity).mul((float) (1.1 - (stressFactor*0.1))));
-
-
-//                TODO: make tick rate better
-                itemSpeed.mul(GlobalDirt.tickScale);
-                newPos.add(itemSpeed);
-                distance = newPos.distance(mousePos);
-
-                double elasticLength = length * (1 + (elasticity));
-                if (distance > elasticLength) {
-                    newPos.set(
-                            mousePos.x() + itemSpeed.x()+ (float) Math.cos(angle) * ((elasticLength) ),
-                            mousePos.y() + itemSpeed.y()+ (float) Math.sin(angle) * ((elasticLength) ),
-                            mousePos.z());
-                }
-
-
-
-
-                globalItemPos.set(newPos);
+                update(guiGraphics, x, y, z, GlobalDirt.msTickDelta);
             }
 
-//            GuiRendererHelper.renderLine(guiGraphics,
-//                    x + 8, y + 8,
-//                    x + newPos.x() - actualX + 8,
-//                    y + newPos.y() - actualY + 8, MiscUtils.colorLerp((float) currentStress, 0xFFFFFFFF, 0xFFFF0000), true);
-//
+            Vector3f renderPos = new Vector3f(prevPos).lerp(newPos, accumulator*30);
 
             guiGraphics.pose().translate(0, 0, 500);
 
             GuiRendererHelper.renderLine_ColorPattern(guiGraphics,
                     x + 8,
                     y + 8,
-                    x + newPos.x() - actualX + 8,
-                    y + newPos.y() - actualY + 8, this.colors,
+                    x + renderPos.x() - actualX + 8,
+                    y + renderPos.y() - actualY + 8, this.colors,
                     (int) (length/8), pixelated
             );
 
-            guiGraphics.pose().translate(0, 0, -500);
+            if (ItemInteractionsConfig.debugDraws) {
+                GuiRendererHelper.renderLine_ColorPattern(guiGraphics,
+                        x + 8,
+                        y + 8,
+                        x + newPos.x() - actualX + 8,
+                        y + newPos.y() - actualY + 8, new int[]{0x40FF0000},
+                        (int) (length/8), pixelated
+                );
 
-//            guiGraphics.drawString(Minecraft.getInstance().font, ""+currentStress, 0, 0, 0xFFFFFFFF);
+            }
+
+            guiGraphics.pose().translate(0, 0, -500);
 
             rotationAngle = (float) MiscUtils.lerpRotation(Math.clamp(currentStress, 0, 1), rotationAngle, angle);
             float rotationDelta = rotationAngle - oldAngle;
 
-//            rotationSpeed = (rotationSpeed + h) * 0.9;
 
 
             if (rotationDelta == 0 && !isStill) {
@@ -178,16 +142,10 @@ public class AnimRope extends AnimTemplate {
 
 
             rotation.rotateZ(rotationDelta);
-
-
-
-//            rotation.rotateTo(newPos, rotPoint);
-
-//            rotation.rotateTo(newPos.x(), newPos.y(), z + 150, (float) actualX + 8, (float) actualY + 8, z + 150);
-            itemPos.set(newPos.x() - actualX, newPos.y - actualY, 0);
-            pose.translate(itemPos.x, itemPos.y, 0);
+            globalItemPos.set(newPos);
+            itemPos.set(newPos.x() - actualX, newPos.y - actualY, globalItemPos.z());
+            pose.translate(renderPos.x - actualX, renderPos.y - actualY, 0);
             pose.pushPose();
-//            pose.mulPose(new Quaternionf().rotateZ(angle));
             pose.rotateAround(rotation, x+8, y+8, z+150);
 
 
@@ -207,9 +165,108 @@ public class AnimRope extends AnimTemplate {
 
     }
 
+    float accumulator = 0f;
+    final float FIXED_STEP = 1f / 30f; // 60 FPS baseline.
+    final float MAX_ACCUMULATED_TIME = 0.25f; // prevent spiral of death
+
+
+    public void update(GuiGraphics guiGraphics, int x, int y, int z, float msTickDelta) {
+
+        // cap delta to avoid huge jumps on lag spikes
+        msTickDelta = Math.min(msTickDelta, MAX_ACCUMULATED_TIME);
+        accumulator += msTickDelta;
+
+
+        // physics steps in fixed time intervals because fuck me
+
+        while (accumulator >= FIXED_STEP) {
+            simulate(x, y, z, FIXED_STEP * 10 * GlobalDirt.tickScale);
+            accumulator -= FIXED_STEP;
+        }
+
+    }
+
+
+
+    public void simulate(int x, int y, int z, float delta) {
+        prevPos.set(globalItemPos);
+        actualX = x;
+        actualY = y;
+
+        // mouse lerping. Eh
+        if (firstTick) {
+            smoothedMousePos.set(mousePos);
+            firstTick = false;
+        } else {
+            smoothedMousePos.lerp(mousePos, 1f - (float) Math.pow(0.1, delta * 60));
+            // Smooths over ~6 frames
+        }
+
+//        float distance = newPos.distance(smoothedMousePos);
+        angle = (float) Math.atan2(newPos.y() - smoothedMousePos.y(), newPos.x() - smoothedMousePos.x());
+
+        Vector3f ropeDir = new Vector3f(
+                newPos.x() - smoothedMousePos.x(),
+                newPos.y() - smoothedMousePos.y(),
+                0f
+        );
+
+        float ropeLen = ropeDir.length();
+        currentStress = Math.max(0, (ropeLen - length) / length);
+
+        if (ropeLen != 0) ropeDir.div(ropeLen); // normals are annoying
+
+        // spring force (soft constraint)
+        float stretch = (float) (ropeLen - length);
+        if (stretch > 0) {
+            float springStrength = 10f;
+            float springForceMag = Math.min(stretch * springStrength, 300f); // cap for stability
+            Vector3f springForce = new Vector3f(ropeDir).mul(springForceMag * delta);
+            itemSpeed.sub(springForce);
+        }
+
+        float gravityFactor = (float) (0.5 + (inertia * inertia * 0.5));
+        itemSpeed.add(new Vector3f(gravity).mul(gravityFactor * delta));
+
+        // tangential preserving dampening
+        float outwardSpeed = itemSpeed.dot(ropeDir);
+        Vector3f radialVel = new Vector3f(ropeDir).mul(outwardSpeed);
+        Vector3f tangentialVel = new Vector3f(itemSpeed).sub(radialVel);
+
+        radialVel.mul(0.92f);
+        tangentialVel.mul(0.995f);
+
+        itemSpeed.set(radialVel.add(tangentialVel));
+
+        newPos.add(new Vector3f(itemSpeed).mul(delta));
+
+        // elastic soft cap
+        float maxRopeLength = (float) (length * (1f + elasticity * 1.25f));
+        float newDistance = newPos.distance(smoothedMousePos);
+
+        if (newDistance > maxRopeLength) {
+            Vector3f dir = new Vector3f(newPos).sub(smoothedMousePos).normalize();
+            newPos.set(smoothedMousePos.x() + dir.x * maxRopeLength,
+                    smoothedMousePos.y() + dir.y * maxRopeLength,
+                    newPos.z());
+
+            float overshootSpeed = itemSpeed.dot(dir);
+            if (overshootSpeed > 0) {
+                Vector3f outwardVel = new Vector3f(dir).mul(overshootSpeed);
+                itemSpeed.sub(outwardVel).sub(outwardVel.mul(0.05f));
+            }
+        }
+
+        globalItemPos.set(newPos);
+    }
+
+
+
 
 
 
 
 
 }
+
+

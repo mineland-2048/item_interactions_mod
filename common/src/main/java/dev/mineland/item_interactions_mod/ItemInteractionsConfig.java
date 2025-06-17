@@ -40,19 +40,24 @@ public class ItemInteractionsConfig {
     }
 
     public static void setSetting(String setting, Object value) {
-        if (settingsMap.get(setting) == null) {
-            ItemInteractionsMod.errorMessage(String.format("Tried setting %s to %s but it doesn't exist", setting, value));
-        }
-        if (value == null) {
-            ItemInteractionsMod.errorMessage("Tried setting '%s' to *null*", setting);
-            return;
-        }
-        if (!value.getClass().equals(settingsMap.get(setting).getClass())) {
-            ItemInteractionsMod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
-            return;
-        }
+        try {
+            if (settingsMap.get(setting) == null) {
+                ItemInteractionsMod.errorMessage(String.format("Tried setting %s to %s but it doesn't exist", setting, value));
+            }
+            if (value == null) {
+                ItemInteractionsMod.errorMessage("Tried setting '%s' to *null*", setting);
+                return;
+            }
+            if (!value.getClass().equals(settingsMap.get(setting).getClass())) {
+                ItemInteractionsMod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
+                return;
+            }
 
-        settingsMap.put(setting, value);
+            settingsMap.put(setting, value);
+
+        } catch (Exception e) {
+            MiscUtils.displayErrorInUi(String.format("setSetting(%s, %s): %s", setting, value, e));
+        }
     }
 
     public static void setAnimationSetting(String id) {
@@ -64,6 +69,7 @@ public class ItemInteractionsConfig {
         return defaultSettingsMap.get(setting);
     }
 
+    private static List<AnimTemplate> animIndexes = new ArrayList<>();
     public static void addAnimation(AnimTemplate anim) {
         animationList.add(anim);
         defaultSettingsMap.putAll(anim.getSettingsList());
@@ -76,6 +82,7 @@ public class ItemInteractionsConfig {
             animations.put(t.getId(), t);
             settingsMap.putAll(t.getSettingsList());
         });
+
         animations.put("none", new AnimTemplate("none"));
     }
 
