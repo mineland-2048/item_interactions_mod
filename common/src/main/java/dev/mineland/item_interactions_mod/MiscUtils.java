@@ -243,8 +243,9 @@ public class MiscUtils {
 
     }
 
+    // each screen has their own top and left. Thats annoying. Will limit drawing to 2x the window size
     public static boolean outOfBoundsPoint(int x, int y) {
-        return outOfBoundsPoint(x, y, 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
+        return outOfBoundsPoint(x, y, -Minecraft.getInstance().getWindow().getWidth(), -Minecraft.getInstance().getWindow().getHeight(), Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight());
     }
 
     public static boolean outOfBoundsPoint(float x, float y) {
@@ -309,7 +310,7 @@ public class MiscUtils {
                 String[] lines = message.string.split(String.format("%n"));
                 for (String line : lines) {
                     maxLength = Math.max(maxLength, font.width(line));
-                    g.drawString(
+                    if (g != null) g.drawString(
                             font,
                             line,
                             padding, currentHeight + padding,

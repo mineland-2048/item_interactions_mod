@@ -275,7 +275,7 @@ public class GlobalDirt {
         speedX = Math.clamp((speedX + (mouseDeltaX)) * drag,-40f,  40f);
         speedY = Math.clamp((speedY + (mouseDeltaY)) * drag,-40f,  40f);
 
-        if (!ItemInteractionsConfig.getAnimationSetting().getId().equals("physics")) {
+        if (!ItemInteractionsConfig.getAnimationSetting().getId().equals("rope")) {
             absSpeed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
             shakeSpeed = Math.clamp((shakeSpeed + (absSpeed * 0.5)) - 5, 0, shakeThreshold + 10);
             shakeThreshold = 40;
@@ -283,7 +283,7 @@ public class GlobalDirt {
         } else {
             absSpeed = (ItemInteractionsConfig.getAnimationSetting()).itemSpeed.distance(0, 0, 0);
             shakeSpeed = Math.max(((absSpeed * 0.5)), 0);
-            shakeThreshold = 3;
+            shakeThreshold = 20;
         }
 
 

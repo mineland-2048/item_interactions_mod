@@ -67,18 +67,32 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
 
     GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
-            "Mouse x",
-            (graph) -> {
-               return GlobalDirt.shakeSpeed;
-            },
+            "speed x",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemSpeed.x(),
+            true
+    )
+            .showTitle()
+            .showYAxis()
+            .setZLayer(1000)
+            .showCurrentValue()
+            .size_fromInnerGraph(50, -200, 200, 50f/400).pos(0, 8).pixelatedGraph().graphDivisions(5)
+//            .addMarker("shake threshold", ItemInteractionsConfig.getAnimationSetting().itemSpeed.y())
+            .allowOverdraw()
+            .decimalPrecision(5)
+            .build();
+
+    GraphOverTimeWidget mouseYPosGraph = GraphOverTimeWidget.builder(
+            "speed y",
+            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemSpeed.y(),
             true
     )
             .showTitle()
             .showYAxis()
             .showCurrentValue()
-            .size_fromInnerGraph(50, GlobalDirt.shakeThreshold, 1).pos(0, 0).pixelatedGraph().graphDivisions(1)
-            .addMarker("shake threshold", GlobalDirt.shakeThreshold)
+            .size_fromInnerGraph(50, -200, 200, 50f/400).pos(100, 8).pixelatedGraph().graphDivisions(5)
+//            .addMarker("shake threshold", ItemInteractionsConfig.getAnimationSetting().itemSpeed.y())
             .allowOverdraw()
+            .decimalPrecision(5)
             .build();
 
 
@@ -202,7 +216,13 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.layout.addTitleHeader(this.title, Minecraft.getInstance().font);
 
 
-        List<String> anims = new ArrayList<>(ItemInteractionsConfig.animations.keySet());
+        List<String> anims = new ArrayList<>();
+        for (AnimTemplate a : ItemInteractionsConfig.animationList) {
+            anims.add(a.getId());
+        }
+
+        anims.add("none");
+
         animationCycleButton = leftColumnLayout.addChild(
                 CycleButton.<String>builder(animationSetting ->
                                 Component.literal(animationSetting).withStyle(
@@ -311,9 +331,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
         double inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
         boolean pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
 
-        System.out.println(gravity);
-
-
 
         ropeElasticity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
             {
@@ -349,7 +366,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
-        ropeGravity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, gravity.y(), -1, 1) {
+        ropeGravity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, gravity.y(), -32, 32, 64*2) {
             {
                 this.updateMessage();
             }
@@ -515,10 +532,13 @@ public class ItemInteractionsSettingsScreen extends Screen {
         ropeAnimLayout.setPosition(leftColumnLayout.getX(), firstY);
 
 
+
         this.addRenderableWidget(mouseXPosGraph);
+        this.addRenderableWidget(mouseYPosGraph);
         if (!ItemInteractionsConfig.debugDraws) {
 //            rotationRawGraph.visible = false;
             mouseXPosGraph.visible = false;
+            mouseYPosGraph.visible = false;
         }
 
 

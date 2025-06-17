@@ -20,6 +20,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
     double maxGraphY;
     double minGraphY;
 
+    float zLayer;
     int graphDataLength;
     double graphDataHeight;
     boolean showYAxis;
@@ -37,8 +38,9 @@ public class GraphOverTimeWidget extends AbstractWidget {
     private int colorOutline = 0xFFFFFFFF;
 
     private boolean pixelatedGraph;
-    int timeIndex = 0;
+    private int timeIndex = 0;
 
+    private int decimalPrecision = 3;
     double[] points;
 
 
@@ -68,7 +70,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
 
 
-    public GraphOverTimeWidget(int x, int y, int width, int height, int graphWidth, int graphHeight, boolean overdraw, double minGraphY, double maxGraphY, int graphDataLength, boolean showYAxis, int graphDivisions, int newerColor, int olderColor, int backgroundColor, int outlineColor, boolean showCurrentValue, boolean pixelatedGraph, PointGetter pointGetter, boolean updateGraphEveryFrame, List<Marker> markers, boolean showGraphTitle, Component message) {
+    public GraphOverTimeWidget(int x, int y, float zLayer, int width, int height, int graphWidth, int graphHeight, boolean overdraw, double minGraphY, double maxGraphY, int graphDataLength, int decimalPrecision, boolean showYAxis, int graphDivisions, int newerColor, int olderColor, int backgroundColor, int outlineColor, boolean showCurrentValue, boolean pixelatedGraph, PointGetter pointGetter, boolean updateGraphEveryFrame, List<Marker> markers, boolean showGraphTitle, Component message) {
         super(x,y,width,height,message);
 
 
@@ -76,6 +78,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
         this.maxGraphY = maxGraphY;
         this.overdraw = overdraw;
         this.graphDataLength = graphDataLength;
+        this.decimalPrecision = decimalPrecision;
         this.showYAxis = showYAxis;
         this.graphDivisions = graphDivisions + 1;
         this.colorLineNew = newerColor;
@@ -96,17 +99,17 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
         Font FONT = Minecraft.getInstance().font;
         if (showYAxis) {
-            this.yAxisLabelWidth = Math.max(MiscUtils.numberMaxDecimal(minGraphY, 3).length(), MiscUtils.numberMaxDecimal(maxGraphY, 3).length());
+            this.yAxisLabelWidth = Math.max(MiscUtils.numberMaxDecimal(minGraphY, decimalPrecision).length(), MiscUtils.numberMaxDecimal(maxGraphY, decimalPrecision).length());
             for (int i = 0; i <= graphDivisions; i++) {
                 double num = MiscUtils.lerp((double) i / graphDivisions, minGraphY, maxGraphY);
-                this.yAxisLabelWidth = Math.max(FONT.width(MiscUtils.numberMaxDecimal(num, 3) + " "), yAxisLabelWidth);
+                this.yAxisLabelWidth = Math.max(FONT.width(MiscUtils.numberMaxDecimal(num, decimalPrecision) + " "), yAxisLabelWidth);
             }
 
 //            this.setSize(graphWidth + yAxisLabelWidth + padding, (int) (maxGraphY - minGraphY) + padding + fontHeight);
         }
 
         if (showGraphTitle) this.titleWidth = FONT.width(message.getString());
-        if (showCurrentValue) this.valueWidth = FONT.width("000000.000");
+        if (showCurrentValue) this.valueWidth = FONT.width("0000." + "0".repeat(decimalPrecision));
 
 
         this.points = new double[graphDataLength];
@@ -150,6 +153,8 @@ public class GraphOverTimeWidget extends AbstractWidget {
         if (!this.visible) return;
         Font FONT = Minecraft.getInstance().font;
 
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, zLayer);
         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), colorBackground);
         guiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
 
@@ -159,7 +164,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
         if (showGraphTitle) guiGraphics.drawCenteredString(FONT, this.getMessage(), getX() + getWidth()/2, getY() + padding + 1, 0xFFFFFFFF);
 
         if (showCurrentValue) {
-            guiGraphics.drawCenteredString(FONT, MiscUtils.numberMaxDecimal(getCurrentValue(), 3), this.getX() + getWidth()/2, this.getY() + this.getHeight() - lineHeight - 1, 0xFFFFFFFF );
+            guiGraphics.drawCenteredString(FONT, MiscUtils.numberMaxDecimal(getCurrentValue(), decimalPrecision), this.getX() + getWidth()/2, this.getY() + this.getHeight() - lineHeight - 1, 0xFFFFFFFF );
         }
 
         try {
@@ -172,7 +177,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
                 if (!showYAxis) continue;
 
-                String string = MiscUtils.numberMaxDecimal(MiscUtils.lerp((float) i/graphDivisions, minGraphY, maxGraphY), 3) + " ";
+                String string = MiscUtils.numberMaxDecimal(MiscUtils.lerp((float) i/graphDivisions, minGraphY, maxGraphY), decimalPrecision) + " ";
                 guiGraphics.drawString(FONT, string,
                         getGraphX() - FONT.width(string),
                         y - FONT.lineHeight/2 + 1,
@@ -184,7 +189,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                 GuiRendererHelper.renderLine(guiGraphics, getGraphX(), y, getGraphX() + getGraphWidth(), y, marker.color);
 
                 if (showYAxis) {
-                    String string = MiscUtils.numberMaxDecimal(marker.val, 3) + " ";
+                    String string = MiscUtils.numberMaxDecimal(marker.val, decimalPrecision) + " ";
                     int left = getGraphX() - (FONT.width(string));
                     int right = getGraphX();
                     int top = y - FONT.lineHeight/2;
@@ -233,6 +238,8 @@ public class GraphOverTimeWidget extends AbstractWidget {
             }
 
             if (!overdraw) guiGraphics.disableScissor();
+
+            guiGraphics.pose().popPose();
 
         } catch (Exception e) {
             MiscUtils.displayErrorInUi(e.toString());
@@ -303,7 +310,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
     public void addMarker(double yPos, int color, String label) {
         markers.add(new Marker(yPos, color, label));
-        this.yAxisLabelWidth = Math.max(yAxisLabelWidth, Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(yPos, 3)));
+        this.yAxisLabelWidth = Math.max(yAxisLabelWidth, Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(yPos, decimalPrecision)));
     }
 
     public void addMarker(double yPos) {
@@ -376,11 +383,16 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
         private final boolean updateGraphEveryFrame;
 
+        private int decimalPrecision = 3;
+
 
         private int yAxisLabelWidth = 0;
 
         private boolean sizedFromInnerGraph = false;
         private float sizedScale = 1f;
+
+        private float zLayer = 0;
+
 
         public Builder(Component graphTitle, PointGetter pointGetter) {
             this(graphTitle, pointGetter, true);
@@ -394,15 +406,15 @@ public class GraphOverTimeWidget extends AbstractWidget {
         }
 
         private void refreshYAxisLabelLength() {
-            this.yAxisLabelWidth = Math.max(MiscUtils.numberMaxDecimal(minGraphY, 3).length(), MiscUtils.numberMaxDecimal(maxGraphY, 3).length());
+            this.yAxisLabelWidth = Math.max(MiscUtils.numberMaxDecimal(minGraphY, decimalPrecision).length(), MiscUtils.numberMaxDecimal(maxGraphY, decimalPrecision).length());
             for (Marker m : yAxisMarkers) {
                 double num = m.val;
-                this.yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(num, 3) + " "), yAxisLabelWidth);
+                this.yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(num, decimalPrecision) + " "), yAxisLabelWidth);
             }
 
             for (int i = 0; i <= graphDivisions; i++) {
                 double num = MiscUtils.lerp((double) i /graphDivisions, minGraphY, maxGraphY);
-                this.yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(num, 3) + " "), yAxisLabelWidth);
+                this.yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(num, decimalPrecision) + " "), yAxisLabelWidth);
             }
         }
 
@@ -414,6 +426,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
             return new GraphOverTimeWidget(
                     this.x,
                     this.y,
+                    this.zLayer,
                     this.width,
                     this.height,
                     this.graphWidth,
@@ -422,6 +435,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                     this.minGraphY,
                     this.maxGraphY,
                     this.graphDataLength,
+                    this.decimalPrecision,
                     this.showYAxis,
                     this.graphDivisions,
                     this.newDataColor,
@@ -561,7 +575,12 @@ public class GraphOverTimeWidget extends AbstractWidget {
 
         public Builder addMarker(String name, double value) {
             this.yAxisMarkers.add(new Marker(value, 0xFFFFFFFF, name));
-            yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(value, 3) + " "), yAxisLabelWidth);
+            yAxisLabelWidth = Math.max(Minecraft.getInstance().font.width(MiscUtils.numberMaxDecimal(value, decimalPrecision) + " "), yAxisLabelWidth);
+            return this;
+        }
+
+        public Builder decimalPrecision(int digits) {
+            this.decimalPrecision = digits;
             return this;
         }
 
@@ -608,6 +627,11 @@ public class GraphOverTimeWidget extends AbstractWidget {
             return this;
         }
 
+
+        public Builder setZLayer(float z) {
+            this.zLayer = z;
+            return this;
+        }
 
         public Builder showYAxis() {
             return showYAxis(true);
