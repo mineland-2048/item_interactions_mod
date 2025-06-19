@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class BaseParticle {
     GuiGraphics guiGraphics;
     double x, y;
+    double oldX, oldY;
     double speedX, speedY;
     double accelerationX, accelerationY;
     double frictionX, frictionY;
@@ -28,6 +29,8 @@ public class BaseParticle {
         this.guiGraphics = guiGraphics;
         this.x = x;
         this.y = y;
+        this.oldX = x;
+        this.oldY = y;
         this.speedX = speedX;
         this.speedY = speedY;
         this.accelerationX = accelerationX;

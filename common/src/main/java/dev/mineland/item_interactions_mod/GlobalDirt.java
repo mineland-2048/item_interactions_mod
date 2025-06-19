@@ -170,6 +170,7 @@ public class GlobalDirt {
     public static long tickTime = 0;
     public static float msTickDelta = 0;
     public static float spawnerTickDelta = 0;
+    public static double tickProgress = 0;
 //    public static float shortFPS = 0;
 
     public static double drag = 0.8f;
@@ -242,6 +243,7 @@ public class GlobalDirt {
         tickTime = currentMilis - lastMilis;
         msTickDelta = ((tickTime) / 1000f);
 
+
         if (MiscUtils.ErrorDisplay.hasMessages() && ItemInteractionsConfig.debugDraws) {
             MiscUtils.ErrorDisplay.drawMessages();
         }
@@ -253,8 +255,6 @@ public class GlobalDirt {
 
 //        System.out.println("Updating Timer");
         double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-        double mouseSpeedMult = ItemInteractionsConfig.mouseSpeedMult;
-        double mouseDeceleration = ItemInteractionsConfig.mouseDeceleration;
 
 
         tickRate = Minecraft.getInstance().level != null ?
@@ -295,9 +295,11 @@ public class GlobalDirt {
         }
 
         double tickTime = Math.floor((msCounter * tickScale * 30));
+        tickProgress += msTickDelta * tickScale * 30;
         if (tickTime != tickCounter) {
             tickCounter = (int) tickTime;
             shouldTickParticles = true;
+            tickProgress = 0;
         } else shouldTickParticles = false;
 
 

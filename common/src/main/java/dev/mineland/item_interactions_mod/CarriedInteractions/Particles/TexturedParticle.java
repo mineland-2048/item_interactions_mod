@@ -3,6 +3,8 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -187,13 +189,30 @@ public class TexturedParticle extends BaseParticle {
         int finalColor = MiscUtils.colorLerp((float) Math.clamp(lifeTime / maxTick, 0f, 1f), this.colorStart, this.colorEnd);
 
         this.guiGraphics.pose().pushMatrix();
-        this.guiGraphics.pose().translate(0, 0);
-        this.guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.frames.get(textureIndex),
-                (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
-                0f, yStart,
-                totalTextureWidth, uvHeight,
-                totalTextureWidth, totalTextureHeight,
-                finalColor);
+        if (ItemInteractionsConfig.smoothGuiParticles) {
+            this.guiGraphics.pose().pushMatrix();
+
+            double renderPosX = MiscUtils.lerp(GlobalDirt.tickProgress, oldX, x);
+            double renderPosY = MiscUtils.lerp(GlobalDirt.tickProgress, oldY, y);
+            this.guiGraphics.pose().translate((float) renderPosX, (float) renderPosY);
+
+            this.guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.frames.get(textureIndex),
+                    -(totalTextureWidth/2), -(uvHeight/2),
+                    0f, yStart,
+                    totalTextureWidth, uvHeight,
+                    totalTextureWidth, totalTextureHeight,
+                    finalColor);
+
+            this.guiGraphics.pose().popMatrix();
+        } else {
+            this.guiGraphics.blit(RenderPipelines.GUI_TEXTURED, this.frames.get(textureIndex),
+                    (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
+                    0f, yStart,
+                    totalTextureWidth, uvHeight,
+                    totalTextureWidth, totalTextureHeight,
+                    finalColor);
+        }
+
         this.guiGraphics.pose().popMatrix();
 
 
@@ -202,6 +221,8 @@ public class TexturedParticle extends BaseParticle {
 
     public void tick() {
         super.tick();
+        this.oldX = x;
+        this.oldY = y;
         this.x += speedX / 20;
         this.y += speedY / 20;
         this.speedX = (speedX + accelerationX) * frictionX;
