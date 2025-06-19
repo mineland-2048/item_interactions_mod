@@ -3,6 +3,8 @@ package dev.mineland.item_interactions_mod.CarriedInteractions.Particles;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.mineland.item_interactions_mod.GlobalDirt;
+import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -139,6 +141,7 @@ public class TexturedParticle extends BaseParticle {
 
 
 
+
     public void render() {
         super.render();
 
@@ -190,20 +193,39 @@ public class TexturedParticle extends BaseParticle {
 //        This is just as close to the tooltip layer as the particles could go without overlapping.
 //        h
         this.guiGraphics.pose().translate(0, 0, 399);
-        this.guiGraphics.blit(RenderType::guiTextured, this.frames.get(textureIndex),
-                (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
-                0f, yStart,
-                totalTextureWidth, uvHeight,
-                totalTextureWidth, totalTextureHeight,
-                finalColor);
+
+        if (ItemInteractionsConfig.smoothGuiParticles) {
+            this.guiGraphics.pose().pushPose();
+
+            double renderPosX = MiscUtils.lerp(GlobalDirt.tickProgress, oldX, x);
+            double renderPosY = MiscUtils.lerp(GlobalDirt.tickProgress, oldY, y);
+            this.guiGraphics.pose().translate(renderPosX, renderPosY, 0);
+
+            this.guiGraphics.blit(RenderType::guiTextured, this.frames.get(textureIndex),
+                    -(totalTextureWidth/2), -(uvHeight/2),
+                    0f, yStart,
+                    totalTextureWidth, uvHeight,
+                    totalTextureWidth, totalTextureHeight,
+                    finalColor);
+
+            this.guiGraphics.pose().popPose();
+        } else {
+            this.guiGraphics.blit(RenderType::guiTextured, this.frames.get(textureIndex),
+                    (int) this.x - (totalTextureWidth/2), (int) this.y - (uvHeight/2),
+                    0f, yStart,
+                    totalTextureWidth, uvHeight,
+                    totalTextureWidth, totalTextureHeight,
+                    finalColor);
+        }
+
         this.guiGraphics.pose().popPose();
 
-
-//        this.guiGraphics.blit();
     }
 
     public void tick() {
         super.tick();
+        this.oldX = x;
+        this.oldY = y;
         this.x += speedX / 20;
         this.y += speedY / 20;
         this.speedX = (speedX + accelerationX) * frictionX;

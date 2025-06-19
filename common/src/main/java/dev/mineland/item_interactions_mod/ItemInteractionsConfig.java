@@ -19,10 +19,9 @@ public class ItemInteractionsConfig {
 //    public static double scaleSpeed;
 //    public static double scaleAmount;
 
-    public static double mouseSpeedMult;
-    public static double mouseDeceleration;
-
     public static boolean enableGuiParticles;
+    public static boolean smoothGuiParticles;
+
     public static boolean debugDraws;
 
     public static HashMap<String, Object> settingsMap = new HashMap<>();
@@ -94,9 +93,12 @@ public class ItemInteractionsConfig {
         settingsMap.put("gui_particles", true);
         settingsMap.put("debug", false);
         settingsMap.put("animation", "speed");
+        settingsMap.put("gui_smooth_particles", false);
         defaultSettingsMap.put("gui_particles", true);
         defaultSettingsMap.put("debug", false);
         defaultSettingsMap.put("animation", "speed");
+        defaultSettingsMap.put("gui_smooth_particles", false);
+
 
         currentAnimationSelected = animations.get("speed");
 
@@ -188,9 +190,8 @@ public class ItemInteractionsConfig {
 
 
     private static void setValuesAfterRefresh() {
-        mouseDeceleration = (double) getSetting("mouse_deceleration");
-        mouseSpeedMult = (double) getSetting("mouse_speed_multiplier");
         enableGuiParticles = (boolean) getSetting("gui_particles");
+        smoothGuiParticles = (boolean) getSetting("gui_smooth_particles");
         debugDraws = (boolean) getSetting("debug");
         currentAnimationSelected = animations.getOrDefault((String) getSetting("animation"), animations.get("speed"));
 

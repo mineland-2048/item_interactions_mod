@@ -53,6 +53,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private SteppedSliderButton ropeGravity;
     private SteppedSliderButton ropeInertia;
     private Button guiParticlesButton;
+    private Button smoothParticlesButton;
 
     private Button resetButton;
 
@@ -64,21 +65,22 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout speedAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout scaleAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout ropeAnimLayout = LinearLayout.vertical().spacing(4);
-    LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(8);
+    LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(2);
 
     GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
-            "speed x",
-            (graph) -> ItemInteractionsConfig.getAnimationSetting().itemSpeed.x(),
+            "TickProgress",
+            (graph) -> GlobalDirt.tickProgress,
             true
     )
             .showTitle()
             .showYAxis()
             .setZLayer(1000)
             .showCurrentValue()
-            .size_fromInnerGraph(50, -200, 200, 50f/400).pos(0, 8).pixelatedGraph().graphDivisions(5)
+            .size_fromInnerGraph(50, 0, 1, 50).pos(0, 28).pixelatedGraph().graphDivisions(5)
+//            .size(300, 100)
 //            .addMarker("shake threshold", ItemInteractionsConfig.getAnimationSetting().itemSpeed.y())
             .allowOverdraw()
-            .decimalPrecision(5)
+            .decimalPrecision(2)
             .build();
 
     GraphOverTimeWidget mouseYPosGraph = GraphOverTimeWidget.builder(
@@ -105,9 +107,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
 //    String oldAnimationConfig   = ItemInteractionsConfig.getAnimationSetting().id;
 //    double oldScaleSpeed        = (double) ItemInteractionsConfig.getSetting("scale_speed");
 //    double oldScaleAmount       = (double) ItemInteractionsConfig.getSetting("scale_amount");
-    double oldMouseDeceleration = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
-    double oldMouseSpeedMult    = (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier");
+//    double oldMouseDeceleration = (double) ItemInteractionsConfig.getSetting("mouse_deceleration");
+//    double oldMouseSpeedMult    = (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier");
     boolean oldParticleEnabled  = (boolean) ItemInteractionsConfig.getSetting("gui_particles");
+    boolean oldSmoothParticles = (boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles");
 //    public static double scaleSpeed;
 //    public static float scaleAmount;
 //    public static double mouseSpeedMult = 1;
@@ -148,6 +151,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseDeceleration.setTooltip(Tooltip.create(Component.literal("The deceleration factor for the items. \n1 = normal deceleration\n0 = no deceleration")));
 
         guiParticlesButton.setTooltip(Tooltip.create(Component.literal("Enable or disable particles in the inventory from resource packs.")));
+        smoothParticlesButton.setTooltip(Tooltip.create(Component.literal("Toggles weather the particles are locked to the texture grid or not.")));
 
 
         boolean hadItems = false;
@@ -267,12 +271,18 @@ public class ItemInteractionsSettingsScreen extends Screen {
                         .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
                 );
 
+        Component guiSmoothInitialText
+                = Component.literal("Smooth particles: ")
+                .append(Component.literal(""+ItemInteractionsConfig.getSetting("gui_smooth_particles"))
+                        .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
+                );
+
         guiParticlesButton = rightColumnLayout.addChild(
                 Button.builder(guiButtonInitialText, (self) -> {
                     ItemInteractionsConfig.enableGuiParticles = !ItemInteractionsConfig.enableGuiParticles;
                     ItemInteractionsConfig.setSetting("gui_particles", ItemInteractionsConfig.enableGuiParticles);
 
-                    ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("gui_particles") ?
+                    ChatFormatting color = (boolean) ItemInteractionsConfig.enableGuiParticles ?
                             ChatFormatting.GREEN : ChatFormatting.RED;
 
 
@@ -282,8 +292,29 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                             .withStyle(color)
                                     )
                     );
+
+                    smoothParticlesButton.active = ItemInteractionsConfig.enableGuiParticles;
                 }).build(), LayoutSettings::alignHorizontallyCenter
         );
+
+        smoothParticlesButton = rightColumnLayout.addChild(
+                Button.builder(guiSmoothInitialText, (self) -> {
+                    ItemInteractionsConfig.smoothGuiParticles = !ItemInteractionsConfig.smoothGuiParticles;
+                    ItemInteractionsConfig.setSetting("gui_smooth_particles", ItemInteractionsConfig.smoothGuiParticles);
+
+                    ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles") ?
+                            ChatFormatting.GREEN : ChatFormatting.RED;
+
+
+                    self.setMessage(
+                            Component.literal("Smooth particles: ")
+                                    .append(Component.literal(""+ItemInteractionsConfig.smoothGuiParticles)
+                                            .withStyle(color)
+                                    )
+                    );
+                }).build(), LayoutSettings::alignHorizontallyCenter
+        );
+
 
 
         LinearLayout footerLayout = LinearLayout.horizontal().spacing(8);
@@ -409,7 +440,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
 
     }
-
     private void addSpeedAnimSettings() {
         mouseSpeedMult = speedAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, (double) ItemInteractionsConfig.getSetting("mouse_speed_multiplier"), -2, 2, 40) {
             {
@@ -430,7 +460,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             @Override
             protected void applyValue() {
                 ItemInteractionsConfig.setSetting("mouse_speed_multiplier", value);
-                ItemInteractionsConfig.mouseSpeedMult = value;
 
             }
 
@@ -451,7 +480,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             @Override
             protected void applyValue() {
                 ItemInteractionsConfig.setSetting("mouse_deceleration", value);
-                ItemInteractionsConfig.mouseDeceleration = value;
             }
         });
     }
@@ -538,8 +566,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
         if (!ItemInteractionsConfig.debugDraws) {
 //            rotationRawGraph.visible = false;
             mouseXPosGraph.visible = false;
-            mouseYPosGraph.visible = false;
         }
+        mouseYPosGraph.visible = false;
 
 
     }
@@ -556,9 +584,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
 //        ItemInteractionsConfig.animationConfig = oldAnimationConfig;
 //        ItemInteractionsConfig.scaleSpeed = oldScaleSpeed;
 //        ItemInteractionsConfig.scaleAmount = oldScaleAmount;
-        ItemInteractionsConfig.mouseDeceleration = oldMouseDeceleration;
-        ItemInteractionsConfig.mouseSpeedMult = oldMouseSpeedMult;
+
         ItemInteractionsConfig.enableGuiParticles = oldParticleEnabled;
+        ItemInteractionsConfig.smoothGuiParticles = oldSmoothParticles;
 
         ItemInteractionsConfig.settingsMap = previousSettingsMap;
         this.minecraft.setScreen(parent);
@@ -585,6 +613,11 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 Component.literal("Inventory particles: ").append(
                 Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_particles")).withStyle(ChatFormatting.GREEN)
         ));
+
+        smoothParticlesButton.setMessage(
+                Component.literal("Smooth particles: ").append(
+                        Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_smooth_particles")).withStyle(ChatFormatting.GREEN)
+                ));
 
         ItemInteractionsConfig.init();
 
