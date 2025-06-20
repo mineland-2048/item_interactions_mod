@@ -356,11 +356,34 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
     private void addPhysAnimSettings() {
-        double elasticity = (double) ItemInteractionsConfig.getSetting("rope_elasticity");
-        double length = (double) ItemInteractionsConfig.getSetting("rope_length");
-        var gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
-        double inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
-        boolean pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
+
+        double elasticity;
+        double length;
+        Vector3f gravity;
+        double inertia;
+        boolean pixelated;
+
+        try {
+            elasticity = (double) ItemInteractionsConfig.getSetting("rope_elasticity");
+            length = (double) ItemInteractionsConfig.getSetting("rope_length");
+            gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
+            inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
+            pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
+        } catch (Exception e) {
+            MiscUtils.displayErrorInUi("Phys error: \n" + e);
+            elasticity = (double) ItemInteractionsConfig.getDefaultSetting("rope_elasticity");
+            length = (double) ItemInteractionsConfig.getDefaultSetting("rope_length");
+            gravity = (Vector3f) ItemInteractionsConfig.getDefaultSetting("rope_gravity");
+            inertia = (double) ItemInteractionsConfig.getDefaultSetting("rope_inertia");
+            pixelated = (boolean) ItemInteractionsConfig.getDefaultSetting("rope_pixelated");
+
+            ItemInteractionsConfig.setSetting("rope_elasticity", ItemInteractionsConfig.getDefaultSetting("rope_elasticity"));
+            ItemInteractionsConfig.setSetting("rope_length", ItemInteractionsConfig.getDefaultSetting("rope_length"));
+            ItemInteractionsConfig.setSetting("rope_gravity", ItemInteractionsConfig.getDefaultSetting("rope_gravity"));
+            ItemInteractionsConfig.setSetting("rope_inertia", ItemInteractionsConfig.getDefaultSetting("rope_inertia"));
+            ItemInteractionsConfig.setSetting("rope_pixelated", ItemInteractionsConfig.getDefaultSetting("rope_pixelated"));
+
+        }
 
 
         ropeElasticity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
