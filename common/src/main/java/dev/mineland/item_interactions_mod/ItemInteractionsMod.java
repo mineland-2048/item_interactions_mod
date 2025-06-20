@@ -44,13 +44,13 @@ public final class ItemInteractionsMod {
         logger.info(message);
     }
 
-    public static void warnMessage(String message) {
-        logger.warn(message);
+    public static void warnMessage(String message, Object... args) {
+        logger.warn(String.format(message, args));
         if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
     }
 
     public static void errorMessage(String message, Object... args) {
-        logger.error(message, args);
+        logger.error(String.format(message, args));
         if (GlobalDirt.isReloadingResources) GlobalDirt.spawnerErrorCount++;
     }
 

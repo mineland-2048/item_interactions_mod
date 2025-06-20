@@ -68,7 +68,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
     LinearLayout ropeAnimLayout = LinearLayout.vertical().spacing(4);
     LinearLayout rightColumnLayout = bodyLayout.addChild(LinearLayout.vertical()).spacing(2);
 
-
     GraphOverTimeWidget mouseXPosGraph = GraphOverTimeWidget.builder(
             "TickProgress",
             (graph) -> GlobalDirt.tickProgress,
@@ -175,7 +174,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             inventoryPreview.setItem(7,  new ItemStack(Items.ZOMBIE_HEAD));
             inventoryPreview.setItem(8,  new ItemStack(Items.EGG));
         }
-
 
 
         updateVisible();
@@ -365,12 +363,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             debugButton.setSize(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT);
             this.addRenderableWidget(debugButton);
         }
-
-
-
-
-
-
 
     }
 

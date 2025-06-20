@@ -1,6 +1,7 @@
 package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import java.io.File;
@@ -35,19 +36,21 @@ public class ItemInteractionsConfig {
 
     private static AnimTemplate currentAnimationSelected;
     public static Object getSetting(String setting) {
+        if (settingsMap.get(setting) == null) return getDefaultSetting(setting);
         return settingsMap.getOrDefault(setting, getDefaultSetting(setting));
     }
 
     public static void setSetting(String setting, Object value) {
         try {
-            if (settingsMap.get(setting) == null) {
+            if (defaultSettingsMap.get(setting) == null) {
                 ItemInteractionsMod.errorMessage(String.format("Tried setting %s to %s but it doesn't exist", setting, value));
+                return;
             }
             if (value == null) {
                 ItemInteractionsMod.errorMessage("Tried setting '%s' to *null*", setting);
                 return;
             }
-            if (!value.getClass().equals(settingsMap.get(setting).getClass())) {
+            if (!value.getClass().equals(defaultSettingsMap.get(setting).getClass())) {
                 ItemInteractionsMod.errorMessage(String.format("Failed to set %s (%s) to setting %s (%s)", value, value.getClass().getName(), setting, settingsMap.get(setting).getClass().getName()));
                 return;
             }
@@ -59,6 +62,11 @@ public class ItemInteractionsConfig {
         }
     }
 
+    public static void resetSetting(String setting) {
+        if (defaultSettingsMap.containsKey(setting)) {
+            settingsMap.put(setting, defaultSettingsMap.get(setting));
+        }
+    }
     public static void setAnimationSetting(String id) {
         setSetting("animation", id);
         currentAnimationSelected = animations.getOrDefault(id, animations.get("speed"));
@@ -76,7 +84,6 @@ public class ItemInteractionsConfig {
 
     public static void refreshAnimList() {
         animations.clear();
-
         animationList.forEach(t -> {
             animations.put(t.getId(), t);
             settingsMap.putAll(t.getSettingsList());
@@ -85,32 +92,24 @@ public class ItemInteractionsConfig {
         animations.put("none", new AnimTemplate("none"));
     }
 
+
+    private static void putDefault(String setting, Object value) {
+        settingsMap.put(setting, value);
+        defaultSettingsMap.put(setting, value);
+
+    }
     public static void init() {
 
         settingsMap.clear();
         refreshAnimList();
 
-        settingsMap.put("gui_particles", true);
-        settingsMap.put("debug", false);
-        settingsMap.put("animation", "speed");
-        settingsMap.put("gui_smooth_particles", false);
-        defaultSettingsMap.put("gui_particles", true);
-        defaultSettingsMap.put("debug", false);
-        defaultSettingsMap.put("animation", "speed");
-        defaultSettingsMap.put("gui_smooth_particles", false);
-
+        putDefault("gui_particles", true);
+        putDefault("debug", false);
+        putDefault("animation", "speed");
+        putDefault("gui_smooth_particles", false);
 
         currentAnimationSelected = animations.get("speed");
 
-
-
-//        animationConfig = DefaultValues.animationConfig;
-//        scaleSpeed = DefaultValues.scaleSpeed;
-//        scaleAmount = DefaultValues.scaleAmount;
-//        mouseDeceleration = DefaultValues.mouseDeceleration;
-//        mouseSpeedMult = DefaultValues.mouseSpeedMult;
-//
-//        enableGuiParticles = DefaultValues.enableGuiParticles;
     }
 
     public static AnimTemplate getAnimationSetting() {
@@ -144,39 +143,45 @@ public class ItemInteractionsConfig {
 
 
                 if (settingsMap.containsKey(arg)) {
-
                     var og = settingsMap.get(arg);
+                    Object parsedValue;
 
-
-                    if (MiscUtils.isNumber(value)) {
-                        double a = Double.parseDouble(value);
-                        settingsMap.put(arg, a);
+                    if (arg.equals("animation")) {
+                        if (animations.containsKey(value)) parsedValue = value;
+                        else parsedValue = null;
                     }
-                    else if (MiscUtils.isBoolean(value))  {
-                        boolean a = Boolean.parseBoolean(value);
-                        settingsMap.put(arg, a);
+                    else {
+//                        System.out.print(arg + ": ");
+                        parsedValue = parseConfigValue(value, og);
                     }
 
-                    else if (MiscUtils.isVector(value)) {
-                        Vector3f a = MiscUtils.parseVector3f(value);
-                        settingsMap.put(arg, a);
-                    }
-                    else { settingsMap.put(arg, value); }
+                    if (parsedValue == null) {
+                        ItemInteractionsMod.warnMessage("Defaulting invalid setting: %s = %s", arg, value);
+                        parsedValue = getDefaultSetting(arg);
+                    };
+                    settingsMap.put(arg, parsedValue);
 
+
+                } else {
+                    ItemInteractionsMod.warnMessage("Found unknown setting: %s = %s", arg, value);
                 }
 
                 lineCount++;
             }
 
-            if (!settingsMap.containsKey("animation") || settingsMap.get("animation") == null || !animations.containsKey((String) settingsMap.get("animation"))) {
+            if (!settingsMap.containsKey("animation") || settingsMap.get("animation") == null || settingsMap.get("animation").equals("null") || !animations.containsKey((String) settingsMap.get("animation"))) {
                 settingsMap.put("animation", defaultAnimations.get("speed"));
             }
 
+//            ItemInteractionsMod.infoMessage("Setting config to: \n" + settingsMap.toString());
 
             writeConfig(configFile);
-        } catch (IOException e) {
-            ItemInteractionsMod.warnMessage("Failed to refresh the config! \n" + e.getMessage());
-            ItemInteractionsMod.warnMessage("Using the defaults");
+        } catch (Exception e) {
+            ItemInteractionsMod.warnMessage("Failed to refresh the config! \n"
+                    + e.getMessage()
+                    + "Using the defaults"
+            );
+
             init();
         }
 
@@ -187,6 +192,69 @@ public class ItemInteractionsConfig {
 
     }
 
+    private static Object parseConfigValue(String value, Object obj) {
+        Object parsedValue = null;
+        switch (obj) {
+            case Integer i:
+//                System.out.printf("Parsing %s: %s", "int", value);
+                if (MiscUtils.isInt(value)) {
+                    parsedValue = Integer.parseInt(value);
+                }
+                break;
+
+            case Float f:
+//                System.out.printf("Parsing %s: %s", "float", value);
+                if (MiscUtils.isNumber(value)) {
+                    parsedValue = Float.parseFloat(value);
+//                    System.out.println(" **SUCCESS**");
+                }
+                break;
+
+            case Double d:
+//                System.out.printf("Parsing %s: %s", "double", value);
+                if (MiscUtils.isNumber(value)) {
+                    parsedValue = Double.parseDouble(value);
+//                    System.out.println(" **SUCCESS**");
+
+                }
+                break;
+
+            case Boolean b:
+//                System.out.printf("Parsing %s: %s", "boolean", value);
+                if (MiscUtils.isBoolean(value)) {
+                    parsedValue = Boolean.parseBoolean(value);
+//                    System.out.println(" **SUCCESS**");
+
+                }
+                break;
+
+            case Vector3f vector3f:
+//                System.out.printf("Parsing %s: %s", "Vector3f", value);
+                if (MiscUtils.isVector(value)) {
+                    parsedValue = MiscUtils.parseVector3f(value);
+//                    System.out.println(" **SUCCESS**");
+                }
+                break;
+            default:
+//                System.out.printf("Found nothing for supposed %s: %s%n", obj.getClass(), value);
+                break;
+        }
+
+        return parsedValue;
+    }
+
+    private static boolean IsCorrectClass(Object og, Object value) {
+
+        boolean ret = og.getClass().equals(value.getClass());
+        if (!ret) {
+            ItemInteractionsMod.warnMessage(String.format("invalid value! using the default %n" +
+                    "Og: %s%n" +
+                    "Cf: %s", og.getClass(), value.getClass() ));
+
+        }
+
+        return ret;
+    }
 
 
     private static void setValuesAfterRefresh() {

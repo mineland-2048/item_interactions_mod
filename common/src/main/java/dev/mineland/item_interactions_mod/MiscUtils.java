@@ -143,16 +143,38 @@ public class MiscUtils {
         return NumberUtils.isParsable(s) || NumberUtils.isCreatable(s);
     }
 
+    public static boolean isInt(String s) {
+        var retString = s.trim();
+        boolean decimalDetected = false;
+
+        for (int i = 0; i < retString.length(); i++) {
+            var c = retString.charAt(i);
+            if (c == '.') decimalDetected = true;
+            if (decimalDetected && Character.isDigit(c)) return false;
+            if (!Character.isDigit(c)) return false;
+        }
+
+        return true;
+
+
+    }
+
     public static boolean isBoolean(String s) {
         return s.equalsIgnoreCase("true") || s.equalsIgnoreCase("false");
     }
 
     public static boolean isVector(String s) {
+
         if (s.isEmpty()) return false;
         if (!s.startsWith("(") || !s.endsWith(")")) return false;
 
 
-        s = s.replace("(", "").replace(")", "").trim().replace("  ", " ");
+        s = s
+                .replace("(", "")
+                .replace(")", "")
+                .replaceAll(" +", " ")
+                .trim();
+
         String[] rawValues = s.split(" ");
 
         for (String rawValue : rawValues) {
@@ -167,7 +189,12 @@ public class MiscUtils {
         if (!s.startsWith("(") || !s.endsWith(")")) throw new NumberFormatException("String is not enclosed in (braces)");
 
 
-        s = s.replace("(", "").replace(")", "").trim().replace("  ", " ");
+        s = s
+                .replace("(", "")
+                .replace(")", "")
+                .replaceAll(" +", " ")
+                .trim();
+
         String[] rawValues = s.split(" ");
 
         float[] numValues = new float[s.length()];
