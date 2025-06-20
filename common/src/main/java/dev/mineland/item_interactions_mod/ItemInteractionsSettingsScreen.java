@@ -638,7 +638,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseSpeedMult.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_speed_multiplier"));
         mouseDeceleration.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_deceleration"));
 
-        ropePixelated.setMessage(Component.literal("Is rope: ").append(
+        ropePixelated.setMessage(Component.literal("Pixel consistent: ").append(
                 Component.literal("" + ItemInteractionsConfig.getDefaultSetting("rope_pixelated")).withStyle(ChatFormatting.GREEN)
         ));
 
