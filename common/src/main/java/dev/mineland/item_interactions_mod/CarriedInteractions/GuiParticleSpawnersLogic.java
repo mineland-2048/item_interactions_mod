@@ -119,8 +119,8 @@ public class GuiParticleSpawnersLogic {
 
     //        if there is a carried item
             else if (carriedItem != null && !carriedItem.isEmpty()) {
-                double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x(),
-                        y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y(),
+                double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x() * 16,
+                        y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y() * 16,
                         speedX = GlobalDirt.speedX + ItemInteractionsConfig.getAnimationSetting().itemSpeed.x(),
                         speedY = GlobalDirt.speedY + ItemInteractionsConfig.getAnimationSetting().itemSpeed.y();
 
