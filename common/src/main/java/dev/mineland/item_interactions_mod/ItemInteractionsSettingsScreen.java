@@ -655,7 +655,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         smoothParticlesButton.setMessage(
                 Component.literal("Smooth particles: ").append(
-                        Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_smooth_particles")).withStyle(ChatFormatting.GREEN)
+                        Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_smooth_particles")).withStyle(ChatFormatting.RED)
                 ));
 
         ItemInteractionsConfig.init();

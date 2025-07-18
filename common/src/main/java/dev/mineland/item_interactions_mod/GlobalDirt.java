@@ -320,6 +320,27 @@ public class GlobalDirt {
 
     }
 
+    public static void renderHead(GuiGraphics guiGraphics) {
+        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
+        GlobalDirt.updateTimer();
+        GlobalDirt.slotCount = 0;
+    }
+
+    public static void renderTail(GuiGraphics guiGraphics) {
+        GlobalDirt.tailUpdateTimer();
+        GlobalDirt.updateMousePositions();
+
+        if ((boolean) ItemInteractionsConfig.getSetting("debug")) {
+            guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
+        }
+
+        if ((boolean)  ItemInteractionsConfig.getSetting("gui_particles")) GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+
+
+        carriedItem = ItemStack.EMPTY;
+    }
+
 
     public static void setGlobalGuiGraphics(GuiGraphics gg) {
         globalGuiGraphics = gg;
