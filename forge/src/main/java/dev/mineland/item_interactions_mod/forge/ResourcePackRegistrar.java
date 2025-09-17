@@ -1,4 +1,4 @@
-package dev.mineland.item_interactions_mod.neoforge;
+package dev.mineland.item_interactions_mod.forge;
 
 import dev.mineland.item_interactions_mod.Item_interactions_mod;
 import net.minecraft.network.chat.Component;
@@ -6,18 +6,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
-import net.minecraft.server.packs.repository.BuiltInPackSource;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.AddPackFindersEvent;
-import net.neoforged.neoforgespi.language.IModInfo;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = Item_interactions_mod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ResourcePackRegistrar {
@@ -25,7 +22,7 @@ public class ResourcePackRegistrar {
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
-        ResourceLocation packLocation = new ResourceLocation(Item_interactions_mod.MOD_ID, "resourcepacks/example_gui_particles");
+        ResourceLocation packLocation = ResourceLocation.fromNamespaceAndPath(Item_interactions_mod.MOD_ID, "resourcepacks/example_gui_particles");
 
         addPackFinders(event,
                 packLocation,
@@ -48,13 +45,8 @@ public class ResourcePackRegistrar {
 
         var packResourcesFactory = new Pack.ResourcesSupplier() {
             @Override
-            public @NotNull PackResources openPrimary(String name) {
+            public @NotNull PackResources open(String name) {
                 return new PathPackResources(name, resourcePath, false); // 'false' = not for metadata only
-            }
-
-            @Override
-            public @NotNull PackResources openFull(String string, Pack.Info arg) {
-                return new PathPackResources(string, resourcePath, false);
             }
         };
 

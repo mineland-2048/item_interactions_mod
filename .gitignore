@@ -6,7 +6,7 @@
 /.gradle/
 /.idea/
 /build/
-/neoforge/.gradle/
-/neoforge/build/
-/neoforge/run/
+/forge/.gradle/
+/forge/build/
+/forge/run/
 /.architectury-transformer/debug.log
