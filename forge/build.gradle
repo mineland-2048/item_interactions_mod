@@ -76,3 +76,15 @@ publishing {
         // Add repositories to publish to here.
     }
 }
+
+afterEvaluate {
+    tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+        manifest.attributes([
+                'MixinConfigs': "item_interactions_mod.mixins.json",
+                'Specification-Title': project.name,
+                'Specification-Version': mod_version,
+                'Implementation-Title': base.archivesName,
+                'Implementation-Version': version,
+        ])
+    }
+}
