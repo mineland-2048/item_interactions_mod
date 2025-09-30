@@ -70,7 +70,7 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
         if (!pictureInPictureRenderState.renderState().usesBlockLight()) {
             Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_FLAT);
         }
-        pictureInPictureRenderState.renderState().render(finalPose, this.bufferSource, 15728880, OverlayTexture.NO_OVERLAY);
+        pictureInPictureRenderState.renderState().submit(finalPose, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), 15728880, OverlayTexture.NO_OVERLAY, 0);
 
 
 

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -203,15 +204,29 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
     }
 
 
+//    @Override
+//    public boolean mouseClicked(double d, double e, int i) {
+    ////        ItemInteractionsMod.infoMessage("d: " + d + ", e" + e + ", i: " + i);
+//
+//        this.container.mouseClicked(d, e, i);
+//
+//        return super.mouseClicked(d, e, i);
+//
+//    };
+
     @Override
-    public boolean mouseClicked(double d, double e, int i) {
-//        ItemInteractionsMod.infoMessage("d: " + d + ", e" + e + ", i: " + i);
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
 
-        this.container.mouseClicked(d, e, i);
+        double x, y;
+        int mb;
 
-        return super.mouseClicked(d, e, i);
+        x = mouseButtonEvent.x();
+        y = mouseButtonEvent.y();
+        mb = mouseButtonEvent.button();
+        this.container.mouseClicked(x, y, mb);
 
-    };
+        return super.mouseClicked(mouseButtonEvent, bl);
+    }
 
     @Override
     public void mouseMoved(double d, double e) {

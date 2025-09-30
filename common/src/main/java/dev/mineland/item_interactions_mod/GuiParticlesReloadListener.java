@@ -116,37 +116,43 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
 
     }
-    @Override
-    public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
 
-        CompletableFuture<Void> a = CompletableFuture.supplyAsync(() -> {
-
-            isReloadingResources = true;
-            spawnerErrorList.clear();
-            particleErrorList.clear();
-            spawnerErrorCount = 0;
-            currentParticleSpawner = "";
-            this.loadStuff(resourceManager);
-
-            if (spawnerErrorCount > 0) {
-
-                String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
-                SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
-                        Component.literal(String.format(errorTitle, spawnerErrorCount)),
-                        Component.literal("Check the logs for more information") );
-
-            }
-
-            isReloadingResources = false;
-            return null;
-
-
-        }, executor);
-
-        return a.thenCompose(preparationBarrier::wait);
-
-//        return ResourceManagerReloadListener.super.reload(preparationBarrier, resourceManager, executor, executor2);
-    }
+//    @Override
+//    public CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor2) {
+//        return ResourceManagerReloadListener.super.reload(sharedState, executor, preparationBarrier, executor2);
+//    }
+//
+//    @Override
+//    public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
+//
+//        CompletableFuture<Void> a = CompletableFuture.supplyAsync(() -> {
+//
+//            isReloadingResources = true;
+//            spawnerErrorList.clear();
+//            particleErrorList.clear();
+//            spawnerErrorCount = 0;
+//            currentParticleSpawner = "";
+//            this.loadStuff(resourceManager);
+//
+//            if (spawnerErrorCount > 0) {
+//
+//                String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
+//                SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+//                        Component.literal(String.format(errorTitle, spawnerErrorCount)),
+//                        Component.literal("Check the logs for more information") );
+//
+//            }
+//
+//            isReloadingResources = false;
+//            return null;
+//
+//
+//        }, executor);
+//
+//        return a.thenCompose(preparationBarrier::wait);
+//
+    ////        return ResourceManagerReloadListener.super.reload(preparationBarrier, resourceManager, executor, executor2);
+//    }
 
     @Override
     public @NotNull String getName() {
@@ -155,6 +161,22 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
+        isReloadingResources = true;
+        spawnerErrorList.clear();
+        particleErrorList.clear();
+        spawnerErrorCount = 0;
+        currentParticleSpawner = "";
+        this.loadStuff(resourceManager);
 
+        if (spawnerErrorCount > 0) {
+
+            String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
+            SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+                    Component.literal(String.format(errorTitle, spawnerErrorCount)),
+                    Component.literal("Check the logs for more information") );
+
+        }
+
+        isReloadingResources = false;
     }
 }

@@ -156,7 +156,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
 //        guiGraphics.pose().translate(0, 0, zLayer);
         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), colorBackground);
-        guiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
+        guiGraphics.submitOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
 
 
         GuiRendererHelper.renderLine_ColorPattern(guiGraphics, getX() + (float) getWidth() /2, getY(), getX() + (float) getWidth() /2, getY() + getHeight(), new int[]{0x20FFFFFF, 0}, 8, true);
@@ -204,7 +204,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                 }
             });
 
-            guiGraphics.renderOutline(this.getGraphX(), this.getGraphY(), this.getGraphWidth(), this.getGraphHeight(), 0xFFFFFFFF);
+            guiGraphics.submitOutline(this.getGraphX(), this.getGraphY(), this.getGraphWidth(), this.getGraphHeight(), 0xFFFFFFFF);
 
             if (!overdraw) guiGraphics.enableScissor(getGraphX(), getGraphY(), getGraphX() + getGraphWidth(), getGraphY() + getGraphHeight());
 
@@ -463,8 +463,8 @@ public class GraphOverTimeWidget extends AbstractWidget {
             this.height = height;
 
             if (!(this.showCurrentValue || this.showYAxis || this.titleVisible)) {
-                 this.graphWidth = width;
-                 this.graphHeight = height;
+                this.graphWidth = width;
+                this.graphHeight = height;
             } else {
                 int subY = 0;
                 int subX = padding * 2;
