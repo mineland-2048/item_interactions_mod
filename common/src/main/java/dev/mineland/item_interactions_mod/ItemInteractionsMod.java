@@ -40,6 +40,12 @@ public final class ItemInteractionsMod {
 
     }
 
+    public static void debugInfoMessage(String message) {
+        if (GlobalDirt.devenv) {
+            logger.debug(message);
+        }
+    }
+
     public static void infoMessage(String message) {
         logger.info(message);
     }

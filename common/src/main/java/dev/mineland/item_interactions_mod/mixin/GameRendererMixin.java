@@ -1,5 +1,6 @@
 package dev.mineland.item_interactions_mod.mixin;
 
+import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.GuiRenderer;
@@ -27,12 +28,15 @@ public class GameRendererMixin {
 
     @ModifyArgs(method = "<init>", at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/render/GuiRenderer;<init>(Lnet/minecraft/client/gui/render/state/GuiRenderState;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Ljava/util/List;)V"))
+//          target = "Lnet/minecraft/client/gui/render/GuiRenderer;<init>(Lnet/minecraft/client/gui/render/state/GuiRenderState;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Ljava/util/List;)V"))
+            target = "Lnet/minecraft/client/gui/render/GuiRenderer;<init>(Lnet/minecraft/client/gui/render/state/GuiRenderState;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;Ljava/util/List;)V"
+    ))
     public void addGuiFloatingItemRenderer(Args args) {
-        List<PictureInPictureRenderer<?>> original = args.get(2);
+        List<PictureInPictureRenderer<?>> original = args.get(4);
         List<PictureInPictureRenderer<?>> modified = new ArrayList<>(original);
         modified.add(new GuiFloatingItemRenderer(Minecraft.getInstance().renderBuffers().bufferSource()));
-        args.set(2, modified);
+        args.set(4, modified);
+        ItemInteractionsMod.debugInfoMessage("Renderer added in the mixin");
 
     }
 }

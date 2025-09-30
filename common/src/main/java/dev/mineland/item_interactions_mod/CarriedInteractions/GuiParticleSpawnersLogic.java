@@ -56,7 +56,7 @@ public class GuiParticleSpawnersLogic {
             List<ResourceLocation> currentSpawnersList = GlobalDirt.slotSpawners.getIdList(slotCount);
             List<ResourceLocation> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
 
 //            No previous spawner and no new spawner
             if (itemGuiParticleSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
@@ -107,7 +107,7 @@ public class GuiParticleSpawnersLogic {
     }
 
 
-//    Logic for the carried spawner and particle ticking
+    //    Logic for the carried spawner and particle ticking
 //    Is ran once per frame
     public static void mainLogic(GuiGraphics guiGraphics) {
         List<BaseParticle> shouldDelete = new ArrayList<>();
@@ -117,7 +117,7 @@ public class GuiParticleSpawnersLogic {
             // if the carried is empty or the item has no spawners then clear the carried spawner
             if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner.clear();
 
-    //        if there is a carried item
+                //        if there is a carried item
             else if (carriedItem != null && !carriedItem.isEmpty()) {
                 double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x() * 16,
                         y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y() * 16,
@@ -126,14 +126,14 @@ public class GuiParticleSpawnersLogic {
 
 
 
-    //            if its a different item from the previous tick
+                //            if its a different item from the previous tick
                 if (!SpawnerRegistry.compareSpawner(carriedGuiParticleSpawner, carriedItem) || (carriedGuiParticleSpawner.isEmpty())) {
 
-    //                if it has a spawner, use it and pick it up
+                    //                if it has a spawner, use it and pick it up
                     List<GuiParticleSpawner> newGuiParticleSpawner = SpawnerRegistry.get(carriedItem);
                     if (!newGuiParticleSpawner.isEmpty()) {
                         carriedGuiParticleSpawner = newGuiParticleSpawner;
-    //                    carriedGuiParticleSpawnerTimers.clear();
+                        //                    carriedGuiParticleSpawnerTimers.clear();
                         Collections.fill(carriedGuiParticleSpawnerTimer, 0f);
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onPickup"));
                         GlobalDirt.slotSpawners.tickSpawners(

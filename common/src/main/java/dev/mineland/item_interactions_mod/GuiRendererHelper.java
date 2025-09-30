@@ -81,7 +81,7 @@ public class GuiRendererHelper {
 
 
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
 
 
             guiRenderState.submitPicturesInPictureState(
@@ -120,26 +120,26 @@ public class GuiRendererHelper {
     }
 
 
-//    TODO: fix non pixelated lines
+    //    TODO: fix non pixelated lines
     public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
 //        if (pixelated) {
-            if (x0 == x1 || y0 == y1) {
-                int px = 0, py = 0;
-                if (y0 != y1) {
-                    px = 1;
-                }
-
-                if (x0 != x1) {
-                    py = 1;
-                }
-
-                guiGraphics.fill((int) x0, (int) y0, (int) x1 + px, (int) y1+py, color);
-                return;
-
+        if (x0 == x1 || y0 == y1) {
+            int px = 0, py = 0;
+            if (y0 != y1) {
+                px = 1;
             }
 
-            LineAlgs.plotLine(guiGraphics, (int) x0, (int) y0, (int) x1, (int) y1, color);
+            if (x0 != x1) {
+                py = 1;
+            }
+
+            guiGraphics.fill((int) x0, (int) y0, (int) x1 + px, (int) y1+py, color);
             return;
+
+        }
+
+        LineAlgs.plotLine(guiGraphics, (int) x0, (int) y0, (int) x1, (int) y1, color);
+        return;
 //        }
 
 
@@ -262,7 +262,7 @@ public class GuiRendererHelper {
             float[] currentPoint = points[i];
             float[] nextPoint = points[i+1];
             if (samePoint( (int) currentPoint[0], (int) currentPoint[1],
-                           (int) nextPoint[0], (int) nextPoint[1])
+                    (int) nextPoint[0], (int) nextPoint[1])
             ) {
                 continue;
             }

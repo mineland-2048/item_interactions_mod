@@ -10,7 +10,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.CommonInputs;
+//import net.minecraft.client.gui.navigation.CommonInputs;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.sounds.SoundManager;
@@ -42,6 +44,9 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     private double handlePosition;
     public double value;
 
+    private boolean dragging;
+
+
     public SteppedSliderButton(int left, int top, int width, int height, Component message, double initialValue) {
         this(left, top, width, height, message, initialValue, 0, 1, 0, false);
 
@@ -54,7 +59,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
         this(left, top, width, height, message, initialValue, minValue, maxValue, steps, false);
     }
 
-//    Main method
+    //    Main method
     public SteppedSliderButton(int left, int top, int width, int height, Component message, double initialValue, double minValue, double maxValue, int steps, boolean divideSteps) {
         super(left, top, width, height, message);
 //        this.value = (double) Math.round(initialValue * 10) / 10;
@@ -124,9 +129,15 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 //        guiGraphics.drawString(minecraft.font, "range: " + this.range, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
     }
 
-    public void onClick(double d, double e) {
-        this.setValueFromMouse(d);
+//    public void onClick(double d, double e) {
+//        this.setValueFromMouse(d);
+//    }
+
+    public void onClick(MouseButtonEvent mouseButtonEvent, boolean bl) {
+        this.dragging = this.active;
+        this.setValueFromMouse(mouseButtonEvent);
     }
+
 
     public void updateHandlePosition() {
         if (steps > 0) {
@@ -151,19 +162,45 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
 
 
+//    @Override
+//    public boolean keyPressed(int i, int j, int k) {
+//        if (CommonInputs.selected(i)) {
+//            this.canChangeValue = !this.canChangeValue;
+//            return true;
+//        } else {
+//            if (this.canChangeValue) {
+//                boolean leftKeyPressed = i == 263;
+//                if (leftKeyPressed || i == 262) {
+//                    int f = leftKeyPressed ? -1 : 1;
+//                    if (this.steps == 0) {
+//                      this.setValue(Math.clamp(this.value + f/range, minValue, maxValue));
+//                    } else this.setValueStep(this.selectedStep + f);
+//                    return true;
+//                }
+//            }
+//
+//            return false;
+//        }
+//    }
+
     @Override
-    public boolean keyPressed(int i, int j, int k) {
-        if (CommonInputs.selected(i)) {
+    public boolean keyPressed(KeyEvent keyEvent) {
+        if (keyEvent.isSelection()) {
             this.canChangeValue = !this.canChangeValue;
             return true;
         } else {
             if (this.canChangeValue) {
-                boolean leftKeyPressed = i == 263;
-                if (leftKeyPressed || i == 262) {
+                boolean leftKeyPressed = keyEvent.isLeft();
+                boolean rightKeyPressed = keyEvent.isRight();
+                if (leftKeyPressed || rightKeyPressed) {
                     int f = leftKeyPressed ? -1 : 1;
+//                    this.setValue(this.value + (double)(f / (float)(this.width - 8)));
+
                     if (this.steps == 0) {
-                      this.setValue(Math.clamp(this.value + f/range, minValue, maxValue));
+                        this.setValue(Math.clamp(this.value + f/range, minValue, maxValue));
                     } else this.setValueStep(this.selectedStep + f);
+
+
                     return true;
                 }
             }
@@ -172,10 +209,16 @@ public abstract class SteppedSliderButton extends AbstractWidget {
         }
     }
 
+
     private void setValueFromMouse(double d) {
         handlePosition = Math.clamp((d - (double)(this.getX() + 4)) / (double)(this.width - 8), 0, 1);
         this.setValueInternal((handlePosition * range) + minValue);
     }
+
+    private void setValueFromMouse(MouseButtonEvent mouseButtonEvent) {
+        this.setValue((mouseButtonEvent.x() - (double)(this.getX() + 4)) / (double)(this.width - 8));
+    }
+
 
     public void setValueStep(int step) {
         setValueInternal(minValue + ((double) step / steps * range));
@@ -212,11 +255,17 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
 
 
-    @Override
-    protected void onDrag(double d, double e, double f, double g) {
-        this.setValueFromMouse(d);
-        super.onDrag(d, e, f, g);
+//    @Override
+//    protected void onDrag(double d, double e, double f, double g) {
+//        this.setValueFromMouse(d);
+//        super.onDrag(d, e, f, g);
+//    }
+
+    protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
+        this.setValueFromMouse(mouseButtonEvent);
+        super.onDrag(mouseButtonEvent, d, e);
     }
+
 
     public void playDownSound(SoundManager soundManager) {
     }

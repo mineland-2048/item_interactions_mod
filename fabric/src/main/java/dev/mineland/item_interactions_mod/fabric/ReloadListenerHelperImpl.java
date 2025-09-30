@@ -17,6 +17,11 @@ public class ReloadListenerHelperImpl {
     public static void registerReloadListener(ResourceManagerReloadListener listener) {
 
         IdentifiableResourceReloadListener idListener = new IdentifiableResourceReloadListener() {
+            @Override
+            public CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor2) {
+                return mainListener.reload(sharedState,executor,preparationBarrier,executor2);
+            }
+
             private final ResourceManagerReloadListener mainListener = listener;
             private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles");
 
@@ -24,10 +29,10 @@ public class ReloadListenerHelperImpl {
                 return ID;
             }
 
-            @Override
-            public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
-                return mainListener.reload(preparationBarrier, resourceManager, executor, executor2);
-            }
+//            @Override
+//            public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
+//                return mainListener.reload(preparationBarrier, resourceManager, executor, executor2);
+//            }
         };
 
 

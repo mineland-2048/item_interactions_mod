@@ -2,12 +2,15 @@ package dev.mineland.item_interactions_mod.renderState;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.network.chat.Component;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -15,6 +18,7 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
 
     public GuiFloatingItemRenderer(BufferSource bufferSource) {
         super(bufferSource);
+
     }
 
     @Override
@@ -70,8 +74,13 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
         if (!pictureInPictureRenderState.renderState().usesBlockLight()) {
             Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_FLAT);
         }
-        pictureInPictureRenderState.renderState().render(finalPose, this.bufferSource, 15728880, OverlayTexture.NO_OVERLAY);
 
+        var nodeCollector = Minecraft.getInstance().gameRenderer.getSubmitNodeStorage();
+        pictureInPictureRenderState.renderState().submit(finalPose, nodeCollector, 15728880, OverlayTexture.NO_OVERLAY, 1000);
+
+//        This code is being reached.
+//        TODO: find why tf this is not rendering.
+//        ItemInteractionsMod.infoMessage("rendering??");
 
 
     }
