@@ -390,7 +390,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
         double length = (double) ItemInteractionsConfig.getSetting("rope_length");
         var gravity = (Vector3f) ItemInteractionsConfig.getSetting("rope_gravity");
         double inertia = (double) ItemInteractionsConfig.getSetting("rope_inertia");
-        boolean pixelated = true; // (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
+        boolean pixelated = (boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
 
 
         ropeElasticity = ropeAnimLayout.addChild(new SteppedSliderButton(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, CommonComponents.EMPTY, elasticity, 0, 1, 20) {
@@ -468,9 +468,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     self.setMessage(Component.literal ("Pixel consistent: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
                 }).build());
 
-        ropePixelated.active = false;
-
-        ropePixelated.setTooltip(Tooltip.create(Component.literal("Due to 1.21.6 changes, this is unavailable as of now.")));
+//        ropePixelated.active = false;
+//
+//        ropePixelated.setTooltip(Tooltip.create(Component.literal("Due to 1.21.6 changes, this is unavailable as of now.")));
 
     }
     private void addSpeedAnimSettings() {

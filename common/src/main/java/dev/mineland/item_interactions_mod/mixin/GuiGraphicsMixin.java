@@ -66,6 +66,7 @@ public abstract class GuiGraphicsMixin{//
     private void setGlobalGuiGraphics(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, CallbackInfo ci) {
         var self = (GuiGraphics) (Object) this;
         GlobalDirt.setGlobalGuiGraphics(self);
+        GlobalDirt.setGlobalGuiRenderState(guiRenderState);
     }
 
     @Unique

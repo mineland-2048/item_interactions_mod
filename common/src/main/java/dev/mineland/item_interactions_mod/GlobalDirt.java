@@ -7,6 +7,7 @@ import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiPartic
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
@@ -197,6 +198,7 @@ public class GlobalDirt {
     public static String currentParticleSpawner;
 
     static GuiGraphics globalGuiGraphics;
+    static GuiRenderState globalGuiRenderState;
     public static int tickCounter;
 
 
@@ -346,8 +348,16 @@ public class GlobalDirt {
         globalGuiGraphics = gg;
     }
 
+    public static void setGlobalGuiRenderState(GuiRenderState gr) {
+        globalGuiRenderState = gr;
+    }
+
     public static GuiGraphics getGlobalGuiGraphics() {
         return globalGuiGraphics;
+    }
+
+    public static GuiRenderState getGlobalGuiRenderState() {
+        return globalGuiRenderState;
     }
 }
 
