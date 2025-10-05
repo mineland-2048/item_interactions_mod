@@ -32,11 +32,15 @@ public class GameRendererMixin {
             target = "Lnet/minecraft/client/gui/render/GuiRenderer;<init>(Lnet/minecraft/client/gui/render/state/GuiRenderState;Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;Ljava/util/List;)V"
     ))
     public void addGuiFloatingItemRenderer(Args args) {
+        if (ItemInteractionsMod.isNeo()) {
+            return;
+        }
+
         List<PictureInPictureRenderer<?>> original = args.get(4);
         List<PictureInPictureRenderer<?>> modified = new ArrayList<>(original);
         modified.add(new GuiFloatingItemRenderer(Minecraft.getInstance().renderBuffers().bufferSource()));
         args.set(4, modified);
-        ItemInteractionsMod.debugInfoMessage("Renderer added in the mixin");
+//            ItemInteractionsMod.debugInfoMessage("Renderer added in the mixin");
 
     }
 }

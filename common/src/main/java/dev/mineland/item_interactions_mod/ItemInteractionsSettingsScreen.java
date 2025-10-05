@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
@@ -367,7 +368,25 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
     private void addNeoButton() {
-        if (ItemInteractionsMod.isNeo() && SharedConstants.getCurrentVersion().id().equals("1.21.6")) {
+        String verString = SharedConstants.getCurrentVersion().id();
+
+        var snapshot = verString.contains("w");
+        boolean showNeoWarn = true;
+
+        if (!snapshot) {
+            try {
+                var minorDrop = verString.substring(verString.indexOf("21.") + 3);
+                int subVersion = Integer.parseInt(minorDrop);
+
+                if (subVersion <= 6) showNeoWarn = false;
+
+            } catch (Exception e) {
+                MiscUtils.displayErrorInUi(e.toString());
+            }
+        }
+
+
+        if (ItemInteractionsMod.isNeo() && showNeoWarn) {
             var widgetSprites = new WidgetSprites(ResourceLocation.withDefaultNamespace("dialog/warning_button"), ResourceLocation.withDefaultNamespace("dialog/warning_button_disabled"), ResourceLocation.withDefaultNamespace("dialog/warning_button_highlighted"));
 
             neoWarning = new ImageButton(
@@ -379,7 +398,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     button -> {}
             );
 
-            neoWarning.setTooltip(Tooltip.create(Component.literal("Due to some weirdness in neoforge 1.21.6, the animation settings render without light. \nThis will be fixed eventually")));
+            neoWarning.setTooltip(Tooltip.create(Component.literal("Due to some weirdness since neoforge 1.21.6, the animation settings render without light. \nThis will be fixed eventually")));
 
 //            this.addRenderableWidget(neoWarning);
         }

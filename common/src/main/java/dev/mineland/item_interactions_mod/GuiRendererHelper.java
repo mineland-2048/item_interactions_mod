@@ -113,6 +113,73 @@ public class GuiRendererHelper {
 
     }
 
+    public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, float initialX, float initialY, float initialZ) {
+        ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
+        int x = (int) initialX;
+        int y = (int) initialY;
+        AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
+        if (anim == null) return;
+
+        if (prevItem.isEmpty() && !itemStack.isEmpty()) {
+            anim.reset((int) initialX, (int) initialY, 1000);
+        }
+        prevItem = itemStack;
+
+        GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), guiRenderState);
+
+        PoseStack newPose = anim.makePose((int) initialX, (int) initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
+        newPose.translate(initialX - x, initialY - y, initialZ - Math.round(initialZ));
+//        newPose.pushPose();
+        try {
+            minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
+
+            AnimTemplate animationSetting = ItemInteractionsConfig.getAnimationSetting();
+            float ivX = animationSetting.itemPos.x;
+            float ivY = animationSetting.itemPos.y;
+
+            int size = 64;
+
+            int correction = (size / 2) - 8;
+            int x0 = (int) (ivX * 16) + x - (correction);
+            int y0 = (int) (ivY * 16) + y - (correction);
+            int x1 = (int) (ivX * 16) + x - (correction) + size;
+            int y1 = (int) (ivY * 16) + y - (correction) + size;
+
+//            x0 = 200; x1 = 260;
+//            y0 = 100; y1 = 120;
+            int scX = x + (int) (ivX * 16) - correction;
+            int scY = y + (int) (ivY * 16) - correction;
+
+
+
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
+
+
+            guiRenderState.submitPicturesInPictureState(
+                    new GuiFloatingItemRenderState(
+                            scratchItemStackRenderState,
+                            new Vector3f(),
+                            new Quaternionf(),
+                            null,
+                            x0, y0,
+                            x1, y1,
+                            16,
+                            null,
+                            newPose
+                    )
+            );
+
+//            scratchItemStackRenderState.submit(newPose, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), 0, 0, 240);
+
+
+        }
+        catch (Exception e) {
+            ItemInteractionsMod.errorMessage("Crashed. " + e);
+        }
+
+
+    }
+
 
     public static void setPixel(GuiGraphics guiGraphics, int x, int y, int color) {
         guiGraphics.fill(x, y, x+1, y+1, color);
