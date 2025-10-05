@@ -98,6 +98,9 @@ public class GuiRendererHelper {
                     )
             );
 
+//            scratchItemStackRenderState.submit(newPose, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), 0, 0, 240);
+
+
         }
         catch (Exception e) {
             ItemInteractionsMod.errorMessage("Crashed. " + e);

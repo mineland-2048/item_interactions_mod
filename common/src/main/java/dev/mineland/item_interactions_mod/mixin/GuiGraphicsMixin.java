@@ -43,7 +43,8 @@ public abstract class GuiGraphicsMixin{//
                 GuiRendererHelper.renderItem(this.guiRenderState, itemStack, level, livingEntity, k, minecraft, i, j, 20000);
 
                 pose.pushMatrix();
-                pose.scale(0);
+                pose.scale(0, 0);
+//                pose.translate(0, 0);
 
             }
 
