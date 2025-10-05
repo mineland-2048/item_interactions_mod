@@ -216,7 +216,9 @@ public abstract class SteppedSliderButton extends AbstractWidget {
     }
 
     private void setValueFromMouse(MouseButtonEvent mouseButtonEvent) {
-        this.setValue((mouseButtonEvent.x() - (double)(this.getX() + 4)) / (double)(this.width - 8));
+        double normalizedProgressFromMouse = Mth.clamp((mouseButtonEvent.x() - (double) (this.getX() + 4)) / (double) (this.width - 8), 0, 1);
+
+        this.setValue((normalizedProgressFromMouse*range) + minValue);
     }
 
 
