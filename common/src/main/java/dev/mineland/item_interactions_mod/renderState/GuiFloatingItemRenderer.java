@@ -76,29 +76,39 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
 
 
 //        Dummy node to get the quads for the item
+
+        final float rotationAmount = (float) Math.toRadians(90);
         var h = node.getSubmitsPerOrder();
         h.forEach((integer, submitNodeCollection) -> {
              submitNodeCollection.getItemSubmits().forEach(itemSubmit -> {
+//                 var tickRot = GlobalDirt.msCounter % 2 < 1 ? GlobalDirt.msCounter % 2 : 0;
+//                float rotationAmount = (float) ((Math.cos((tickRot - 1) * Math.PI) * Math.PI) - (Math.PI));
+
                 var itemPose = new PoseStack();
 
-                float rotationAmount = (float) (Math.sin(GlobalDirt.msCounter* 0.1) * Math.PI);
-                itemPose.rotateAround(new Quaternionf().rotateLocalX(rotationAmount), 0, 0, 0);
-                itemPose.pushPose();
 
 //                Gets the pose from the item and sets it like in OversizedItemRenderer
-                itemPose.pushPose();
                 itemPose.last().set(itemSubmit.pose());
                 itemPose.scale(1.0f, -1.0f, -1.0f);
 
+
+
 //                the 0.5 is from the pivot centering
-                itemPose.translate(0.0f + 0.5f, 2.0f - 0.5f + (blockLight ? 2f : 0), 0.0f - 0.5f);
+//                Translates the item again.
+                final float tx = 0.5f, tz = -0.5f;
+                float ty = 1.5f; // 2.0f from the item pos and 0.5 from the pivot center
+                if (blockLight) {
+                    ty = 3.2f;
+                    itemPose.rotateAround(new Quaternionf().rotateLocalY(rotationAmount), tx, ty, tz);
 
+                }
 
-
+                itemPose.translate(tx, ty, tz);
                 itemPose.pushPose();
 //                Finally, apply the tranformation from the animation
-                itemPose.last().mulPose(finalPose.last().pose());
 
+                itemPose.pushPose();
+                itemPose.last().mulPose(finalPose.last().pose());
 
 
 
