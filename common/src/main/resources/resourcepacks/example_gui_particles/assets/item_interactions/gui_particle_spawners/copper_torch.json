@@ -1,0 +1,19 @@
+{
+    "children": ["item_interactions:torch_smoke"],
+    "applies": [{ "id": "copper_torch" }],
+    "attributes": {
+        "x": 0,
+        "y": 3
+    },
+    "events": {
+        "onCarried": {
+            "interval": 80,
+            "interval_variance": 20,
+
+            "particles": [
+                {"id": "copper_fire_flame"}
+            ]
+        },
+        "onIdle": "onCarried"
+    }
+}
