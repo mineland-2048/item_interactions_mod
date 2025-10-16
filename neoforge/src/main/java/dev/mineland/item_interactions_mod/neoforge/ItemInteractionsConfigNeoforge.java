@@ -11,7 +11,7 @@ public class ItemInteractionsConfigNeoforge implements IConfigScreenFactory {
     public ItemInteractionsConfigNeoforge() {}
 
     @Override
-    public @NotNull Screen createScreen(@NotNull ModContainer modContainer, Screen arg) {
+    public @NotNull Screen createScreen(@NotNull ModContainer modContainer, @NotNull Screen arg) {
         return new ItemInteractionsSettingsScreen(arg);
     }
 }

@@ -29,7 +29,8 @@ public final class ItemInteractionsMod {
         registerAnimations();
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
-        ReloadListenerHelper.registerReloadListener(new GuiParticlesReloadListener());
+//        Why is architectury being such a pain rn
+//        ReloadListenerHelper.registerReloadListener(new GuiParticlesReloadListener());
     }
 
     static void registerAnimations() {

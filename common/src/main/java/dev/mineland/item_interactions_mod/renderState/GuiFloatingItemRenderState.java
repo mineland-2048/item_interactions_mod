@@ -5,12 +5,15 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import javax.sound.midi.Track;
+
 public record GuiFloatingItemRenderState (
-        ItemStackRenderState renderState,
+        TrackingItemStackRenderState renderState,
         Vector3f translation,
         Quaternionf rotation,
         @Nullable Quaternionf overrideCameraAngle,
@@ -24,7 +27,7 @@ public record GuiFloatingItemRenderState (
         PoseStack poseStack
 ) implements PictureInPictureRenderState {
     public GuiFloatingItemRenderState(
-            ItemStackRenderState itemStackRenderState,
+            TrackingItemStackRenderState itemStackRenderState,
             Vector3f translation,
             Quaternionf rotation,
             @Nullable Quaternionf overrideCameraAngle,
@@ -40,7 +43,7 @@ public record GuiFloatingItemRenderState (
     }
 
     public GuiFloatingItemRenderState(
-        ItemStackRenderState renderState, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, int x0, int y0, int x1, int y1, float scale, @Nullable ScreenRectangle scissorArea, @Nullable ScreenRectangle bounds, PoseStack poseStack
+        TrackingItemStackRenderState renderState, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, int x0, int y0, int x1, int y1, float scale, @Nullable ScreenRectangle scissorArea, @Nullable ScreenRectangle bounds, PoseStack poseStack
     )
     {
         this.renderState = renderState;
@@ -57,7 +60,7 @@ public record GuiFloatingItemRenderState (
         this.poseStack = poseStack;
     }
 
-    public ItemStackRenderState renderState() { return this.renderState; }
+    public TrackingItemStackRenderState renderState() { return this.renderState; }
 
 
 

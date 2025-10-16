@@ -5,7 +5,7 @@ license = "GNU LGPL 3.0"
 
 [[mods]]
 modId = "item_interactions_mod"
-version = "${version}+${minecraft_version}"
+version = "${version}-mc${minecraft_version}"
 displayName = "Item interactions mod"
 authors = "mineland"
 description = '''
@@ -24,7 +24,7 @@ side = "CLIENT"
 [[dependencies.item_interactions_mod]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version},)"
+versionRange = "${version_range_neo}"
 ordering = "NONE"
 side = "CLIENT"
 

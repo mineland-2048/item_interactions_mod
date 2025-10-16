@@ -18,7 +18,7 @@ public class ReloadListenerHelperImpl {
 
         IdentifiableResourceReloadListener idListener = new IdentifiableResourceReloadListener() {
             @Override
-            public CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor2) {
+            public @NotNull CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor2) {
                 return mainListener.reload(sharedState,executor,preparationBarrier,executor2);
             }
 

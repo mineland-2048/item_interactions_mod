@@ -8,11 +8,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.TextureSetup;
 import dev.mineland.item_interactions_mod.renderState.ColoredPolygonRenderState;
+import net.minecraft.client.gui.render.state.GuiItemRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
+import net.minecraft.client.gui.render.state.pip.OversizedItemRenderState;
 import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -48,11 +51,13 @@ public class GuiRendererHelper {
 
     public static ItemStack prevItem = ItemStack.EMPTY;
     public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, int initialX, int initialY, int initialZ) {
-        ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
+        TrackingItemStackRenderState scratchItemStackRenderState = new TrackingItemStackRenderState();
         int x = initialX;
         int y = initialY;
         AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
         if (anim == null) return;
+
+
 
         if (prevItem.isEmpty() && !itemStack.isEmpty()) {
             anim.reset(initialX, initialY, 1000);
@@ -87,6 +92,10 @@ public class GuiRendererHelper {
 
             if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
 
+//            var guiItemRenderState = new GuiItemRenderState();
+//            guiRenderState.submitPicturesInPictureState(
+//                    new OversizedItemRenderState();
+//            );
 
             guiRenderState.submitPicturesInPictureState(
                     new GuiFloatingItemRenderState(
@@ -114,7 +123,7 @@ public class GuiRendererHelper {
     }
 
     public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, float initialX, float initialY, float initialZ) {
-        ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
+        TrackingItemStackRenderState scratchItemStackRenderState = new TrackingItemStackRenderState();
         int x = (int) initialX;
         int y = (int) initialY;
         AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();

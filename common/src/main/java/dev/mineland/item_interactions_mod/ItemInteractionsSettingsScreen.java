@@ -17,8 +17,9 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
@@ -27,21 +28,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
+//@Environment(EnvType.CLIENT)
 public class ItemInteractionsSettingsScreen extends Screen {
 
 
     private final Screen parent;
 
 
+
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, 36);
 
-    public Button button1;
-    public Button button2;
-
-    public Button doneButton;
-
-    private ImageButton neoWarning;
+    private ImageButton versionWarningButton;
+    private StringWidget warnStringWidget;
+    private boolean enableVersionWarning = false;
 
     private Button debugButton;
     private CycleButton<String> animationCycleButton;
@@ -199,9 +198,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         String value = animationCycleButton.getValue();
 
-        if (ItemInteractionsMod.isNeo() && neoWarning != null) {
-            neoWarning.visible = true;
-            neoWarning.active = !value.equals("none");
+        if (enableVersionWarning && versionWarningButton != null) {
+            versionWarningButton.visible = true;
+            versionWarningButton.active = !value.equals("none");
 
         }
 
@@ -250,6 +249,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                     ItemInteractionsConfig.setAnimationSetting(string);
                                     ItemInteractionsConfig.getAnimationSetting().reset((int) GlobalDirt.lastMouseX, (int) GlobalDirt.lastMouseY, 0);
                                     updateVisible();
+
+
                                 }
                         )
 
@@ -333,7 +334,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         this.layout.addToFooter(footerLayout);
 
-        addNeoButton();
+        addVersionWarning();
 
         updateVisible();
 
@@ -367,29 +368,57 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     }
 
-    private void addNeoButton() {
+    private void addVersionWarning() {
         String verString = SharedConstants.getCurrentVersion().id();
 
         var snapshot = verString.contains("w");
-        boolean showNeoWarn = true;
+        boolean showVersionWarn = true;
+
+        StringBuilder versionWarnMessage = new StringBuilder();
+        String countString = "This";
+
+        ArrayList<String> versionWarnMessages = new ArrayList<>();
 
         if (!snapshot) {
             try {
                 var minorDrop = verString.substring(verString.indexOf("21.") + 3);
                 int subVersion = Integer.parseInt(minorDrop);
 
-                if (subVersion <= 6) showNeoWarn = false;
+                if (subVersion <= 6) showVersionWarn = false;
+                else {
+                    versionWarnMessages.add("> Due to changes on 1.21.9, some animations experience issues, aswell as items with entity renderers being broken (chests, heads, banners, etc).");
+                }
 
             } catch (Exception e) {
                 MiscUtils.displayErrorInUi(e.toString());
             }
+        } else {
+            versionWarnMessages.add("> You're playing on a snapshot version. This is not supported");
+        }
+
+        if (ItemInteractionsMod.isNeo()) {
+            versionWarnMessages.add("> Due to NeoForge weirdness, items appear with no light");
         }
 
 
-        if (ItemInteractionsMod.isNeo() && showNeoWarn) {
+
+
+
+
+        if (showVersionWarn) {
+            countString = (versionWarnMessages.size() > 1 ? "These" : "This") + " will be fixed eventually, but you can disable animations in the meantime to get around this";
+
+            for (String msg : versionWarnMessages) {
+                versionWarnMessage.append(msg).append('\n');
+            }
+
+            versionWarnMessage.append(countString);
+
+
+
             var widgetSprites = new WidgetSprites(ResourceLocation.withDefaultNamespace("dialog/warning_button"), ResourceLocation.withDefaultNamespace("dialog/warning_button_disabled"), ResourceLocation.withDefaultNamespace("dialog/warning_button_highlighted"));
 
-            neoWarning = new ImageButton(
+            versionWarningButton = new ImageButton(
                     Minecraft.getInstance().getWindow().getGuiScaledWidth() - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT,
                     Button.DEFAULT_SPACING,
                     SpriteIconButton.DEFAULT_HEIGHT,
@@ -398,9 +427,22 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     button -> {}
             );
 
-            neoWarning.setTooltip(Tooltip.create(Component.literal("Due to some weirdness since neoforge 1.21.6, the animation settings render without light. \nThis will be fixed eventually")));
+            versionWarningButton.setTooltip(Tooltip.create(Component.literal(versionWarnMessage.toString())));
 
-//            this.addRenderableWidget(neoWarning);
+            warnStringWidget = new StringWidget(
+                    Component.literal("WARNING: THERE ARE VERSION ISSUES")
+                            .withStyle(
+                                    Style.EMPTY
+                                            .withColor(ChatFormatting.YELLOW)
+                                            .withBold(true)
+                            ),
+                    Minecraft.getInstance().font
+
+            );
+            this.enableVersionWarning = true;
+//            this.addRenderableWidget(versionWarningButton);
+//            this.addRenderableWidget(warnStringWidget);
+//            warnStringWidget.setY();
         }
     }
 
@@ -622,9 +664,12 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseYPosGraph.visible = false;
 
 
-        if (ItemInteractionsMod.isNeo()) {
-            neoWarning.setPosition(width - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT, Button.DEFAULT_SPACING );
-            addRenderableWidget(neoWarning);
+        if (enableVersionWarning) {
+            versionWarningButton.setPosition(width - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT, Button.DEFAULT_SPACING );
+            warnStringWidget.setPosition((width/2) - warnStringWidget.getWidth() / 2, Minecraft.getInstance().font.lineHeight * 3);
+            addRenderableWidget(versionWarningButton);
+            addRenderableWidget(warnStringWidget);
+
         }
 
 

@@ -1,5 +1,6 @@
 package dev.mineland.item_interactions_mod.neoforge;
 
+import dev.mineland.item_interactions_mod.GuiParticlesReloadListener;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderState;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderer;
@@ -20,10 +21,9 @@ public final class Item_interactions_modNeoForge {
         // Run our common setup.
         container.registerExtensionPoint(IConfigScreenFactory.class, new ItemInteractionsConfigNeoforge() {});
         ItemInteractionsMod.init();
-
         ItemInteractionsMod.LOADER = ItemInteractionsMod.LOADER_ENUM.NEOFORGE;
 
-
+        ReloadListenerHelperImpl.registerReloadListener(new GuiParticlesReloadListener());
 
         modFile = container.getModInfo().getOwningFile().getFile().getFilePath();
 

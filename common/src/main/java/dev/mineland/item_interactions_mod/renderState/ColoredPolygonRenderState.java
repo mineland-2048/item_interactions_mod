@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 import org.joml.Vector2f;
 
-@Environment(EnvType.CLIENT)
+//@Environment(EnvType.CLIENT)
 public record ColoredPolygonRenderState(
         RenderPipeline pipeline,
         TextureSetup textureSetup,

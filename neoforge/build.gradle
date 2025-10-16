@@ -45,7 +45,9 @@ processResources {
     from(project(":common").sourceSets["main"].resources)
     filesMatching('META-INF/neoforge.mods.toml') {
         expand version: project.version,
-        "minecraft_version": rootProject.minecraft_version
+        "minecraft_version": rootProject.minecraft_version,
+        "version_range_neo": rootProject.version_range_neo
+
     }
 }
 

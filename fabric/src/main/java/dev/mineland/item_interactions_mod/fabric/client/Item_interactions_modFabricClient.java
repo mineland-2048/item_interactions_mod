@@ -1,6 +1,8 @@
 package dev.mineland.item_interactions_mod.fabric.client;
 
+import dev.mineland.item_interactions_mod.GuiParticlesReloadListener;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
+import dev.mineland.item_interactions_mod.fabric.ReloadListenerHelperImpl;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
@@ -15,10 +17,12 @@ public final class Item_interactions_modFabricClient implements ClientModInitial
 
         ItemInteractionsMod.init();
         ItemInteractionsMod.LOADER = ItemInteractionsMod.LOADER_ENUM.FABRIC;
+        ReloadListenerHelperImpl.registerReloadListener(new GuiParticlesReloadListener());
 
         FabricLoader.getInstance().getModContainer(ItemInteractionsMod.MOD_ID).ifPresent(container -> {
             ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "example_gui_particles");
             ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
         });
+
     }
 }
