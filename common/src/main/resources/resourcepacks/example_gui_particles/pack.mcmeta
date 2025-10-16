@@ -4,7 +4,9 @@
     "pack_format": 55,
     "supported_formats": {
       "min_inclusive": 55,
-      "max_inclusive": 70
-    }
+      "max_inclusive": 75
+    },
+    "min_format": 55,
+    "max_format": 75
   }
 }
