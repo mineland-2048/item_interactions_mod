@@ -372,27 +372,13 @@ public class ItemInteractionsSettingsScreen extends Screen {
         String verString = SharedConstants.getCurrentVersion().id();
 
         var snapshot = verString.contains("w");
-        boolean showVersionWarn = true;
 
         StringBuilder versionWarnMessage = new StringBuilder();
-        String countString = "This";
+        String countString;
 
         ArrayList<String> versionWarnMessages = new ArrayList<>();
 
-        if (!snapshot) {
-            try {
-                var minorDrop = verString.substring(verString.indexOf("21.") + 3);
-                int subVersion = Integer.parseInt(minorDrop);
-
-                if (subVersion <= 6) showVersionWarn = false;
-                else {
-                    versionWarnMessages.add("> Due to changes on 1.21.9, some animations experience issues, aswell as items with entity renderers being broken (chests, heads, banners, etc).");
-                }
-
-            } catch (Exception e) {
-                MiscUtils.displayErrorInUi(e.toString());
-            }
-        } else {
+        if (snapshot) {
             versionWarnMessages.add("> You're playing on a snapshot version. This is not supported");
         }
 
@@ -400,12 +386,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
             versionWarnMessages.add("> Due to NeoForge weirdness, items appear with no light");
         }
 
-
-
-
-
-
-        if (showVersionWarn) {
+        if (!versionWarnMessages.isEmpty()) {
             countString = (versionWarnMessages.size() > 1 ? "These" : "This") + " will be fixed eventually, but you can disable animations in the meantime to get around this";
 
             for (String msg : versionWarnMessages) {
@@ -413,8 +394,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
 
             versionWarnMessage.append(countString);
-
-
 
             var widgetSprites = new WidgetSprites(ResourceLocation.withDefaultNamespace("dialog/warning_button"), ResourceLocation.withDefaultNamespace("dialog/warning_button_disabled"), ResourceLocation.withDefaultNamespace("dialog/warning_button_highlighted"));
 

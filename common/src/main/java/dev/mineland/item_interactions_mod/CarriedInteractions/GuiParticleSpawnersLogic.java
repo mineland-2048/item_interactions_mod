@@ -23,6 +23,7 @@ public class GuiParticleSpawnersLogic {
     public static void reset() {
         slots.clear();
     }
+
     public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
 
         if (!GlobalDirt.shouldTickParticles || dontUpdateTimer) return false;
@@ -34,9 +35,9 @@ public class GuiParticleSpawnersLogic {
         while (slots.size() <= GlobalDirt.slotCount) slots.add(null);
 
         if (slots.get(slotCount) != slot) {
-            if (slotCount-1 >= 0 && slots.get(slotCount - 1) == slot) {
+            if (slotCount - 1 >= 0 && slots.get(slotCount - 1) == slot) {
                 GlobalDirt.slotCount--;
-            } else if (slotCount+1 < slots.size() && slots.get(slotCount + 1) == slot) {
+            } else if (slotCount + 1 < slots.size() && slots.get(slotCount + 1) == slot) {
                 GlobalDirt.slotCount++;
             }
 
@@ -44,7 +45,6 @@ public class GuiParticleSpawnersLogic {
         }
 
         slots.set(slotCount, slot);
-
 
 
         while (GlobalDirt.slotSpawners.size() <= slotCount) GlobalDirt.slotSpawners.add(null);
@@ -66,7 +66,8 @@ public class GuiParticleSpawnersLogic {
 
 //            The slot had a previous spawner but no longer will
             if (itemGuiParticleSpawnerList.isEmpty()) {
-                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFFFF0000);
+                if (ItemInteractionsConfig.debugDraws)
+                    guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFFFF0000);
                 GlobalDirt.slotSpawners.set(slotCount, new ArrayList<>());
                 return false;
             }
@@ -77,8 +78,8 @@ public class GuiParticleSpawnersLogic {
 
 //            Slot was empty or had some spawners but will receive a new set of spawners
             if ((currentSpawnersList.isEmpty()) || !new HashSet<>(currentSpawnersList).containsAll(itemSpawnersIdList)) {
-                if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, currentSpawnersList.isEmpty() ? 0xFF00FF00 : 0xFFFFFF00);
-
+                if (ItemInteractionsConfig.debugDraws)
+                    guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, currentSpawnersList.isEmpty() ? 0xFF00FF00 : 0xFFFFFF00);
 
 
                 GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, (isInventoryScrolling && inventoryJustOpened) ? "onIdle" : "onPut");
@@ -90,10 +91,9 @@ public class GuiParticleSpawnersLogic {
             }
 
 
-
-
 //            No spawner updates. Just tick
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x8000FF00);
+            if (ItemInteractionsConfig.debugDraws)
+                guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0x8000FF00);
             GlobalDirt.slotSpawners.tick(slotCount, spawnerTickDelta, guiGraphics, globalX, globalY, 0f, 0f);
             return false;
 
@@ -114,15 +114,15 @@ public class GuiParticleSpawnersLogic {
 
 
             // if the carried is empty or the item has no spawners then clear the carried spawner
-            if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty()) carriedGuiParticleSpawner.clear();
+            if (carriedItem == null || carriedItem.isEmpty() || SpawnerRegistry.get(carriedItem).isEmpty())
+                carriedGuiParticleSpawner.clear();
 
                 //        if there is a carried item
             else if (carriedItem != null && !carriedItem.isEmpty()) {
-                double  x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x() * 16,
+                double x = lastMouseX + ItemInteractionsConfig.getAnimationSetting().itemPos.x() * 16,
                         y = lastMouseY + ItemInteractionsConfig.getAnimationSetting().itemPos.y() * 16,
                         speedX = GlobalDirt.speedX + ItemInteractionsConfig.getAnimationSetting().itemSpeed.x(),
                         speedY = GlobalDirt.speedY + ItemInteractionsConfig.getAnimationSetting().itemSpeed.y();
-
 
 
                 //            if its a different item from the previous tick
@@ -145,9 +145,7 @@ public class GuiParticleSpawnersLogic {
                         carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState("onIdle"));
 
 
-
-                    }
-                    else GlobalDirt.carriedGuiParticleSpawner.clear();
+                    } else GlobalDirt.carriedGuiParticleSpawner.clear();
                 }
 
                 carriedGuiParticleSpawner.forEach((spawner) -> spawner.setState(isShaking ? "onShake" : "onCarried"));
@@ -171,7 +169,6 @@ public class GuiParticleSpawnersLogic {
             particle.render();
 
         }
-
 
 
         GlobalDirt.particleList.removeAll(shouldDelete);

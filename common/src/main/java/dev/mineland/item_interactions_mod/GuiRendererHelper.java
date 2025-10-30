@@ -76,8 +76,6 @@ public class GuiRendererHelper {
             int scX = x + (int) (ivX * 16) - correction;
             int scY = y + (int) (ivY * 16) - correction;
 
-
-
             if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
 
             guiRenderState.submitPicturesInPictureState(
@@ -118,7 +116,6 @@ public class GuiRendererHelper {
 
         PoseStack newPose = anim.makePose((int) initialX, (int) initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
         newPose.translate(initialX - x, initialY - y, initialZ - Math.round(initialZ));
-//        newPose.pushPose();
         try {
             minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
 

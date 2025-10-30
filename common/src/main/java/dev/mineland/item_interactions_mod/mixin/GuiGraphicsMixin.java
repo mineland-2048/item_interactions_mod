@@ -33,7 +33,7 @@ public abstract class GuiGraphicsMixin{//
     private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
 
-            GuiGraphics self = (GuiGraphics) (Object) this;
+//            GuiGraphics self = (GuiGraphics) (Object) this;
             ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
             this.minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
 
@@ -42,9 +42,10 @@ public abstract class GuiGraphicsMixin{//
             if (iteminteractions$canAnimate() && !ItemInteractionsConfig.getAnimationSetting().getId().equals("none")) {
                 GuiRendererHelper.renderItem(this.guiRenderState, itemStack, level, livingEntity, k, minecraft, i, j, 20000);
 
+
+//                Need to check mod compat here
                 pose.pushMatrix();
                 pose.scale(0, 0);
-//                pose.translate(0, 0);
 
             }
 

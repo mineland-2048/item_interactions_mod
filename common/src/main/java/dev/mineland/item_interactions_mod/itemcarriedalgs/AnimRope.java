@@ -94,7 +94,7 @@ public class AnimRope extends AnimTemplate {
         try {
             newPos.set(globalItemPos);
 
-            if (!GlobalDirt.skipCalcs){
+            if (!GlobalDirt.skipCalcs) {
                 mousePos.set(x, y, globalItemPos.z());
                 actualX = x; actualY = y;
                 update(guiGraphics, x, y, z, GlobalDirt.msTickDelta);
