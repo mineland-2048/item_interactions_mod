@@ -17,10 +17,9 @@ import java.util.*;
 public class GlobalDirt {
 
 
-    public static class slotSpawners{
+    public static class slotSpawners {
         private static final List<List<GuiParticleSpawner>> SPAWNERS = new ArrayList<>(90);
         private static final List<List<Float>> SPAWNER_TIMERS = new ArrayList<>(90);
-
 
 
         public static void setState(int id, String state) {
@@ -29,12 +28,13 @@ public class GlobalDirt {
                 s.setState(state);
             }
         }
+
         public static List<GuiParticleSpawner> get(int id) {
 
             return id == -1 ? GlobalDirt.carriedGuiParticleSpawner : SPAWNERS.get(id);
         }
 
-        public static void set(int id, GuiParticleSpawner guiParticleSpawner){
+        public static void set(int id, GuiParticleSpawner guiParticleSpawner) {
             get(id).clear();
             get(id).add(guiParticleSpawner);
 
@@ -83,7 +83,7 @@ public class GlobalDirt {
         public static List<ResourceLocation> getIdList(int id) {
             List<ResourceLocation> result = new ArrayList<>();
             if (get(id) == null) return result;
-            for(GuiParticleSpawner s : get(id)) {
+            for (GuiParticleSpawner s : get(id)) {
                 result.add(s.getName());
             }
             return result;
@@ -93,6 +93,7 @@ public class GlobalDirt {
         public static void tick(int id, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
             tickSpawners(id, get(id), time, guiGraphics, globalX, globalY, speedX, speedY);
         }
+
         public static void tickSpawners(int slotId, List<GuiParticleSpawner> guiParticleSpawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
             int childCount = 0;
             for (GuiParticleSpawner guiParticleSpawner : guiParticleSpawners) {
@@ -104,7 +105,8 @@ public class GlobalDirt {
 
         public static void setSpawnerTimer(int slotId, int spawnerId, float timer) {
             if (slotId == -1) {
-                while (GlobalDirt.carriedGuiParticleSpawnerTimer.size() <= spawnerId) GlobalDirt.carriedGuiParticleSpawnerTimer.add(0f);
+                while (GlobalDirt.carriedGuiParticleSpawnerTimer.size() <= spawnerId)
+                    GlobalDirt.carriedGuiParticleSpawnerTimer.add(0f);
                 GlobalDirt.carriedGuiParticleSpawnerTimer.set(spawnerId, timer);
                 return;
             }
@@ -113,15 +115,17 @@ public class GlobalDirt {
         }
 
         public static void modifySpawnTimer(int slotId, int spawnerId, float timeAmount) {
-            setSpawnerTimer(slotId, spawnerId,  getSpawnerTimer(slotId, spawnerId) + timeAmount);
+            setSpawnerTimer(slotId, spawnerId, getSpawnerTimer(slotId, spawnerId) + timeAmount);
         }
 
         public static List<Float> getSpawnerTimer(int slotId) {
             return slotId == -1 ? GlobalDirt.carriedGuiParticleSpawnerTimer : SPAWNER_TIMERS.get(slotId);
         }
+
         public static float getSpawnerTimer(int slotId, int spawnerId) {
             if (slotId == -1) {
-                while (GlobalDirt.carriedGuiParticleSpawnerTimer.size() <= spawnerId) GlobalDirt.carriedGuiParticleSpawnerTimer.add(0f);
+                while (GlobalDirt.carriedGuiParticleSpawnerTimer.size() <= spawnerId)
+                    GlobalDirt.carriedGuiParticleSpawnerTimer.add(0f);
                 return GlobalDirt.carriedGuiParticleSpawnerTimer.get(spawnerId);
             }
             while (SPAWNER_TIMERS.get(slotId).size() <= spawnerId) SPAWNER_TIMERS.get(slotId).add(0f);
@@ -146,8 +150,8 @@ public class GlobalDirt {
 
     public static boolean debugStuck = false;
 
-    public static double    lastMouseX = 0, lastMouseY = 0,
-                            speedX = 0, speedY = 0;
+    public static double lastMouseX = 0, lastMouseY = 0,
+            speedX = 0, speedY = 0;
 
     public static double absSpeed = 0;
     public static double shakeSpeed = 0;
@@ -179,6 +183,8 @@ public class GlobalDirt {
     public static int particleCount = 0;
 
     public static boolean isInventoryScrolling = false;
+    public static boolean inventoryJustOpened = false;
+
     public static Quaternionf rollback;
     public static PoseStack.Pose rollbackPose;
 
@@ -209,7 +215,7 @@ public class GlobalDirt {
         lastMilis = 0;
 
         msCounter = 0;
-
+        tickCounter = 0;
 
         speedX = 0;
         speedY = 0;
@@ -223,6 +229,8 @@ public class GlobalDirt {
 
         particleList.clear();
         slotSpawners.clear();
+
+        inventoryJustOpened = true;
 
         carriedGuiParticleSpawner.clear();
         GuiParticleSpawnersLogic.reset();
@@ -274,8 +282,8 @@ public class GlobalDirt {
         mouseDeltaX = (Minecraft.getInstance().mouseHandler.xpos() / guiScale) - lastMouseX;
         mouseDeltaY = (Minecraft.getInstance().mouseHandler.ypos() / guiScale) - lastMouseY;
 
-        speedX = Math.clamp((speedX + (mouseDeltaX)) * drag,-40f,  40f);
-        speedY = Math.clamp((speedY + (mouseDeltaY)) * drag,-40f,  40f);
+        speedX = Math.clamp((speedX + (mouseDeltaX)) * drag, -40f, 40f);
+        speedY = Math.clamp((speedY + (mouseDeltaY)) * drag, -40f, 40f);
 
         if (!ItemInteractionsConfig.getAnimationSetting().getId().equals("rope")) {
             absSpeed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
@@ -308,17 +316,16 @@ public class GlobalDirt {
         particleCount = 0;
 
 
-
-
-
     }
 
     public static boolean dontUpdateTimer = false;
+
     public static void tailUpdateTimer() {
         if (dontUpdateTimer) return;
         msCounter += msTickDelta;
         msCounter %= 1000;
         lastMilis = currentMilis;
+        inventoryJustOpened = true;
 
     }
 
@@ -337,7 +344,8 @@ public class GlobalDirt {
             guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
         }
 
-        if ((boolean)  ItemInteractionsConfig.getSetting("gui_particles")) GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+        if ((boolean) ItemInteractionsConfig.getSetting("gui_particles"))
+            GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 
 
         carriedItem = ItemStack.EMPTY;

@@ -64,7 +64,6 @@ public class GuiParticleSpawnersLogic {
                 return false;
             }
 
-//
 //            The slot had a previous spawner but no longer will
             if (itemGuiParticleSpawnerList.isEmpty()) {
                 if (ItemInteractionsConfig.debugDraws) guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, 0xFFFF0000);
@@ -82,7 +81,7 @@ public class GuiParticleSpawnersLogic {
 
 
 
-                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, isInventoryScrolling ? "onIdle" : "onPut");
+                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, (isInventoryScrolling && inventoryJustOpened) ? "onIdle" : "onPut");
                 GlobalDirt.slotSpawners.tick(slotCount, spawnerTickDelta, guiGraphics, globalX, globalY, 0f, 0f);
                 GlobalDirt.slotSpawners.setState(slotCount, "onIdle");
 

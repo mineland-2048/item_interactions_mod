@@ -22,15 +22,18 @@ import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
 @Mixin(AbstractContainerScreen.class)
 public abstract class InventoryGuiMixin {
-    @Shadow protected int topPos;
+    @Shadow
+    protected int topPos;
 
-    @Shadow protected int leftPos;
+    @Shadow
+    protected int leftPos;
 
 
-    @Shadow private ItemStack draggingItem;
+    @Shadow
+    private ItemStack draggingItem;
 
 
-    @Inject(method = "renderFloatingItem",at = @At("HEAD"))
+    @Inject(method = "renderFloatingItem", at = @At("HEAD"))
     protected void mixedRenderFloatingItem(GuiGraphics guiGraphics,
                                            ItemStack itemStack,
                                            int i, int j,
@@ -58,7 +61,8 @@ public abstract class InventoryGuiMixin {
             guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
         }
 
-        if ((boolean)  ItemInteractionsConfig.getSetting("gui_particles")) GuiParticleSpawnersLogic.mainLogic(guiGraphics);
+        if ((boolean) ItemInteractionsConfig.getSetting("gui_particles"))
+            GuiParticleSpawnersLogic.mainLogic(guiGraphics);
 
 
         carriedItem = ItemStack.EMPTY;
@@ -69,9 +73,6 @@ public abstract class InventoryGuiMixin {
     protected void initHeadMixin(CallbackInfo ci) {
         GlobalDirt.particleList.clear();
         GlobalDirt.slotSpawners.clear();
-
-
-
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -86,14 +87,12 @@ public abstract class InventoryGuiMixin {
 
     @Inject(method = "renderSlot", at = @At("TAIL"))
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
-        if (! (boolean) ItemInteractionsConfig.getSetting("gui_particles")) return;
+        if (!(boolean) ItemInteractionsConfig.getSetting("gui_particles")) return;
 
         this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 
     }
-
-
 
 
 }
