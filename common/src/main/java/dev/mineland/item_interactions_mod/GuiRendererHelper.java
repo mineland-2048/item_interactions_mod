@@ -34,16 +34,6 @@ public class GuiRendererHelper {
 
     public final static CachedOrthoProjectionMatrixBuffer itemsProjectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer("items", -1000.0F, 1000.0F, true);
 
-    private static float zNear = -1000f;
-    private static float zFar = 1000f;
-    private static boolean invertY = true;
-    private static float f = 0;
-    private static float g = 0;
-
-    private static Matrix4f orthoMatrix = (new Matrix4f()).setOrtho(0.0F, f, invertY ? g : 0.0F, invertY ? 0.0F : g, zNear, zFar);
-
-
-
     public static void clearItem() {
         currentItemStackRenderer = new ItemStackRenderState();
         currentPose = new PoseStack();
@@ -57,8 +47,6 @@ public class GuiRendererHelper {
         AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
         if (anim == null) return;
 
-
-
         if (prevItem.isEmpty() && !itemStack.isEmpty()) {
             anim.reset(initialX, initialY, 1000);
         }
@@ -66,8 +54,8 @@ public class GuiRendererHelper {
 
         GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), guiRenderState);
 
-        PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
-//        newPose.pushPose();
+//        Inverted the speed due to the item renderer flipping everything
+        PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, -speedY, isCurrentItem3d, guiGraphics);
         try {
             minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
 
@@ -92,11 +80,6 @@ public class GuiRendererHelper {
 
             if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
 
-//            var guiItemRenderState = new GuiItemRenderState();
-//            guiRenderState.submitPicturesInPictureState(
-//                    new OversizedItemRenderState();
-//            );
-
             guiRenderState.submitPicturesInPictureState(
                     new GuiFloatingItemRenderState(
                             scratchItemStackRenderState,
@@ -110,9 +93,6 @@ public class GuiRendererHelper {
                             newPose
                     )
             );
-
-//            scratchItemStackRenderState.submit(newPose, Minecraft.getInstance().gameRenderer.getSubmitNodeStorage(), 0, 0, 240);
-
 
         }
         catch (Exception e) {
