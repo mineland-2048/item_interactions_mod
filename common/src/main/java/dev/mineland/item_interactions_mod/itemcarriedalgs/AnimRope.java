@@ -141,13 +141,11 @@ public class AnimRope extends AnimTemplate {
             oldAngle = rotationAngle;
 
 
-            rotation.rotateZ(rotationDelta);
+            rotation.rotateZ(-rotationDelta);
             globalItemPos.set(newPos);
             itemPos.set((renderPos.x() - actualX) / 16, (renderPos.y - actualY) / 16, globalItemPos.z());
             pose.pushPose();
             pose.rotateAround(rotation, 0, 0, 16);
-
-
 
             isDead = true;
         } catch (Exception e) {

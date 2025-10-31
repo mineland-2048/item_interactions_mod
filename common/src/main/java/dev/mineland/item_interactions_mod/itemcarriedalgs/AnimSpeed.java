@@ -57,7 +57,7 @@ public class AnimSpeed extends AnimTemplate {
         } else {
 
             float angleVertical = (Mth.DEG_TO_RAD * 22.5f * Math.clamp((-speedY*0.1f), -1.5f ,1.5f));
-            float angleHorizontal = Mth.DEG_TO_RAD * speedX*0.4f;
+            float angleHorizontal = Mth.DEG_TO_RAD * -speedX*0.4f;
             Quaternionf quatRotateVertical = new Quaternionf()
                     .rotateX(angleVertical)
                     .rotateZ(angleHorizontal)

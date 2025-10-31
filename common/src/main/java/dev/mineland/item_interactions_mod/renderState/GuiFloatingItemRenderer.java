@@ -8,6 +8,8 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.feature.BlockFeatureRenderer;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -62,13 +64,17 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
 
         pictureInPictureRenderState.renderState().submit(finalPose, node, magicNumber, OverlayTexture.NO_OVERLAY, lightLevelMaybe);
 
-        var modelRenderer = new ModelFeatureRenderer();
-        var itemFeatureRenderer = new ItemFeatureRenderer();
-        var orderedNode = node.order(0);
-        var outlineBufferSource = new OutlineBufferSource();
-        itemFeatureRenderer.render(orderedNode, bufferSource, outlineBufferSource);
-        modelRenderer.render(orderedNode, bufferSource, outlineBufferSource, bufferSource);
+        var featureRendererDispatcher = new FeatureRenderDispatcher(
+                node,
+                Minecraft.getInstance().getBlockRenderer(),
+                bufferSource,
+                Minecraft.getInstance().getAtlasManager(),
+                Minecraft.getInstance().renderBuffers().outlineBufferSource(),
+                Minecraft.getInstance().renderBuffers().crumblingBufferSource(),
+                Minecraft.getInstance().font
+        );
 
+        featureRendererDispatcher.renderAllFeatures();
     }
 
     @Override
