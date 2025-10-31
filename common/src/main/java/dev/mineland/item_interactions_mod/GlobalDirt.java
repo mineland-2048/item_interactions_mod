@@ -209,7 +209,6 @@ public class GlobalDirt {
 
 
     public static void restore() {
-//        System.out.println("Restoring global dirt");
         lastMouseX = 0;
         lastMouseY = 0;
         lastMilis = 0;
@@ -325,8 +324,6 @@ public class GlobalDirt {
         msCounter += msTickDelta;
         msCounter %= 1000;
         lastMilis = currentMilis;
-        inventoryJustOpened = true;
-
     }
 
     public static void renderHead(GuiGraphics guiGraphics) {

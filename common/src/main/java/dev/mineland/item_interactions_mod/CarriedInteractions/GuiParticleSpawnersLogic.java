@@ -82,7 +82,7 @@ public class GuiParticleSpawnersLogic {
                     guiGraphics.fill(slot.x, slot.y, slot.x + 16, slot.y + 16, currentSpawnersList.isEmpty() ? 0xFF00FF00 : 0xFFFFFF00);
 
 
-                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, (isInventoryScrolling && inventoryJustOpened) ? "onIdle" : "onPut");
+                GlobalDirt.slotSpawners.set(slotCount, itemGuiParticleSpawnerList, (isInventoryScrolling || inventoryJustOpened) ? "onIdle" : "onPut");
                 GlobalDirt.slotSpawners.tick(slotCount, spawnerTickDelta, guiGraphics, globalX, globalY, 0f, 0f);
                 GlobalDirt.slotSpawners.setState(slotCount, "onIdle");
 
@@ -157,6 +157,7 @@ public class GuiParticleSpawnersLogic {
             }
 
             isInventoryScrolling = false;
+            inventoryJustOpened = false;
 
         }
 
