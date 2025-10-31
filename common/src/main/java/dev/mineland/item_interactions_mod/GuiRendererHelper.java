@@ -3,6 +3,8 @@ package dev.mineland.item_interactions_mod;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
+import dev.mineland.item_interactions_mod.modcompat.ModCompat;
+import dev.mineland.item_interactions_mod.modcompat.TinyItemAnimationsCompat;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,6 +23,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.joml.*;
+import xyz.trivaxy.tia.ModConfigs;
 
 import java.lang.Math;
 
@@ -56,6 +59,13 @@ public class GuiRendererHelper {
 
 //        Inverted the speed due to the item renderer flipping everything
         PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, -speedY, isCurrentItem3d, guiGraphics);
+
+//        Tiny Item Animations compat here
+        if (ModCompat.isTinyItemAnimationsLoaded()) {
+            TinyItemAnimationsCompat.applyTIAMouseScaling(newPose);
+        }
+
+
         try {
             minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, k);
 

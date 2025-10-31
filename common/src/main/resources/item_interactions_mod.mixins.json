@@ -11,7 +11,8 @@
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
     "SettingsScreenMixin",
-    "VideoSettingsScreenMixin"
+    "VideoSettingsScreenMixin",
+    "compat.TIAMixinInjectsMixinAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
