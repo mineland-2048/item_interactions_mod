@@ -44,7 +44,7 @@ processResources {
     inputs.property 'version', project.version
 //    This is to get make the resource pack appear in the dev enviroment.
 //    Need to disable this when building the jar or else it dies
-//    from(project(":common").sourceSets["main"].resources)
+    from(project(":common").sourceSets["main"].resources)
     filesMatching('META-INF/neoforge.mods.toml') {
         expand version: project.version,
         "minecraft_version": rootProject.minecraft_version,
