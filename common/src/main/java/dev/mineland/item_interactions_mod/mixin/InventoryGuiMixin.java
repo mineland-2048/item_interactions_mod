@@ -86,7 +86,7 @@ public abstract class InventoryGuiMixin {
 
 
     @Inject(method = "renderSlot", at = @At("TAIL"))
-    void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, CallbackInfo ci) {
+    void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j, CallbackInfo ci) {
         if (!(boolean) ItemInteractionsConfig.getSetting("gui_particles")) return;
 
         this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);

@@ -26,10 +26,6 @@ import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
 public class GuiParticlesReloadListener implements ResourceManagerReloadListener {
 
-
-
-
-
     private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, Identifier id, ResourceManager resourceManager) {
 
         GuiParticleSpawner result;

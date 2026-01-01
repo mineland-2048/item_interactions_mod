@@ -7,9 +7,11 @@ import dev.mineland.item_interactions_mod.modcompat.ModCompat;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class Item_interactions_modFabricClient implements ClientModInitializer {
     @Override
@@ -21,8 +23,8 @@ public final class Item_interactions_modFabricClient implements ClientModInitial
         ReloadListenerHelperImpl.registerReloadListener(new GuiParticlesReloadListener());
 
         FabricLoader.getInstance().getModContainer(ItemInteractionsMod.MOD_ID).ifPresent(container -> {
-            ResourceLocation packId = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "example_gui_particles");
-            ResourceManagerHelper.registerBuiltinResourcePack(packId, container, Component.literal("Example gui particle pack"), ResourcePackActivationType.NORMAL);
+            Identifier packId = Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "example_gui_particles");
+            ResourceLoader.registerBuiltinPack(packId, container, Component.literal("Example gui particle pack"), PackActivationType.NORMAL);
         });
 
         ModCompat.setTinyItemAnimationsLoaded(FabricLoader.getInstance().isModLoaded("tia"));

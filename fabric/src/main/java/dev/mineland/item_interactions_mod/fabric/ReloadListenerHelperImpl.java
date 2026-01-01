@@ -1,9 +1,8 @@
 package dev.mineland.item_interactions_mod.fabric;
 
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -16,18 +15,29 @@ public class ReloadListenerHelperImpl {
 
     public static void registerReloadListener(ResourceManagerReloadListener listener) {
 
-        IdentifiableResourceReloadListener idListener = new IdentifiableResourceReloadListener() {
+        ResourceManagerReloadListener idListener = new ResourceManagerReloadListener() {
             @Override
-            public @NotNull CompletableFuture<Void> reload(SharedState sharedState, Executor executor, PreparationBarrier preparationBarrier, Executor executor2) {
+            public @NotNull CompletableFuture<Void> reload(@NotNull SharedState sharedState, @NotNull Executor executor, @NotNull PreparationBarrier preparationBarrier, @NotNull Executor executor2) {
                 return mainListener.reload(sharedState,executor,preparationBarrier,executor2);
             }
 
-            private final ResourceManagerReloadListener mainListener = listener;
-            private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles");
-
-            public ResourceLocation getFabricId() {
-                return ID;
+            @Override
+            public void prepareSharedState(@NotNull SharedState sharedState) {
+                ResourceManagerReloadListener.super.prepareSharedState(sharedState);
             }
+
+            @Override
+            public @NotNull String getName() {
+                return ResourceManagerReloadListener.super.getName();
+            }
+
+            @Override
+            public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
+
+            }
+
+            private final ResourceManagerReloadListener mainListener = listener;
+
 
 //            @Override
 //            public @NotNull CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
@@ -36,6 +46,6 @@ public class ReloadListenerHelperImpl {
         };
 
 
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(idListener);
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles"), idListener);
     }
 }
