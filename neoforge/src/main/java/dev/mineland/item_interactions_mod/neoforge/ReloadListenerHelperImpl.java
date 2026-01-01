@@ -1,7 +1,7 @@
 package dev.mineland.item_interactions_mod.neoforge;
 
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,7 +14,7 @@ public class ReloadListenerHelperImpl {
     private static ResourceManagerReloadListener listener;
     @SubscribeEvent
     public static void onReloadListener(AddClientReloadListenersEvent event) {
-        event.addListener(ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles"), listener);
+        event.addListener(Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles"), listener);
     }
 
     public static void registerReloadListener(ResourceManagerReloadListener l) {

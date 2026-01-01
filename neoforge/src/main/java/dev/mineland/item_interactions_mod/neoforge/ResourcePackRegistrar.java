@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod.neoforge;
 
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -16,7 +16,7 @@ public class ResourcePackRegistrar {
 
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
-        ResourceLocation packLocation = ResourceLocation.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "resourcepacks/example_gui_particles");
+        Identifier packLocation = Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "resourcepacks/example_gui_particles");
 
         event.addPackFinders(
                 packLocation,
