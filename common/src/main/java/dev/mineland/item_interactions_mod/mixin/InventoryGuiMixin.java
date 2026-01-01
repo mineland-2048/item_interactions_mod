@@ -3,7 +3,6 @@ package dev.mineland.item_interactions_mod.mixin;
 import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
-import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -27,10 +26,6 @@ public abstract class InventoryGuiMixin {
 
     @Shadow
     protected int leftPos;
-
-
-    @Shadow
-    private ItemStack draggingItem;
 
 
     @Inject(method = "renderFloatingItem", at = @At("HEAD"))
@@ -82,14 +77,14 @@ public abstract class InventoryGuiMixin {
 
 
     @Unique
-    boolean dead = false;
+    boolean item_interactions_mod$dead = false;
 
 
     @Inject(method = "renderSlot", at = @At("TAIL"))
     void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j, CallbackInfo ci) {
         if (!(boolean) ItemInteractionsConfig.getSetting("gui_particles")) return;
 
-        this.dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, dead, leftPos, topPos, GlobalDirt.slotCount);
+        this.item_interactions_mod$dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, item_interactions_mod$dead, leftPos, topPos, GlobalDirt.slotCount);
         GlobalDirt.slotCount++;
 
     }

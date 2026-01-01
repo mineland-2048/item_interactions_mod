@@ -19,14 +19,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
 public class GuiParticlesReloadListener implements ResourceManagerReloadListener {
 
-    private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, Identifier id, ResourceManager resourceManager) {
+    private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, Identifier id) {
 
         GuiParticleSpawner result;
         DataResult<GuiParticleSpawner> dataResult;
@@ -49,13 +47,14 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     }
 
 
-    private double trySet(JsonObject json, String member, double defaultValue) {
-        try {
-            return json.get(member).getAsDouble();
-        } catch(Exception ignore) {
-            return defaultValue;
-        }
-    }
+//    private double trySet(JsonObject json, String member, double defaultValue) {
+//        try {
+//            return json.get(member).getAsDouble();
+//        } catch(Exception ignore) {
+//            return defaultValue;
+//        }
+//    }
+
     private void loadSpawners(ResourceManager resourceManager) {
         for (Map.Entry<Identifier, Resource> entry : resourceManager.listResources("gui_particle_spawners", Identifier -> Identifier.getPath().endsWith(".json")).entrySet()) {
             {
@@ -75,7 +74,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
 
 //                    ItemInteractionsMod.infoMessage("Parsing spawner: " + id);
-                    GuiParticleSpawner a = parseSpawner(json, id, resourceManager);
+                    GuiParticleSpawner a = parseSpawner(json, id);
 
                     SpawnerRegistry.register(a, id);
 
@@ -156,7 +155,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     }
 
     @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {
+    public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
         isReloadingResources = true;
         spawnerErrorList.clear();
         particleErrorList.clear();
