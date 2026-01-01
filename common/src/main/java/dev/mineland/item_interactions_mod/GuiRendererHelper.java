@@ -44,8 +44,6 @@ public class GuiRendererHelper {
     public static ItemStack prevItem = ItemStack.EMPTY;
     public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, int initialX, int initialY, int initialZ) {
         TrackingItemStackRenderState scratchItemStackRenderState = new TrackingItemStackRenderState();
-        int x = initialX;
-        int y = initialY;
         AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
         if (anim == null) return;
 
@@ -54,7 +52,8 @@ public class GuiRendererHelper {
         }
         prevItem = itemStack;
 
-        GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), guiRenderState);
+
+        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
 
 //        Inverted the speed due to the item renderer flipping everything
         PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, -speedY, isCurrentItem3d, guiGraphics);
@@ -75,17 +74,17 @@ public class GuiRendererHelper {
             int size = 64;
 
             int correction = (size / 2) - 8;
-            int x0 = (int) (ivX * 16) + x - (correction);
-            int y0 = (int) (ivY * 16) + y - (correction);
-            int x1 = (int) (ivX * 16) + x - (correction) + size;
-            int y1 = (int) (ivY * 16) + y - (correction) + size;
+            int x0 = (int) (ivX * 16) + initialX - (correction);
+            int y0 = (int) (ivY * 16) + initialY - (correction);
+            int x1 = (int) (ivX * 16) + initialX - (correction) + size;
+            int y1 = (int) (ivY * 16) + initialY - (correction) + size;
 
 //            x0 = 200; x1 = 260;
 //            y0 = 100; y1 = 120;
-            int scX = x + (int) (ivX * 16) - correction;
-            int scY = y + (int) (ivY * 16) - correction;
+            int scX = initialX + (int) (ivX * 16) - correction;
+            int scY = initialY + (int) (ivY * 16) - correction;
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
 
             guiRenderState.submitPicturesInPictureState(
                     new GuiFloatingItemRenderState(
@@ -121,8 +120,7 @@ public class GuiRendererHelper {
         }
         prevItem = itemStack;
 
-        GuiGraphics guiGraphics = new GuiGraphics(Minecraft.getInstance(), guiRenderState);
-
+        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
         PoseStack newPose = anim.makePose((int) initialX, (int) initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
         newPose.translate(initialX - x, initialY - y, initialZ - Math.round(initialZ));
         try {
@@ -147,7 +145,7 @@ public class GuiRendererHelper {
 
 
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(scX, scY, size, size, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
 
 
             guiRenderState.submitPicturesInPictureState(
@@ -215,7 +213,7 @@ public class GuiRendererHelper {
 
 
 
-        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
+//        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
 //        CachedOrthoProjectionMatrixBuffer itemsProjectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer("items", -1000.0F, 1000.0F, true);
 
 
@@ -360,7 +358,7 @@ public class GuiRendererHelper {
     }
 
     private static void renderSmoothLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
-        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
+//        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
 
         try {
 

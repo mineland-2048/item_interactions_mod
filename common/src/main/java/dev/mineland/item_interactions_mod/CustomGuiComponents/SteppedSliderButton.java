@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -118,7 +119,10 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight(), ARGB.white(this.alpha));
         int k = this.active ? 16777215 : 10526880;
-        this.renderScrollingString(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
+
+        this.renderScrollingStringOverContents(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
+
+//        this.renderScrollingStringOverContents(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
 
 //        int yoff = 0;
 //        guiGraphics.drawString(minecraft.font, "handle: " + handlePosition, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);

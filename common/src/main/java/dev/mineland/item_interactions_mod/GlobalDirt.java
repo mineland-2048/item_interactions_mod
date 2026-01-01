@@ -364,6 +364,14 @@ public class GlobalDirt {
     public static GuiRenderState getGlobalGuiRenderState() {
         return globalGuiRenderState;
     }
+
+    public static GuiGraphics createGuiGraphics(Minecraft minecraft, GuiRenderState guiRenderState) {
+        int mouseX = (int)minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
+        int mouseY = (int)minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
+        return new GuiGraphics(minecraft, guiRenderState, mouseX, mouseY);
+
+
+    }
 }
 
 

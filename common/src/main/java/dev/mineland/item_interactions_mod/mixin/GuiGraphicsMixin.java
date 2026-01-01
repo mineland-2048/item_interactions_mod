@@ -63,8 +63,8 @@ public abstract class GuiGraphicsMixin{//
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;)V")
-    private void setGlobalGuiGraphics(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V")
+    private void setGlobalGuiGraphics(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, int i, int j, CallbackInfo ci) {
         var self = (GuiGraphics) (Object) this;
         GlobalDirt.setGlobalGuiGraphics(self);
         GlobalDirt.setGlobalGuiRenderState(guiRenderState);

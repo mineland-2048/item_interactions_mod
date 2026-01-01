@@ -237,13 +237,13 @@ public class ItemInteractionsSettingsScreen extends Screen {
         anims.add("none");
 
         animationCycleButton = leftColumnLayout.addChild(
-                CycleButton.<String>builder(animationSetting ->
-                                Component.literal(animationSetting).withStyle(
-                                        animationSetting.equals("none") ?
-                                                ChatFormatting.RED : ChatFormatting.YELLOW)
-                        )
+                CycleButton.builder(animationSetting -> {
+                            return Component.literal(animationSetting).withStyle(
+                                    animationSetting.contentEquals("none") ?
+                                            ChatFormatting.RED : ChatFormatting.YELLOW);
+
+                        }, (String) ItemInteractionsConfig.getSetting("animation"))
                         .withValues(anims)
-                        .withInitialValue((String) ItemInteractionsConfig.getSetting("animation"))
                         .create(0,0,Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT, Component.literal("Animation"),
                                 (button, string) -> {
                                     ItemInteractionsConfig.setAnimationSetting(string);
