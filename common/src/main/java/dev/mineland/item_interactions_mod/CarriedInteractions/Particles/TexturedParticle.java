@@ -9,7 +9,7 @@ import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ public class TexturedParticle extends BaseParticle {
     TextureType textureType;
 
     JsonObject textureMcMeta;
-    ResourceLocation particleLocation;
+    Identifier particleLocation;
 
-    List<ResourceLocation> frames;
+    List<Identifier> frames;
 
     int width, height;
     double frametime;
@@ -47,11 +47,11 @@ public class TexturedParticle extends BaseParticle {
         }
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, ResourceLocation particleLocation, int tintStart, int tintEnd) {
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, int tintStart, int tintEnd) {
         this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeTime, particleLocation, TextureType.LIFETIME, tintStart, tintEnd);
     }
 
-    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, ResourceLocation particleLocation, TextureType textureType,  int tintStart, int tintEnd) {
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, TextureType textureType,  int tintStart, int tintEnd) {
         super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, tintStart, tintEnd, lifeTime);
 
         this.particleLocation = particleLocation;
@@ -104,16 +104,16 @@ public class TexturedParticle extends BaseParticle {
     }
 
 
-    private List<ResourceLocation> getTexturesFromArray(ResourceLocation particleLocation) {
+    private List<Identifier> getTexturesFromArray(Identifier particleLocation) {
         try {
             Resource a = Minecraft.getInstance().getResourceManager().getResource(particleLocation.withPrefix("particles/").withSuffix(".json")).orElseThrow();
-            List<ResourceLocation> finalList = new ArrayList<>();
+            List<Identifier> finalList = new ArrayList<>();
 
 
             JsonElement json = JsonParser.parseReader(a.openAsReader());
 
             for(JsonElement textureJson : json.getAsJsonObject().get("textures").getAsJsonArray()) {
-                ResourceLocation raw = ResourceLocation.parse(textureJson.getAsString());
+                Identifier raw = Identifier.parse(textureJson.getAsString());
 
 //                If it sets a different texture then use that instead of parsing from just particles
                 String path = raw.getPath().startsWith("textures/") ?
@@ -121,7 +121,7 @@ public class TexturedParticle extends BaseParticle {
 
 //                If it doesnt end in .png then add it
                 path = path.endsWith(".png") ? path : path + ".png";
-                finalList.add(ResourceLocation.fromNamespaceAndPath(raw.getNamespace(), path));
+                finalList.add(Identifier.fromNamespaceAndPath(raw.getNamespace(), path));
             }
 
             this.length = finalList.size();
@@ -132,8 +132,8 @@ public class TexturedParticle extends BaseParticle {
         } catch (Exception e) {
 //            ItemInteractionsMod.warnMessage("died from getting vanilla texture (" + particleLocation + "): " + e);
 
-            List<ResourceLocation> r = new ArrayList<>();
-            r.add(ResourceLocation.parse("minecraft:textures/missingno.png"));
+            List<Identifier> r = new ArrayList<>();
+            r.add(Identifier.parse("minecraft:textures/missingno.png"));
             return r;
         }
     }

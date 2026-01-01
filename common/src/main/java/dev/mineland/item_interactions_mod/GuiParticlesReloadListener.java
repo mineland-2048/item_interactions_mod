@@ -9,7 +9,7 @@ import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiPartic
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -30,13 +30,13 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 
 
 
-    private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, ResourceLocation id, ResourceManager resourceManager) {
+    private GuiParticleSpawner parseSpawner(JsonObject SpawnerJson, Identifier id, ResourceManager resourceManager) {
 
         GuiParticleSpawner result;
         DataResult<GuiParticleSpawner> dataResult;
 
         currentParticleSpawner = id.toString();
-        ResourceLocation filePath = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
+        Identifier filePath = Identifier.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
 
 
         dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, SpawnerJson);
@@ -61,13 +61,13 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
         }
     }
     private void loadSpawners(ResourceManager resourceManager) {
-        for (Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources("gui_particle_spawners", resourceLocation -> resourceLocation.getPath().endsWith(".json")).entrySet()) {
+        for (Map.Entry<Identifier, Resource> entry : resourceManager.listResources("gui_particle_spawners", Identifier -> Identifier.getPath().endsWith(".json")).entrySet()) {
             {
 
 
 
 
-                ResourceLocation id = entry.getKey();
+                Identifier id = entry.getKey();
                 Resource resource = entry.getValue();
 
                 if (ItemInteractionsConfig.debugDraws) {

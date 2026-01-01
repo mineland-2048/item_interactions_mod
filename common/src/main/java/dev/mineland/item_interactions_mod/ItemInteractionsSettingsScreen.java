@@ -19,7 +19,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.numbers.StyledFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
@@ -395,7 +395,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
             versionWarnMessage.append(countString);
 
-            var widgetSprites = new WidgetSprites(ResourceLocation.withDefaultNamespace("dialog/warning_button"), ResourceLocation.withDefaultNamespace("dialog/warning_button_disabled"), ResourceLocation.withDefaultNamespace("dialog/warning_button_highlighted"));
+            var widgetSprites = new WidgetSprites(Identifier.withDefaultNamespace("dialog/warning_button"), Identifier.withDefaultNamespace("dialog/warning_button_disabled"), Identifier.withDefaultNamespace("dialog/warning_button_highlighted"));
 
             versionWarningButton = new ImageButton(
                     Minecraft.getInstance().getWindow().getGuiScaledWidth() - Button.DEFAULT_SPACING - Button.DEFAULT_HEIGHT,

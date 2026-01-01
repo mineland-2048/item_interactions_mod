@@ -5,7 +5,6 @@ import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 
 public class BaseParticle {
     GuiGraphics guiGraphics;

@@ -11,7 +11,7 @@ import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ColorRGBA;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class ParticleInstance {
-    ResourceLocation id;
+    Identifier id;
     public Optional<Float>  x, y,
                             speedX, speedY,
                             accelerationX, accelerationY,
@@ -35,7 +35,7 @@ public class ParticleInstance {
 
 
     public static final Codec<ParticleInstance> CODEC = RecordCodecBuilder.create(particleInstanceInstance -> particleInstanceInstance.group(
-            ResourceLocation.CODEC.fieldOf("id").forGetter(p -> p.id),
+            Identifier.CODEC.fieldOf("id").forGetter(p -> p.id),
             Codec.FLOAT.optionalFieldOf("x").forGetter(p -> p.x),
             Codec.FLOAT.optionalFieldOf("y").forGetter(p -> p.y),
             Codec.FLOAT.optionalFieldOf("speedX").forGetter(p -> p.speedX),
@@ -90,12 +90,12 @@ public class ParticleInstance {
         this(null, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, colorStart, colorEnd, brightnessStart, brightnessEnd, duration, count);
     }
 
-    public ParticleInstance(ResourceLocation id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> brightnessStart, Optional<Float> brightnessEnd, Optional<Float> duration, Optional<Integer> count) {
+    public ParticleInstance(Identifier id, Optional<Float> x, Optional<Float> y, Optional<Float> speedX, Optional<Float> speedY, Optional<Float> accelerationX, Optional<Float> accelerationY, Optional<Float> frictionX, Optional<Float> frictionY, Optional<ColorRGBA> colorStart, Optional<ColorRGBA> colorEnd, Optional<Float> brightnessStart, Optional<Float> brightnessEnd, Optional<Float> duration, Optional<Integer> count) {
 
         if (id != null) {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 
-            ResourceLocation fixedPath = id.withPath("particles/" + id.getPath() + ".json");
+            Identifier fixedPath = id.withPath("particles/" + id.getPath() + ".json");
 
             Optional<Resource> particleResource =  resourceManager.getResource(fixedPath);
 
@@ -117,8 +117,8 @@ public class ParticleInstance {
                     JsonArray textureList = particleJson.getAsJsonObject().get("textures").getAsJsonArray();
 
                     for (JsonElement textureLocationJson : textureList.asList()) {
-                        ResourceLocation textureLocation = ResourceLocation.parse(textureLocationJson.getAsString());
-                        textureLocation = ResourceLocation.fromNamespaceAndPath(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
+                        Identifier textureLocation = Identifier.parse(textureLocationJson.getAsString());
+                        textureLocation = Identifier.fromNamespaceAndPath(textureLocation.getNamespace(), "textures/particle/" + textureLocation.getPath() + ".png");
                         if (resourceManager.getResource(textureLocation).isEmpty()) {
                             if (!GlobalDirt.particleErrorList.containsKey(id)) GlobalDirt.particleErrorList.put(id, new ArrayList<>());
 
@@ -165,7 +165,7 @@ public class ParticleInstance {
 
     }
 
-    public ParticleInstance(ResourceLocation id, float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float brightnessStart, float brightnessEnd, float duration, int count) {
+    public ParticleInstance(Identifier id, float x, float y, float speedX, float speedY, float accelerationX, float accelerationY, float frictionX, float frictionY, ColorRGBA colorStart, ColorRGBA colorEnd, float brightnessStart, float brightnessEnd, float duration, int count) {
         this(id, Optional.of(x), Optional.of(y), Optional.of(speedX), Optional.of(speedY), Optional.of(accelerationX), Optional.of(accelerationY), Optional.of(frictionX), Optional.of(frictionY), Optional.of(colorStart), Optional.of(colorEnd), Optional.of(brightnessStart), Optional.of(brightnessEnd), Optional.of(duration), Optional.of(count));
     }
 

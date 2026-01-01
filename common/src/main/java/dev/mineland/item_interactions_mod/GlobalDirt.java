@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawnersLogic;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Quaternionf;
 
@@ -80,8 +80,8 @@ public class GlobalDirt {
 //            SPAWNERS.get(id).add(guiParticleSpawner);
 //        }
 
-        public static List<ResourceLocation> getIdList(int id) {
-            List<ResourceLocation> result = new ArrayList<>();
+        public static List<Identifier> getIdList(int id) {
+            List<Identifier> result = new ArrayList<>();
             if (get(id) == null) return result;
             for (GuiParticleSpawner s : get(id)) {
                 result.add(s.getName());
@@ -198,8 +198,8 @@ public class GlobalDirt {
 
     public static boolean isReloadingResources;
 
-    public static Map<ResourceLocation, List<String>> spawnerErrorList = new HashMap<>();
-    public static Map<ResourceLocation, List<String>> particleErrorList = new HashMap<>();
+    public static Map<Identifier, List<String>> spawnerErrorList = new HashMap<>();
+    public static Map<Identifier, List<String>> particleErrorList = new HashMap<>();
     public static int spawnerErrorCount = 0;
     public static String currentParticleSpawner;
 

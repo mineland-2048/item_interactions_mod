@@ -15,7 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,10 +27,10 @@ import java.util.*;
 
 public class GuiParticleSpawner {
     protected int id = 0;
-    protected ResourceLocation name = null;
+    protected Identifier name = null;
 
-    private Optional<ResourceLocation> parent = Optional.empty();
-    private Optional<List<ResourceLocation>> childrenLocations = Optional.empty();
+    private Optional<Identifier> parent = Optional.empty();
+    private Optional<List<Identifier>> childrenLocations = Optional.empty();
     private Optional<ParticleInstance> attributes = Optional.empty();
     private Optional<ParticleInstance> attributes_variance = Optional.empty();
     private Optional<Map<String, Either<ParticleEvent, String>>> events = Optional.empty();
@@ -54,8 +55,8 @@ public class GuiParticleSpawner {
     }
     public static Codec<GuiParticleSpawner> CODEC = RecordCodecBuilder.create(
             spawnerInstance -> spawnerInstance.group(
-                    ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(s -> s.parent),
-                    ResourceLocation.CODEC.listOf().optionalFieldOf("children").forGetter(s -> s.childrenLocations),
+                    Identifier.CODEC.optionalFieldOf("parent").forGetter(s -> s.parent),
+                    Identifier.CODEC.listOf().optionalFieldOf("children").forGetter(s -> s.childrenLocations),
                     ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes").forGetter(s -> s.attributes),
                     ParticleInstance.CONFIG_CODEC.optionalFieldOf("attributes_variance").forGetter(s -> s.attributes_variance),
 
@@ -75,9 +76,9 @@ public class GuiParticleSpawner {
 
     private JsonObject tempParentJson;
 
-    public GuiParticleSpawner parseSpawner(ResourceLocation id) {
+    public GuiParticleSpawner parseSpawner(Identifier id) {
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-//        if (! id.getPath().startsWith("gui_particle_spawners/")) id = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
+//        if (! id.getPath().startsWith("gui_particle_spawners/")) id = Identifier.fromNamespaceAndPath(id.getNamespace(), "gui_particle_spawners/" + id.getPath());
 
         id = id.withPath("gui_particle_spawners/" + id.getPath() + ".json");
         if (resourceManager.getResource(id).isEmpty()) {
@@ -96,7 +97,7 @@ public class GuiParticleSpawner {
             dataResult = GuiParticleSpawner.CODEC.parse(JsonOps.INSTANCE, json);
 
             String warnMessage = String.format("Errors found in '%s': ", id);
-            ResourceLocation finalId = id;
+            Identifier finalId = id;
             result = dataResult.resultOrPartial((s) -> {
                 if (!GlobalDirt.spawnerErrorList.containsKey(finalId)) GlobalDirt.spawnerErrorList.put(finalId, new ArrayList<>());
                 GlobalDirt.spawnerErrorList.get(finalId).add(warnMessage + s);
@@ -127,8 +128,8 @@ public class GuiParticleSpawner {
     }
 
     public GuiParticleSpawner(
-            Optional<ResourceLocation> parent,
-            Optional<List<ResourceLocation>> children,
+            Optional<Identifier> parent,
+            Optional<List<Identifier>> children,
             Optional<ParticleInstance> attributes,
             Optional<ParticleInstance> attributes_variance,
             Optional<Map<String, Either<ParticleEvent, String>>> eventMap,
@@ -137,8 +138,8 @@ public class GuiParticleSpawner {
         GuiParticleSpawner parentSpawner;
         Optional<Map<String, Either<ParticleEvent, String>>> parentEvents = Optional.empty();
         if (parent.isPresent()) {
-            ResourceLocation resourceLocation = parent.get();
-            parentSpawner = parseSpawner(resourceLocation);
+            Identifier Identifier = parent.get();
+            parentSpawner = parseSpawner(Identifier);
             this.copyFromParent(parentSpawner);
 
 
@@ -165,7 +166,7 @@ public class GuiParticleSpawner {
 
 
         children.ifPresent(childrenList -> {
-            for (ResourceLocation childId : childrenList) {
+            for (Identifier childId : childrenList) {
                 GuiParticleSpawner c = parseSpawner(childId);
                 if (c != null) this.childGuiParticleSpawners.add(c);
             }
@@ -173,15 +174,15 @@ public class GuiParticleSpawner {
     }
 
 
-    public void setName(ResourceLocation name) {
+    public void setName(Identifier name) {
         this.name = name;
     }
 
     public void setName(String name) {
-        this.name = ResourceLocation.parse(name);
+        this.name = Identifier.parse(name);
     }
 
-    public ResourceLocation getName() {
+    public Identifier getName() {
         return this.name;
     }
 
@@ -481,11 +482,11 @@ public class GuiParticleSpawner {
         this.id = id;
     }
 
-    public ResourceLocation getParent() {
+    public Identifier getParent() {
         return parent.orElseGet(() -> null);
     }
 
-    public void setParent(ResourceLocation parent) {
+    public void setParent(Identifier parent) {
         this.parent = Optional.of(parent);
     }
 

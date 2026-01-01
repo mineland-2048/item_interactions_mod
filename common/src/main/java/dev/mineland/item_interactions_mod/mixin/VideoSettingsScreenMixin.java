@@ -12,7 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,7 +40,7 @@ public abstract class VideoSettingsScreenMixin {
                 },
                 true
             )
-            .sprite(ResourceLocation.fromNamespaceAndPath("item_interactions_mod", "icon/settings_icon"), 15, 15)
+            .sprite(Identifier.fromNamespaceAndPath("item_interactions_mod", "icon/settings_icon"), 15, 15)
             .size(buttonSize, buttonSize)
             .build();
 

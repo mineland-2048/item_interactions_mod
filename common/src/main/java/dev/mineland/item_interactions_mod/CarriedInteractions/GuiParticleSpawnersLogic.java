@@ -4,7 +4,8 @@ import dev.mineland.item_interactions_mod.*;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -53,10 +54,10 @@ public class GuiParticleSpawnersLogic {
         try {
             ItemStack slotItem = slot.getItem();
             List<GuiParticleSpawner> itemGuiParticleSpawnerList = SpawnerRegistry.get(slotItem);
-            List<ResourceLocation> currentSpawnersList = GlobalDirt.slotSpawners.getIdList(slotCount);
-            List<ResourceLocation> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
+            List<Identifier> currentSpawnersList = GlobalDirt.slotSpawners.getIdList(slotCount);
+            List<Identifier> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.submitOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
 
 //            No previous spawner and no new spawner
             if (itemGuiParticleSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
