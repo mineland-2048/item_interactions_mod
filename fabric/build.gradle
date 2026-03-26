@@ -1,83 +1,63 @@
 plugins {
-    id 'com.github.johnrengelman.shadow'
+    id 'multiloader-loader'
+    id 'fabric-loom'
 }
-
-architectury {
-    platformSetupLoomIde()
-    fabric()
-}
-
-configurations {
-    common {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
-
-    // Files in this configuration will be bundled into your mod using the Shadow plugin.
-    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
-    shadowBundle {
-        canBeResolved = true
-        canBeConsumed = false
-    }
-}
-
 dependencies {
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
-
-
-    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
-
-
-//    modImplementation "net.fabricmc.fabric-api:fabric-api:$project.fabric_api_version"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
-    modCompileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
-    modCompileOnly "maven.modrinth:flow:2.2.0+1.21"
-
-
-//    modImplementation("com.terraformersmc:modmenu:11.0.3")
-
-//    modImplementation "maven.modrinth:flow:2.2.0+1.21"
-//    modImplementation "maven.modrinth:mru:1.0.17+1.21.1-fabric"
-//    modImplementation "dev.isxander:yet-another-config-lib:3.6.1+1.21-fabric"
-
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+//    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 }
 
-processResources {
-    inputs.property 'version', project.version
-//    from(project(":common").sourceSets["main"].resources)
-
-    filesMatching('fabric.mod.json') {
-        expand version: project.version,
-        "minecraft_version": rootProject.minecraft_version,
-        "fabric_loader_version": rootProject.fabric_loader_version,
-        "fabric_api_version": project.fabric_api_version,
-        "version_range_fabric": rootProject.version_range_fabric
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('runs/server')
+        }
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shadowBundle]
-    archiveClassifier = 'dev-shadow'
-}
-
-remapJar {
-    input.set shadowJar.archiveFile
-}
-
-
-repositories {
-    maven {
-        name = "Terraformers"
-        url = "https://maven.terraformersmc.com/"
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
     }
-
-    maven {
-        url = "https://api.modrinth.com/maven"
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'fabric')
+            }
+        }
     }
-
-    maven { url "https://maven.isxander.dev/releases" }
+}
+loom.remapConfigurations.configureEach {
+    configurations.named(it.name) {
+        attributes {
+            attribute(loaderAttribute, 'fabric')
+        }
+    }
 }

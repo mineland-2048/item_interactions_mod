@@ -11,3 +11,6 @@
 /neoforge/run/
 /.architectury-transformer/debug.log
 /forge/
+/buildSrc/build/
+/*/build
+/*/.gradle
