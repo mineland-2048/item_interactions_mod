@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.joml.*;
-import xyz.trivaxy.tia.ModConfigs;
 
 import java.lang.Math;
 

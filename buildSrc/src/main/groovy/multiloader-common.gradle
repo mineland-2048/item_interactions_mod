@@ -35,6 +35,14 @@ repositories {
         url = 'https://maven.parchmentmc.org'
     }
 
+    maven {
+        url = "https://api.modrinth.com/maven"
+    }
+
+}
+
+dependencies {
+    compileOnly "maven.modrinth:tiny-item-animations:1.2.3-fabric"
 }
 
 // Declare capabilities on the outgoing configurations.
@@ -83,6 +91,8 @@ processResources {
             'minecraft_version_range'      : minecraft_version_range,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
+            'version_range_fabric'         : version_range_fabric,
+            'version_range_neo'            : version_range_neo,
             'mod_name'                     : mod_name,
             'mod_author'                   : mod_author,
             'mod_id'                       : mod_id,

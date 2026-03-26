@@ -4,8 +4,6 @@ import dev.mineland.item_interactions_mod.CustomGuiComponents.ConfigInventoryPre
 import dev.mineland.item_interactions_mod.CustomGuiComponents.GraphOverTimeWidget;
 import dev.mineland.item_interactions_mod.CustomGuiComponents.SteppedSliderButton;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;

@@ -29,7 +29,7 @@ public abstract class GuiGraphicsMixin{//
     @Shadow @Final private Matrix3x2fStack pose;
 
     //    smooth-swapping compat by doing the item tilting after their swap
-    @Inject(order = 1500, at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
+    @Inject(at = @At("HEAD"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
     private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
 

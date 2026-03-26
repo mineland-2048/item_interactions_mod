@@ -5,7 +5,6 @@ import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimRope;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimScale;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpeed;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimSpin;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

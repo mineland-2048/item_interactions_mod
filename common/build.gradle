@@ -4,12 +4,6 @@ plugins {
 }
 
 
-repositories {
-    maven {
-        url = "https://api.modrinth.com/maven"
-    }
-}
-
 neoForge {
     neoFormVersion = neo_form_version
     // Automatically enable AccessTransformers if the file exists
@@ -29,10 +23,6 @@ dependencies {
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
-
-    compileOnly "maven.modrinth:tiny-item-animations:1.2.3-fabric"
-
-
 }
 
 configurations {
