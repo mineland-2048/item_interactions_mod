@@ -1,3 +1,4 @@
+
 plugins {
     `multiloader-loader`
     id("net.neoforged.moddev") version "2.0.107"
@@ -13,6 +14,8 @@ neoForge {
 }
 
 dependencies {
+    compileOnly("maven.modrinth:tiny-item-animations:${commonMod.dep("tia")}")
+    compileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
 }
 
 neoForge {

@@ -4,27 +4,27 @@ loaderVersion = "[2,)"
 license = "GNU LGPL 3.0"
 
 [[mods]]
-modId = "item_interactions_mod"
-version = "${version}-mc${minecraft_version}"
-displayName = "Item interactions mod"
-authors = "mineland"
+modId = "${modId}"
+version = "${modVersion}-mc${minecraftVersion}"
+displayName = "${modName}"
+authors = "${modAuthor}"
 description = '''
-Item interactions in your inventory!
+${modDescription}
 '''
 logoFile = "assets/item_interactions_mod/icon.png"
 
 
-[[dependencies.item_interactions_mod]]
+[[dependencies.${ modId }]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21,)"
+versionRange = "[21,)" # Should probably change this...
 ordering = "NONE"
 side = "CLIENT"
 
-[[dependencies.item_interactions_mod]]
+[[dependencies.${ modId }]]
 modId = "minecraft"
 type = "required"
-versionRange = "${version_range_neo}"
+versionRange = "[${minMinecraftVersion},)"
 ordering = "NONE"
 side = "CLIENT"
 

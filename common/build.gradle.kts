@@ -32,7 +32,9 @@ dependencies {
     })
 
     compileOnly("org.spongepowered:mixin:0.8.5")
-    modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
+    modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric-loader")}")
+    modCompileOnly("maven.modrinth:tiny-item-animations:${commonMod.dep("tia")}")
+    modCompileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
 }
 
 val commonJava: Configuration by configurations.creating {

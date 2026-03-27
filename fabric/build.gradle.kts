@@ -12,6 +12,7 @@ stonecutter {
 
 dependencies {
     minecraft("com.mojang:minecraft:${commonMod.mc}")
+
     mappings(loom.layered {
         officialMojangMappings()
         commonMod.depOrNull("parchment")?.let { parchmentVersion ->
@@ -19,11 +20,14 @@ dependencies {
         }
     })
 
-    modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric_loader")}")
-    modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric_api")}+${commonMod.mc}")
+    modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric-loader")}")
+    modApi("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric-api")}+${commonMod.mc}")
+    modCompileOnly("maven.modrinth:tiny-item-animations:${commonMod.dep("tia")}")
+    modCompileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
 
     // Required dependencies
     modImplementation("com.terraformersmc:modmenu:${commonMod.dep("modmenu")}")
+
 }
 
 loom {
