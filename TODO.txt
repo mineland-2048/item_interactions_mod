@@ -12,3 +12,7 @@ also particles set cant override parent
 - Fix mouse speed transfer to the particles
 
 - Fix component matching (firework rockets)
+
+
+# NOTES:
+`gradle build --scan` somehow fixed the ksp issue????? what????
