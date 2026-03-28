@@ -1,6 +1,6 @@
 plugins {
     id("multiloader-common")
-    id("fabric-loom") version "1.15-SNAPSHOT"
+    id("net.fabricmc.fabric-loom") version "1.15-SNAPSHOT"
     kotlin("jvm") version "2.2.0"
     id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("dev.kikugie.fletching-table.fabric") version "0.1.0-alpha.14"
@@ -24,17 +24,11 @@ loom {
 
 dependencies {
     minecraft(group = "com.mojang", name = "minecraft", version = commonMod.mc)
-    mappings(loom.layered {
-        officialMojangMappings()
-        commonMod.depOrNull("parchment")?.let { parchmentVersion ->
-            parchment("org.parchmentmc.data:parchment-${commonMod.mc}:$parchmentVersion@zip")
-        }
-    })
 
     compileOnly("org.spongepowered:mixin:0.8.5")
-    modCompileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric-loader")}")
-    modCompileOnly("maven.modrinth:tiny-item-animations:${commonMod.dep("tia")}")
-    modCompileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
+    compileOnly("net.fabricmc:fabric-loader:${commonMod.dep("fabric-loader")}")
+    compileOnly("maven.modrinth:tiny-item-animations:${commonMod.dep("tia")}")
+    compileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
 }
 
 val commonJava: Configuration by configurations.creating {

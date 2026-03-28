@@ -15,3 +15,8 @@
 /*/build
 /*/.gradle
 /*/runs
+/versions/*/build
+build
+.kotlin
+run
+.gradle

@@ -1,3 +1,5 @@
+import dev.kikugie.stonecutter.data.ParsedVersion
+
 val isCi = System.getenv("CI") == "true"
 gradle.startParameter.isParallelProjectExecutionEnabled = !isCi
 gradle.startParameter.isBuildCacheEnabled = !isCi
@@ -41,14 +43,23 @@ stonecutter {
 
         dists.forEach { (branchName, branchVersions) ->
             branch(branchName) {
-                versions(*branchVersions.toTypedArray())
+
+                for (verString in branchVersions) {
+                    val ver = version(verString)
+                    if (sc.semantics.eval(verString, ">=26.1")) {
+                        ver.buildscript("unobfuscated.gradle.kts")
+                    }
+
+                }
             }
         }
+
+
     }
 }
 
 rootProject.name = "item_interactions_mod"
-System.out.println("Gamer: ${rootProject.name.toString()}")
+System.out.println("Gamer: ${rootProject.name}")
 
 
 //include("common")

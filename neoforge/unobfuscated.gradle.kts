@@ -30,13 +30,6 @@ neoForge {
         }
     }
 
-    parchment {
-        commonMod.depOrNull("parchment")?.let {
-            mappingsVersion = it
-            minecraftVersion = commonMod.mc
-        }
-    }
-
     mods {
         register(commonMod.id) {
             sourceSet(sourceSets.main.get())
