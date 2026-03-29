@@ -77,7 +77,7 @@ public class ItemInteractionsConfig {
     }
 
     private static List<AnimTemplate> animIndexes = new ArrayList<>();
-    public static void addAnimation(AnimTemplate anim) {
+    public static void renderAnimation(AnimTemplate anim) {
         animationList.add(anim);
         defaultSettingsMap.putAll(anim.getSettingsList());
     }
@@ -277,9 +277,7 @@ public class ItemInteractionsConfig {
 
 
 
-        h.forEach((k, v) -> {
-            stringList.add(String.format("%s = %s%n", k, v));
-        });
+        h.forEach((k, v) -> stringList.add(String.format("%s = %s%n", k, v)));
 
         for(String s : stringList) {
             configFileString.append(s);

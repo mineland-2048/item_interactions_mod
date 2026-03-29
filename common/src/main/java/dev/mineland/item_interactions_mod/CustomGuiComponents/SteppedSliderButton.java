@@ -2,11 +2,10 @@ package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-//import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -17,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class SteppedSliderButton extends AbstractWidget {
     private static final Identifier SLIDER_SPRITE = Identifier.withDefaultNamespace("widget/slider");
@@ -103,8 +101,11 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
-        Minecraft minecraft = Minecraft.getInstance();
+    //~ if >= 26.1 'renderWidget' -> 'extractWidgetRenderState'
+    public void extractWidgetRenderState(
+            @NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a
+    ) {
+//        Minecraft minecraft = Minecraft.getInstance();
 
         double stepWidth = (double) this.getWidth() / steps;
         if (divideSteps) for (int x = 0; x < steps; x++) {
@@ -113,25 +114,27 @@ public abstract class SteppedSliderButton extends AbstractWidget {
         else guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), ARGB.white(this.alpha));
 
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.getHandleSprite(), this.getX() + (int)(handlePosition * (double)(this.width - 8)), this.getY(), 8, this.getHeight(), ARGB.white(this.alpha));
-        int k = this.active ? 16777215 : 10526880;
+//        int k = this.active ? 16777215 : 10526880;
 
-        this.renderScrollingStringOverContents(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
+        //~ render_extract
+        this.extractScrollingStringOverContents(guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE), this.getMessage(), 2);
+        //~ !render_extract
 
 //        this.renderScrollingStringOverContents(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);
 
 //        int yoff = 0;
-//        guiGraphics.drawString(minecraft.font, "handle: " + handlePosition, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
-//        guiGraphics.drawString(minecraft.font, "steps: " + steps, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
-//        guiGraphics.drawString(minecraft.font, "value: " + ((handlePosition * range) + minValue), getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
-//        guiGraphics.drawString(minecraft.font, "step: " + this.selectedStep, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
-//        guiGraphics.drawString(minecraft.font, "range: " + this.range, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+//        guiGraphics.text(minecraft.font, "handle: " + handlePosition, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+//        guiGraphics.text(minecraft.font, "steps: " + steps, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+//        guiGraphics.text(minecraft.font, "value: " + ((handlePosition * range) + minValue), getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+//        guiGraphics.text(minecraft.font, "step: " + this.selectedStep, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
+//        guiGraphics.text(minecraft.font, "range: " + this.range, getX(), getY() + getHeight() + (10 * yoff++), 0xFFFFFFFF);
     }
 
 //    public void onClick(double d, double e) {
 //        this.setValueFromMouse(d);
 //    }
 
-    public void onClick(MouseButtonEvent mouseButtonEvent, boolean bl) {
+    public void onClick(@NotNull MouseButtonEvent mouseButtonEvent, boolean bl) {
         this.dragging = this.active;
         this.setValueFromMouse(mouseButtonEvent);
     }
@@ -261,13 +264,13 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 //        super.onDrag(d, e, f, g);
 //    }
 
-    protected void onDrag(MouseButtonEvent mouseButtonEvent, double d, double e) {
+    protected void onDrag(@NotNull MouseButtonEvent mouseButtonEvent, double dx, double dy) {
         this.setValueFromMouse(mouseButtonEvent);
-        super.onDrag(mouseButtonEvent, d, e);
+        super.onDrag(mouseButtonEvent, dx, dy);
     }
 
 
-    public void playDownSound(SoundManager soundManager) {
+    public void playDownSound(@NotNull SoundManager soundManager) {
     }
 
     public void onRelease(double d, double e) {

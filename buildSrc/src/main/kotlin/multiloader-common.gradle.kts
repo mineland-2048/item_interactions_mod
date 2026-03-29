@@ -70,6 +70,11 @@ tasks {
 
         val jsonExpandProps = expandProps.mapValues { (_, v) -> v.replace("\n", "\\\\n") }
 
+
+        filesMatching(listOf("item_interactions_mod.mixins.json", "fabricOnly.mixins.json")) {
+            expand(expandProps)
+        }
+
         filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
             expand(expandProps)
         }

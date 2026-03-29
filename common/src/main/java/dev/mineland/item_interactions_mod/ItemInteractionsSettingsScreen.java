@@ -7,7 +7,7 @@ import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.numbers.StyledFormat;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -164,13 +163,15 @@ public class ItemInteractionsSettingsScreen extends Screen {
         }
 
         if (!hadItems) {
-            inventoryPreview.setItem(0,  new ItemStack(Items.CRAFTING_TABLE));
-            inventoryPreview.setItem(1,  new ItemStack(Items.OAK_LEAVES));
-            inventoryPreview.setItem(2,  new ItemStack(Items.DIAMOND_PICKAXE));
-            inventoryPreview.setItem(4,  new ItemStack(Items.REDSTONE_LAMP));
-            inventoryPreview.setItem(6,  new ItemStack(Items.FLINT_AND_STEEL));
-            inventoryPreview.setItem(7,  new ItemStack(Items.ZOMBIE_HEAD));
-            inventoryPreview.setItem(8,  new ItemStack(Items.EGG));
+
+//            var itemStack = Items.CRAFTING_TABLE.getDefaultInstance();
+//            inventoryPreview.setItem(0,  itemStack);
+//            inventoryPreview.setItem(1,  Items.OAK_LEAVES.getDefaultInstance());
+//            inventoryPreview.setItem(2,  Items.DIAMOND_PICKAXE.getDefaultInstance());
+//            inventoryPreview.setItem(4,  Items.REDSTONE_LAMP.getDefaultInstance());
+//            inventoryPreview.setItem(6,  Items.FLINT_AND_STEEL.getDefaultInstance());
+//            inventoryPreview.setItem(7,  Items.ZOMBIE_HEAD.getDefaultInstance());
+//            inventoryPreview.setItem(8,  Items.EGG.getDefaultInstance());
         }
 
 
@@ -598,15 +599,17 @@ public class ItemInteractionsSettingsScreen extends Screen {
     }
 
 
+
     int timer = 10;
     @Override
-    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
-        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
+    //~ if >= 26.1 'render' -> 'extractRenderState' {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, a);
+        GlobalDirt.setGlobalGuiGraphicsExtractor(guiGraphics);
         AnimTemplate currentAnimation = ItemInteractionsConfig.getAnimationSetting();
         if (currentAnimation != null) currentAnimation.refreshSettings();
     }
-
+    //~}
     @Override
     public void mouseMoved(double d, double e) {
         inventoryPreview.mouseMoved(d, e);

@@ -2,14 +2,9 @@ package dev.mineland.item_interactions_mod.mixin;
 
 import dev.mineland.item_interactions_mod.ItemInteractionsSettingsScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -24,7 +19,7 @@ public abstract class VideoSettingsScreenMixin {
 
 
     @Inject(method = "addOptions", at = @At("TAIL"))
-    protected void addSettingsButton(CallbackInfo callbackInfo) {
+    protected void renderSettingsButton(CallbackInfo callbackInfo) {
         VideoSettingsScreen screen = (VideoSettingsScreen) (Object) this;
 //        VideoSettingsScreenHelper.modify();
 
@@ -47,9 +42,9 @@ public abstract class VideoSettingsScreenMixin {
 //        Button button = SpriteIconButton.builder(Component.literal(""), btn -> {
 //            Minecraft.getInstance().setScreen(new ItemInteractionsSettingsScreen(screen));
 //        }).bounds(x, y, buttonSize, buttonSize).build();
-//        button = screen.layout.addToFooter(button, layoutSettings -> {
+//        button = screen.layout.renderToFooter(button, layoutSettings -> {
 //            layoutSettings.alignHorizontallyRight();
-//            layoutSettings.paddingRight(Button.DEFAULT_SPACING);
+//            layoutSettings.prenderingRight(Button.DEFAULT_SPACING);
 //        });
 
         iconButton = screen.layout.addToFooter(iconButton, layoutSettings -> {

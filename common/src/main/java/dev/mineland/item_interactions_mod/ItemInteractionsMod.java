@@ -37,10 +37,10 @@ public final class ItemInteractionsMod {
     }
 
     static void registerAnimations() {
-        ItemInteractionsConfig.addAnimation(new AnimSpeed());
-        ItemInteractionsConfig.addAnimation(new AnimScale());
-        ItemInteractionsConfig.addAnimation(new AnimRope());
-        ItemInteractionsConfig.addAnimation(new AnimSpin());
+        ItemInteractionsConfig.renderAnimation(new AnimSpeed());
+        ItemInteractionsConfig.renderAnimation(new AnimScale());
+        ItemInteractionsConfig.renderAnimation(new AnimRope());
+        ItemInteractionsConfig.renderAnimation(new AnimSpin());
 
     }
 

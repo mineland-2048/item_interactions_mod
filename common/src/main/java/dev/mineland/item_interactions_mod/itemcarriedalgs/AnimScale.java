@@ -1,7 +1,7 @@
 package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 
@@ -22,12 +22,12 @@ public class AnimScale extends AnimTemplate {
 
     public AnimScale() {
         super("scale");
-        addSetting("scale_speed", 1.0);
-        addSetting("scale_amount", 0.1);
+        renderSetting("scale_speed", 1.0);
+        renderSetting("scale_amount", 0.1);
     }
 
 
-    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
+    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphicsExtractor guiGraphics) {
 
         scale = (float) ( Math.abs(Math.cos(Math.PI * (msCounter / ((tickScale) / scaleSpeed)))) * scaleAmount);
 

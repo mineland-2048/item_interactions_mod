@@ -5,7 +5,7 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
@@ -23,8 +23,8 @@ public class ClientFakeContainer implements Container {
 
     private int x;
     private int y;
-    private int slotSize = 18;
-    private int columns, rows;
+    private final int slotSize = 18;
+    private final int columns, rows;
     public ClientFakeContainer(int columns, int rows, int left, int top) {
         int id = 0;
         this.x = left;
@@ -36,7 +36,7 @@ public class ClientFakeContainer implements Container {
             for (int j = 0; j < columns; j++) {
                 Slot newSlot = new Slot(this, id, left + (j*slotSize), top + (i*slotSize));
                 newSlot.index = id;
-                ItemStack newEmptyItem = new ItemStack(ItemStack.EMPTY.getItem());
+                ItemStack newEmptyItem = (ItemStack.EMPTY);
                 slots.add(newSlot);
                 itemStacks.add(newEmptyItem);
                 id++;
@@ -86,7 +86,7 @@ public class ClientFakeContainer implements Container {
         return slots.size();
     }
 
-    public void renderSlots(GuiGraphics guiGraphics) {
+    public void renderSlots(GuiGraphicsExtractor guiGraphics) {
         GlobalDirt.slotCount = 0;
         for (Slot slot : slots) {
 
@@ -116,8 +116,10 @@ public class ClientFakeContainer implements Container {
             int itemX = slot.x + 1;
             int itemY = slot.y + 1;
 
-            guiGraphics.renderItem(slot.getItem(), itemX, itemY);
-            guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
+            //~ if >= 21.6 '.renderItem' -> '.item' {
+            guiGraphics.item(slot.getItem(), itemX, itemY);
+            guiGraphics.itemDecorations(Minecraft.getInstance().font, slot.getItem(), itemX, itemY);
+            //~}
 
             if (ItemInteractionsConfig.enableGuiParticles) {
                 GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, false, 0, 0, GlobalDirt.slotCount);
@@ -126,13 +128,17 @@ public class ClientFakeContainer implements Container {
         }
     }
 
-    public void renderMouseItem(GuiGraphics guiGraphics, int x, int y) {
+    public void renderMouseItem(GuiGraphicsExtractor guiGraphics, int x, int y) {
         GlobalDirt.carriedItem = mouseItem;
-        guiGraphics.renderItem(mouseItem, x - 8, y - 8);
-        guiGraphics.renderItemDecorations(Minecraft.getInstance().font, mouseItem, x - 8, y - 8);
+
+        //~ if >= 21.6 '.renderItem' -> '.item' {
+        guiGraphics.item(mouseItem, x - 8, y - 8);
+        guiGraphics.itemDecorations(Minecraft.getInstance().font, mouseItem, x - 8, y - 8);
+        //~}
+
     }
 
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    public void render(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
 
         renderSlots(guiGraphics);
 
@@ -143,7 +149,10 @@ public class ClientFakeContainer implements Container {
         guiGraphics.pose().translate(0, 0);
         guiGraphics.pose().popMatrix();
         GlobalDirt.skipCalcs = true;
-        guiGraphics.renderItem(mouseItem, x + 18, y - 36);
+
+        //~ if >= 21.6 '.renderItem' -> '.item' {
+        guiGraphics.item(mouseItem, x + 18, y - 36);
+        //~}
         GlobalDirt.skipCalcs = false;
 
 

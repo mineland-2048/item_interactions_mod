@@ -1,29 +1,31 @@
 package dev.mineland.item_interactions_mod;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import dev.mineland.item_interactions_mod.modcompat.ModCompat;
 import dev.mineland.item_interactions_mod.modcompat.TinyItemAnimationsCompat;
+import dev.mineland.item_interactions_mod.renderState.ColoredPolygonRenderState;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.render.TextureSetup;
-import dev.mineland.item_interactions_mod.renderState.ColoredPolygonRenderState;
-import net.minecraft.client.gui.render.state.GuiItemRenderState;
-import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.gui.render.state.pip.OversizedItemRenderState;
-import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
+
+//~ if >= 21.6 'net.minecraft.client.gui.render.state.GuiRenderState' -> 'net.minecraft.client.renderer.state.gui.GuiRenderState'
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
+
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.joml.*;
 
-import java.lang.Math;
+import org.joml.Matrix3x2f;
+import org.joml.Quaternionf;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import static dev.mineland.item_interactions_mod.GlobalDirt.*;
 import static dev.mineland.item_interactions_mod.MiscUtils.*;
@@ -33,7 +35,7 @@ public class GuiRendererHelper {
     public static ItemStackRenderState currentItemStackRenderer;
     public static PoseStack currentPose;
 
-    public final static CachedOrthoProjectionMatrixBuffer itemsProjectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer("items", -1000.0F, 1000.0F, true);
+//    public final static CachedOrthoProjectionMatrixBuffer itemsProjectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer("items", -1000.0F, 1000.0F, true);
 
     public static void clearItem() {
         currentItemStackRenderer = new ItemStackRenderState();
@@ -41,7 +43,7 @@ public class GuiRendererHelper {
     }
 
     public static ItemStack prevItem = ItemStack.EMPTY;
-    public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, int initialX, int initialY, int initialZ) {
+    public static void renderItem(GuiRenderState guiRenderState, ItemStack itemStack, Level level, LivingEntity livingEntity, int k, Minecraft minecraft, int initialX, int initialY, int seed) {
         TrackingItemStackRenderState scratchItemStackRenderState = new TrackingItemStackRenderState();
         AnimTemplate anim = ItemInteractionsConfig.getAnimationSetting();
         if (anim == null) return;
@@ -52,7 +54,7 @@ public class GuiRendererHelper {
         prevItem = itemStack;
 
 
-        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
+        GuiGraphicsExtractor guiGraphics = createGuiGraphicsExtractor(minecraft, guiRenderState);
 
 //        Inverted the speed due to the item renderer flipping everything
         PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, -speedY, isCurrentItem3d, guiGraphics);
@@ -83,9 +85,16 @@ public class GuiRendererHelper {
             int scX = initialX + (int) (ivX * 16) - correction;
             int scY = initialY + (int) (ivY * 16) - correction;
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) {
+                //~ if >= 26.1 'renderOutline' -> 'outline'
+                guiGraphics.outline(scX, scY, size, size, 0xFFFFFFFF);
+            }
 
-            guiRenderState.submitPicturesInPictureState(
+
+
+
+            //~ if >= 26.1 'submit' -> 'add'
+            guiRenderState.addPicturesInPictureState(
                     new GuiFloatingItemRenderState(
                             scratchItemStackRenderState,
                             new Vector3f(),
@@ -119,7 +128,7 @@ public class GuiRendererHelper {
         }
         prevItem = itemStack;
 
-        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
+        GuiGraphicsExtractor guiGraphics = createGuiGraphicsExtractor(minecraft, guiRenderState);
         PoseStack newPose = anim.makePose((int) initialX, (int) initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
         newPose.translate(initialX - x, initialY - y, initialZ - Math.round(initialZ));
         try {
@@ -144,10 +153,11 @@ public class GuiRendererHelper {
 
 
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
+            //~ if >= 26.1 'renderOutline' -> 'outline'
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.outline(scX, scY, size, size, 0xFFFFFFFF);
 
-
-            guiRenderState.submitPicturesInPictureState(
+            //~ if >= 26.1 'submitPicturesInPictureState' -> 'addPicturesInPictureState'
+            guiRenderState.addPicturesInPictureState(
                     new GuiFloatingItemRenderState(
                             scratchItemStackRenderState,
                             new Vector3f(),
@@ -173,21 +183,21 @@ public class GuiRendererHelper {
     }
 
 
-    public static void setPixel(GuiGraphics guiGraphics, int x, int y, int color) {
+    public static void setPixel(GuiGraphicsExtractor guiGraphics, int x, int y, int color) {
         guiGraphics.fill(x, y, x+1, y+1, color);
     }
 
-    public static void renderLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void renderLine(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
         renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
-    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color) {
+    public static void renderLine(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int color) {
         renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
 
     //    TODO: fix non pixelated lines
-    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
+    public static void renderLine(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
         if (pixelated) {
             if (x0 == x1 || y0 == y1) {
                 int px = 0, py = 0;
@@ -244,13 +254,14 @@ public class GuiRendererHelper {
         float blY  = points[3].y();
 
 
-//        vertexConsumer.addVertex(orthoMatrix, brX, brY, (float) 0).setColor(color);
-//        vertexConsumer.addVertex(orthoMatrix, trX, trY, (float) 0).setColor(color);
-//        vertexConsumer.addVertex(orthoMatrix, tlX, tlY, (float) 0).setColor(color);
-//        vertexConsumer.addVertex(orthoMatrix, blX, blY, (float) 0).setColor(color);
+//        vertexConsumer.renderVertex(orthoMatrix, brX, brY, (float) 0).setColor(color);
+//        vertexConsumer.renderVertex(orthoMatrix, trX, trY, (float) 0).setColor(color);
+//        vertexConsumer.renderVertex(orthoMatrix, tlX, tlY, (float) 0).setColor(color);
+//        vertexConsumer.renderVertex(orthoMatrix, blX, blY, (float) 0).setColor(color);
 //
 
-        GlobalDirt.getGlobalGuiRenderState().submitGuiElement(
+        //~ if >= 26.1 'submit' -> 'add'
+        GlobalDirt.getGlobalGuiRenderState().addGuiElement(
                 new ColoredPolygonRenderState(
                         RenderPipelines.GUI,
                         TextureSetup.noTexture(),
@@ -275,10 +286,10 @@ public class GuiRendererHelper {
 
 
 //    TODO:
-//     - add line colors per length
-//     - add line color gradients
+//     - render line colors per length
+//     - render line color gradients
 
-    public static void renderLines_RepeatColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+    public static void renderLines_RepeatColors(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
         int pointsLength = points.length;
         int colorsLength = colors.length;
 
@@ -292,7 +303,7 @@ public class GuiRendererHelper {
         renderLines(guiGraphics, points, newColors, pixelated);
     }
 
-    public static void renderLine_ColorPattern(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int[] colors, int repeats, boolean pixelated) {
+    public static void renderLine_ColorPattern(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int[] colors, int repeats, boolean pixelated) {
         if (repeats < 1) repeats = 1;
         if (samePoint(x0,y0,x1,y1)) return;
         if (colors.length == 0) return;
@@ -316,8 +327,8 @@ public class GuiRendererHelper {
 
     }
 
-//    TODO: maybe add lerped colored lines.
-//    public static void renderLines_LerpColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+//    TODO: maybe render lerped colored lines.
+//    public static void renderLines_LerpColors(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
 //        int[] newColors = new int[points.length];
 //
 //        for (int i = 0; i < newColors.length; i++) {
@@ -326,7 +337,7 @@ public class GuiRendererHelper {
 //
 //    }
 
-    private static void renderLines(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+    private static void renderLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
         if (points.length == 0) return;
 
 //        renderPixelatedLines(guiGraphics, points, colors);
@@ -335,7 +346,7 @@ public class GuiRendererHelper {
         else renderSmoothLines(guiGraphics, points, colors);
     }
 
-    private static void renderPixelatedLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
+    private static void renderPixelatedLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors) {
 
         if (points.length == 1) setPixel(guiGraphics, (int) points[0][0], (int) points[0][1], colors[0]);
 
@@ -356,7 +367,7 @@ public class GuiRendererHelper {
 
     }
 
-    private static void renderSmoothLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
+    private static void renderSmoothLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors) {
 //        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
 
         try {
@@ -393,7 +404,9 @@ public class GuiRendererHelper {
                 float blY  = quadPoints[3].y();
 
 
-                GlobalDirt.getGlobalGuiRenderState().submitGuiElement(
+
+                //~ if >= 26.1 'submit' -> 'add'
+                GlobalDirt.getGlobalGuiRenderState().addGuiElement(
                         new ColoredPolygonRenderState(
                                 RenderPipelines.GUI,
                                 TextureSetup.noTexture(),
@@ -411,10 +424,10 @@ public class GuiRendererHelper {
 //                vertexConsumer.putBulkData();
 
 //                vertexConsumer.
-//                vertexConsumer.addVertex(orthoMatrix, brX, brY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
-//                vertexConsumer.addVertex(orthoMatrix, trX, trY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
-//                vertexConsumer.addVertex(orthoMatrix, tlX, tlY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
-//                vertexConsumer.addVertex(orthoMatrix, blX, blY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
+//                vertexConsumer.renderVertex(orthoMatrix, brX, brY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
+//                vertexConsumer.renderVertex(orthoMatrix, trX, trY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
+//                vertexConsumer.renderVertex(orthoMatrix, tlX, tlY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
+//                vertexConsumer.renderVertex(orthoMatrix, blX, blY, (float) 0).setColor(colors[i])    .setNormal(0.0F, 0.0F, 1.0F);;
 
 
             }
@@ -431,7 +444,7 @@ public class GuiRendererHelper {
 
 
 class LineAlgs {
-    public static void plotLineLow(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLineLow(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
         int dx = x1 - x0;
         int dy = y1 - y0;
         int yi = 1;
@@ -472,7 +485,7 @@ class LineAlgs {
 
     }
 
-    public static void plotLineHigh(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLineHigh(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
         int dx = x1 - x0;
         int dy = y1 - y0;
         int xi = 1;
@@ -505,7 +518,7 @@ class LineAlgs {
     }
 
 
-    public static void plotLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLine(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
         if (Math.abs(y1 - y0) < Math.abs(x1-x0)) {
             if (x0 > x1) plotLineLow(guiGraphics, x1,y1,x0,y0, color);
             else plotLineLow(guiGraphics, x0, y0, x1, y1, color);

@@ -4,10 +4,15 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
+//~ gui_methods
 
 public class BaseParticle {
-    GuiGraphics guiGraphics;
+
+    GuiGraphicsExtractor guiGraphics;
+
     double x, y;
     double oldX, oldY;
     double speedX, speedY;
@@ -24,7 +29,10 @@ public class BaseParticle {
     int id;
 
 
-    public BaseParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, int colorStart, int colorEnd, double lifeTime) {
+    public BaseParticle(
+            GuiGraphicsExtractor guiGraphics,
+            double x, double y,
+            double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, int colorStart, int colorEnd, double lifeTime) {
         this.guiGraphics = guiGraphics;
         this.x = x;
         this.y = y;
@@ -64,7 +72,11 @@ public class BaseParticle {
                     this.id, colorArr[1], colorArr[2], colorArr[3]
             );
 
-            this.guiGraphics.drawString(Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, color);
+
+
+            this.guiGraphics.text(
+                    Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, color
+            );
 
             GlobalDirt.particleCount++;
         }

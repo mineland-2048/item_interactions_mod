@@ -5,7 +5,7 @@ import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -28,8 +28,14 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
     private static int mouseX, mouseY;
 
-    public ConfigInventoryPreview(int i, int j, int k, int l, Component label) {
-        super(i,j,k,l,label);
+    public ConfigInventoryPreview(int x, int y, int width, int height, Component label) {
+        super(
+                x,y,
+                width,height,
+                label
+                //? if >= 26.1
+                , AbstractContainerWidget.defaultSettings(9)
+        );
 
         int containerRows = 3;
         int imageHeight = 114 + containerRows * 18;
@@ -39,8 +45,8 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
         int previewWidth = containerRows*18 + 7 + 7;
         int previewHeight = 3*18 + 7 + 17;
 
-        invX = getX() + (width / 2) - previewWidth/2;
-        invY = getY() + (height/2) - previewHeight/2;
+        invX = getX() + (this.width / 2) - previewWidth/2;
+        invY = getY() + (this.height /2) - previewHeight/2;
 
         this.container = new ClientFakeContainer(3, 3, invX + 7, invY + 17);
 
@@ -62,7 +68,10 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
+    //~ if >= 26.1 'renderWidget' -> 'extractWidgetRenderState'
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+
+        //~ gui_methods
 //        guiGraphics.blit();
 
         Font font = Minecraft.getInstance().font;
@@ -71,7 +80,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
         if (ItemInteractionsConfig.debugDraws) {
 //            guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF0000FF);
-//            guiGraphics.drawString(font, String.format("""
+//            guiGraphics.text(font, String.format("""
 //                x: %d
 //                y: %d
 //                width: %d
@@ -143,11 +152,11 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 //            float tickScale = GlobalDirt.tickScale;
 //            long frameTime = GlobalDirt.frameTime;
 //            float tickDelta = GlobalDirt.tickDelta;
-//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100, 0xFFFFFFFF);
-//            guiGraphics.drawString(Minecraft.getInstance().font, "tickRate: " + tickRate, 100, 100 + 10, 0xFFFFFFFF);
-//            guiGraphics.drawString(Minecraft.getInstance().font, "tickScale: " + tickScale, 100, 100 + 20, 0xFFFFFFFF);
-//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 30, 0xFFFFFFFF);
-//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 40, 0xFFFFFFFF);
+//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100, 0xFFFFFFFF);
+//            guiGraphics.text(Minecraft.getInstance().font, "tickRate: " + tickRate, 100, 100 + 10, 0xFFFFFFFF);
+//            guiGraphics.text(Minecraft.getInstance().font, "tickScale: " + tickScale, 100, 100 + 20, 0xFFFFFFFF);
+//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 30, 0xFFFFFFFF);
+//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 40, 0xFFFFFFFF);
 //        }
 
     }

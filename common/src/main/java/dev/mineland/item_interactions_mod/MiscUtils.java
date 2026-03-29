@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -12,8 +12,8 @@ import java.util.List;
 
 public class MiscUtils {
 
-    public static void setGuiGraphics(GuiGraphics gg) {
-        GlobalDirt.globalGuiGraphics = gg;
+    public static void setGuiGraphicsExtractor(GuiGraphicsExtractor gg) {
+        GlobalDirt.globalGuiGraphicsExtractor = gg;
     }
     //    I dont know if java has any counting function for strings, so i made this. Aeugh
     public static int count(String s, String match) {
@@ -109,8 +109,6 @@ public class MiscUtils {
     public static double lerpRotation(double t, double a, double b) {
         var shortest_angle=((((b - a) % Math.PI) + (Math.PI * 1.5)) % Math.PI) - (Math.PI/2);
         return a + shortest_angle * t;
-//        double d = ((b - a + (Math.PI * 1.5)) % Math.PI) - (Math.PI*0.5);
-//        return a + d * t;
     }
 
     public static Vector3f lerpVector3f(float t, Vector3f a, Vector3f b) {
@@ -289,7 +287,7 @@ public class MiscUtils {
 
 
     public static void displayErrorInUi(String s) {
-        ErrorDisplay.addMessage(s);
+        ErrorDisplay.renderMessage(s);
     }
 
     public static int max(int... numbers) {
@@ -307,7 +305,7 @@ public class MiscUtils {
 
         static int maxTime = 5;
 
-        public static void addMessage(String s) {
+        public static void renderMessage(String s) {
             int i = -1;
             for (Message m : messages) {
                 i++;
@@ -320,13 +318,13 @@ public class MiscUtils {
             if (i == -1) {
                 ItemInteractionsMod.errorMessage(s);
                 messages.add(new Message(s));
-            };
+            }
         }
         public static void drawMessages() {
-            int padding = 4;
+            int prendering = 4;
             int currentHeight = 0;
             Font font = Minecraft.getInstance().font;
-            GuiGraphics g = GlobalDirt.getGlobalGuiGraphics();
+            GuiGraphicsExtractor g = GlobalDirt.getGlobalGuiGraphicsExtractor();
 
             g.pose().pushMatrix();
 //            g.pose().translate(0, 0, 100);
@@ -337,13 +335,15 @@ public class MiscUtils {
                 String[] lines = message.string.split(String.format("%n"));
                 for (String line : lines) {
                     maxLength = Math.max(maxLength, font.width(line));
-                    if (g != null) g.drawString(
+
+                    //~ gui_methods
+                    g.text(
                             font,
                             line,
-                            padding, currentHeight + padding,
+                            prendering, currentHeight + prendering,
                             MiscUtils.colorLerp(message.time / maxTime, 0xFFFF0000, 0xFFFFFFFF)
                     );
-
+                    //~ !gui_methods
                     currentHeight += font.lineHeight;
 
                 }
@@ -357,7 +357,7 @@ public class MiscUtils {
                 messageIndex++;
             }
 //            g.pose().translate(0, 0, -1);
-            g.fill(0, 0, maxLength + padding*2, currentHeight - font.lineHeight + padding, 0xd0000000);
+            g.fill(0, 0, maxLength + prendering*2, currentHeight - font.lineHeight + prendering, 0xd0000000);
             g.pose().popMatrix();
 
 

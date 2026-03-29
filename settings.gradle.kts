@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.data.ParsedVersion
-
 val isCi = System.getenv("CI") == "true"
 gradle.startParameter.isParallelProjectExecutionEnabled = !isCi
 gradle.startParameter.isBuildCacheEnabled = !isCi
@@ -49,7 +47,6 @@ stonecutter {
                     if (sc.semantics.eval(verString, ">=26.1")) {
                         ver.buildscript("unobfuscated.gradle.kts")
                     }
-
                 }
             }
         }

@@ -10,7 +10,7 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -169,7 +169,7 @@ public class ParticleInstance {
         this(id, Optional.of(x), Optional.of(y), Optional.of(speedX), Optional.of(speedY), Optional.of(accelerationX), Optional.of(accelerationY), Optional.of(frictionX), Optional.of(frictionY), Optional.of(colorStart), Optional.of(colorEnd), Optional.of(brightnessStart), Optional.of(brightnessEnd), Optional.of(duration), Optional.of(count));
     }
 
-    public void spawn(GuiGraphics guiGraphics, float spawnX, float spawnY, float spawnSpeedX, float spawnSpeedY, ParticleInstance attributes, ParticleInstance attributes_variance) {
+    public void spawn(GuiGraphicsExtractor guiGraphics, float spawnX, float spawnY, float spawnSpeedX, float spawnSpeedY, ParticleInstance attributes, ParticleInstance attributes_variance) {
 
 
         double xVar = attributes_variance.x.orElse(0f);

@@ -6,13 +6,10 @@ import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.SubmitNodeStorage;
-import net.minecraft.client.renderer.feature.BlockFeatureRenderer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
-import net.minecraft.client.renderer.feature.ItemFeatureRenderer;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
 public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatingItemRenderState> {
@@ -22,7 +19,7 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
     }
 
     @Override
-    public Class<GuiFloatingItemRenderState> getRenderStateClass() {
+    public @NotNull Class<GuiFloatingItemRenderState> getRenderStateClass() {
         return GuiFloatingItemRenderState.class;
     }
 
@@ -66,12 +63,15 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
 
         var featureRendererDispatcher = new FeatureRenderDispatcher(
                 node,
-                Minecraft.getInstance().getBlockRenderer(),
+                //~ if >= 26.1 '.getBlockRenderer()' -> '.getModelManager()'
+                Minecraft.getInstance().getModelManager(),
                 bufferSource,
                 Minecraft.getInstance().getAtlasManager(),
                 Minecraft.getInstance().renderBuffers().outlineBufferSource(),
                 Minecraft.getInstance().renderBuffers().crumblingBufferSource(),
                 Minecraft.getInstance().font
+                //?if >= 26.1
+                ,Minecraft.getInstance().gameRenderer.getGameRenderState()
         );
 
         featureRendererDispatcher.renderAllFeatures();

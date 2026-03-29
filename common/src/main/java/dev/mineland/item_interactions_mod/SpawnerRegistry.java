@@ -2,7 +2,6 @@ package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -52,7 +51,7 @@ public record SpawnerRegistry() {
             if (guiParticleSpawner != null && guiParticleSpawner.matches(item)) result.add(guiParticleSpawner);
         }
         return result;
-    };
+    }
 
 
     public static List<Identifier> getList(ItemStack item) {

@@ -132,7 +132,7 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
 //            if (spawnerErrorCount > 0) {
 //
 //                String errorTitle = (spawnerErrorCount == 1) ? "%d Gui particle error" : "%d Gui particle errors";
-//                SystemToast.add(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
+//                SystemToast.render(Minecraft.getInstance().getToastManager(), SystemToast.SystemToastId.PACK_LOAD_FAILURE,
 //                        Component.literal(String.format(errorTitle, spawnerErrorCount)),
 //                        Component.literal("Check the logs for more information") );
 //

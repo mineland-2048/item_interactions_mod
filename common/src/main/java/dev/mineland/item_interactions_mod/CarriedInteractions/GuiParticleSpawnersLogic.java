@@ -3,7 +3,7 @@ package dev.mineland.item_interactions_mod.CarriedInteractions;
 import dev.mineland.item_interactions_mod.*;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
@@ -25,7 +25,7 @@ public class GuiParticleSpawnersLogic {
         slots.clear();
     }
 
-    public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
+    public static boolean checkAndTick(GuiGraphicsExtractor guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
 
         if (!GlobalDirt.shouldTickParticles || dontUpdateTimer) return false;
 
@@ -57,7 +57,8 @@ public class GuiParticleSpawnersLogic {
             List<Identifier> currentSpawnersList = GlobalDirt.slotSpawners.getIdList(slotCount);
             List<Identifier> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
 
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
+            //~ gui_methods
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.outline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
 
 //            No previous spawner and no new spawner
             if (itemGuiParticleSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
@@ -109,7 +110,7 @@ public class GuiParticleSpawnersLogic {
 
     //    Logic for the carried spawner and particle ticking
 //    Is ran once per frame
-    public static void mainLogic(GuiGraphics guiGraphics) {
+    public static void mainLogic(GuiGraphicsExtractor guiGraphics) {
         List<BaseParticle> shouldDelete = new ArrayList<>();
         if (shouldTickParticles && ItemInteractionsConfig.enableGuiParticles && !dontUpdateTimer) {
 

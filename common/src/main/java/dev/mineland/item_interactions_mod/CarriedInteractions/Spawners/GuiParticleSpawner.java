@@ -12,7 +12,7 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
@@ -190,7 +190,7 @@ public class GuiParticleSpawner {
 
     public Codec<GuiParticleSpawner> getCODEC() { return GuiParticleSpawner.CODEC; }
 
-    public void fireEvent(int id, int childCount, String eventName, float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
+    public void fireEvent(int id, int childCount, String eventName, float timeDuration, GuiGraphicsExtractor guiGraphics, float x, float y, float speedX, float speedY) {
         if (this.events.isEmpty()) {
             System.out.println("No events registered in " + this.getName());
 //            this.timer += timeDuration;
@@ -222,7 +222,7 @@ public class GuiParticleSpawner {
 
 
 
-    public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
+    public void tick(float timeDuration, GuiGraphicsExtractor guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
 
         for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY, slotId, childCount + 1);
         Either<ParticleEvent, String> event = this.getEvents().get(this.state);

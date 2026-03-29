@@ -2,15 +2,13 @@ package dev.mineland.item_interactions_mod.renderState;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import javax.sound.midi.Track;
+//~ if >= 21.6 'net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState' -> 'net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState'
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 
 public record GuiFloatingItemRenderState (
         TrackingItemStackRenderState renderState,

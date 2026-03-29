@@ -4,7 +4,7 @@ import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawner
 import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +28,12 @@ public abstract class InventoryGuiMixin {
     protected int leftPos;
 
 
-    @Inject(method = "renderFloatingItem", at = @At("HEAD"))
-    protected void mixedRenderFloatingItem(GuiGraphics guiGraphics,
+    @Inject(
+            at = @At("HEAD"),
+            //~ if >= 26.1 'renderFloatingItem' -> 'extractFloatingItem'
+            method = "extractFloatingItem"
+    )
+    protected void mixedRenderFloatingItem(GuiGraphicsExtractor guiGraphics,
                                            ItemStack itemStack,
                                            int i, int j,
                                            @Nullable String string,
@@ -38,22 +42,32 @@ public abstract class InventoryGuiMixin {
 
     }
 
-    @Inject(method = "render", at = @At("HEAD"))
-    public void renderMixinHead(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
-        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
+    @Inject(
+            at = @At("HEAD"),
+            //~ if >= 26.1 'render' -> 'extractRenderState'
+            method = "extractRenderState"
+    )
+    public void renderMixinHead(GuiGraphicsExtractor guiGraphics, int i, int j, float f, CallbackInfo ci) {
+        GlobalDirt.setGlobalGuiGraphicsExtractor(guiGraphics);
         GlobalDirt.updateTimer();
         GlobalDirt.slotCount = 0;
 
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
-    public void renderMixinTail(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
+    @Inject(
+            at = @At("TAIL"),
+            //~ if >= 26.1 'render' -> 'extractRenderState'
+            method = "extractRenderState"
+    )
+    public void renderMixinTail(GuiGraphicsExtractor guiGraphics, int i, int j, float f, CallbackInfo ci) {
         GlobalDirt.tailUpdateTimer();
         GlobalDirt.updateMousePositions();
 
         if ((boolean) ItemInteractionsConfig.getSetting("debug")) {
-            guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
-            guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
+            //~ if >= 21.6 'drawString' -> 'text' {
+            guiGraphics.text(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+            guiGraphics.text(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
+            //~}
         }
 
         if ((boolean) ItemInteractionsConfig.getSetting("gui_particles"))
@@ -80,8 +94,12 @@ public abstract class InventoryGuiMixin {
     boolean item_interactions_mod$dead = false;
 
 
-    @Inject(method = "renderSlot", at = @At("TAIL"))
-    void checkForParticlesWhenRenderSlot(GuiGraphics guiGraphics, Slot slot, int i, int j, CallbackInfo ci) {
+    @Inject(
+            at = @At("TAIL"),
+            //~ if >= 26.1 'render' -> 'extract'
+            method = "extractSlot"
+    )
+    void checkForParticlesWhenRenderSlot(GuiGraphicsExtractor guiGraphics, Slot slot, int i, int j, CallbackInfo ci) {
         if (!(boolean) ItemInteractionsConfig.getSetting("gui_particles")) return;
 
         this.item_interactions_mod$dead = GuiParticleSpawnersLogic.checkAndTick(guiGraphics, slot, item_interactions_mod$dead, leftPos, topPos, GlobalDirt.slotCount);

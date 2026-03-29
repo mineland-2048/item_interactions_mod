@@ -1,16 +1,15 @@
 {
   "required": true,
   "package": "dev.mineland.item_interactions_mod.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_${javaVersion}",
   "minVersion": "0.8",
   "client": [
     "AbstractRecipeBookScreenMixin",
     "CreativeModeItemPickerMixin",
     "GameRendererMixin",
-    "GuiGraphicsMixin",
+    "Gui_Graphics_Mixin",
     "InventoryGuiMixin",
     "IsCarriedConditionalFixMixin",
-    "SettingsScreenMixin",
     "VideoSettingsScreenMixin",
     "compat.TIAMixinInjectsMixinAccessor"
   ],

@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -53,14 +53,14 @@ public class AnimRope extends AnimTemplate {
 
     public AnimRope() {
         super("rope");
-        addSetting("rope_elasticity", 0.4);
-        addSetting("rope_length", 16.0);
-        addSetting("rope_gravity", new Vector3f(0, 6f, 0));
-        addSetting("rope_inertia", 0.8);
-        addSetting("rope_pixelated", true);
+        renderSetting("rope_elasticity", 0.4);
+        renderSetting("rope_length", 16.0);
+        renderSetting("rope_gravity", new Vector3f(0, 6f, 0));
+        renderSetting("rope_inertia", 0.8);
+        renderSetting("rope_pixelated", true);
     }
 
-    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
+    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphicsExtractor guiGraphics) {
 
         PoseStack pose = new PoseStack();
 
@@ -89,7 +89,7 @@ public class AnimRope extends AnimTemplate {
 
 
 
-    private void ropeSim(GuiGraphics guiGraphics, PoseStack pose, int x, int y, int z) {
+    private void ropeSim(GuiGraphicsExtractor guiGraphics, PoseStack pose, int x, int y, int z) {
 
         try {
             newPos.set(globalItemPos);
@@ -167,7 +167,7 @@ public class AnimRope extends AnimTemplate {
     final float MAX_ACCUMULATED_TIME = 0.25f; // prevent spiral of death
 
 
-    public void update(GuiGraphics guiGraphics, int x, int y, int z, float msTickDelta) {
+    public void update(GuiGraphicsExtractor guiGraphics, int x, int y, int z, float msTickDelta) {
 
         // cap delta to avoid huge jumps on lag spikes
         msTickDelta = Math.min(msTickDelta, MAX_ACCUMULATED_TIME);
