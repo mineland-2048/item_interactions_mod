@@ -4,7 +4,7 @@ import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -152,8 +152,8 @@ public class GraphOverTimeWidget extends AbstractWidget {
     boolean dead;
     @Override
     //~ if >= 26.1 'renderWidget' -> 'extractWidgetRenderState'
-    protected void extractWidgetRenderState(
-            @NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick
+    protected void renderWidget(
+            @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick
     ) {
 
 
@@ -164,15 +164,15 @@ public class GraphOverTimeWidget extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
 //        guiGraphics.pose().translate(0, 0, zLayer);
         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), colorBackground);
-        guiGraphics.outline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
+        guiGraphics.renderOutline(this.getX(), this.getY(), this.getWidth(), this.getHeight(), colorOutline);
 
 
         GuiRendererHelper.renderLine_ColorPattern(guiGraphics, getX() + (float) getWidth() /2, getY(), getX() + (float) getWidth() /2, getY() + getHeight(), new int[]{0x20FFFFFF, 0}, 8, true);
         GuiRendererHelper.renderLine_ColorPattern(guiGraphics, getX(), getY() + (float) getHeight()/2, getX() + getWidth(), getY() + (float) getHeight()/2, new int[]{0x20FFFFFF, 0}, 8, true);
-        if (showGraphTitle) guiGraphics.centeredText(FONT, this.getMessage(), getX() + getWidth()/2, getY() + prendering + 1, 0xFFFFFFFF);
+        if (showGraphTitle) guiGraphics.drawCenteredString(FONT, this.getMessage(), getX() + getWidth()/2, getY() + prendering + 1, 0xFFFFFFFF);
 
         if (showCurrentValue) {
-            guiGraphics.centeredText(FONT, MiscUtils.numberMaxDecimal(getCurrentValue(), decimalPrecision), this.getX() + getWidth()/2, this.getY() + this.getHeight() - lineHeight - 1, 0xFFFFFFFF );
+            guiGraphics.drawCenteredString(FONT, MiscUtils.numberMaxDecimal(getCurrentValue(), decimalPrecision), this.getX() + getWidth()/2, this.getY() + this.getHeight() - lineHeight - 1, 0xFFFFFFFF );
         }
 
         try {
@@ -186,7 +186,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                 if (!showYAxis) continue;
 
                 String string = MiscUtils.numberMaxDecimal(MiscUtils.lerp((float) i/graphDivisions, minGraphY, maxGraphY), decimalPrecision) + " ";
-                guiGraphics.text(FONT, string,
+                guiGraphics.drawString(FONT, string,
                         getGraphX() - FONT.width(string),
                         y - FONT.lineHeight/2 + 1,
                         0xFFFFFFFF);
@@ -203,7 +203,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                     int top = y - FONT.lineHeight/2;
                     int bottom = y + FONT.lineHeight/2 + 1;
 
-                    guiGraphics.text(FONT, string,
+                    guiGraphics.drawString(FONT, string,
                             left,
                             y - FONT.lineHeight/2 + 1,
                             marker.color);
@@ -212,7 +212,7 @@ public class GraphOverTimeWidget extends AbstractWidget {
                 }
             });
 
-            guiGraphics.outline(this.getGraphX(), this.getGraphY(), this.getGraphWidth(), this.getGraphHeight(), 0xFFFFFFFF);
+            guiGraphics.renderOutline(this.getGraphX(), this.getGraphY(), this.getGraphWidth(), this.getGraphHeight(), 0xFFFFFFFF);
 
             if (!overdraw) guiGraphics.enableScissor(getGraphX(), getGraphY(), getGraphX() + getGraphWidth(), getGraphY() + getGraphHeight());
 

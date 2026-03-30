@@ -5,13 +5,13 @@ import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 //~ gui_methods
 
 public class BaseParticle {
 
-    GuiGraphicsExtractor guiGraphics;
+    GuiGraphics guiGraphics;
 
     double x, y;
     double oldX, oldY;
@@ -30,7 +30,7 @@ public class BaseParticle {
 
 
     public BaseParticle(
-            GuiGraphicsExtractor guiGraphics,
+            GuiGraphics guiGraphics,
             double x, double y,
             double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, int colorStart, int colorEnd, double lifeTime) {
         this.guiGraphics = guiGraphics;
@@ -74,7 +74,7 @@ public class BaseParticle {
 
 
 
-            this.guiGraphics.text(
+            this.guiGraphics.drawString(
                     Minecraft.getInstance().font, debugString, 0, 10 * GlobalDirt.particleCount, color
             );
 

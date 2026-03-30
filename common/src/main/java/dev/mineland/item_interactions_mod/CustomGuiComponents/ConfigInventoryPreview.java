@@ -5,7 +5,7 @@ import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -13,13 +13,17 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.List;
 
 public class ConfigInventoryPreview extends AbstractContainerWidget {
 
     private static final Identifier CONTAINER_BACKGROUND = Identifier.withDefaultNamespace("textures/gui/container/generic_54.png");
+    private static final Identifier DISABLED_SLOT_LOCATION_SPRITE = Identifier.withDefaultNamespace("container/crafter/disabled_slot");
+
     private final ClientFakeContainer container;
 
     private static int invX, invY;
@@ -27,6 +31,11 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
     private static final int previewHeight = (3)*18 + 7 + 17;
 
     private static int mouseX, mouseY;
+    private static boolean canRenderItems = false;
+
+    public boolean shouldRenderItems() {
+        return canRenderItems;
+    }
 
     public ConfigInventoryPreview(int x, int y, int width, int height, Component label) {
         super(
@@ -34,7 +43,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
                 width,height,
                 label
                 //? if >= 26.1
-                , AbstractContainerWidget.defaultSettings(9)
+                //, AbstractContainerWidget.defaultSettings(9)
         );
 
         int containerRows = 3;
@@ -53,6 +62,13 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
         mouseX = 0; mouseY = 0;
 
+        try {
+            new ItemStack(Items.AIR);
+            canRenderItems = true;
+        } catch(Exception ignored) {
+            canRenderItems = false;
+        }
+
 //        container.printItemStacks();
 //        Slot newSlot1 = new Slot();
     }
@@ -69,7 +85,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
     @Override
     //~ if >= 26.1 'renderWidget' -> 'extractWidgetRenderState'
-    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float a) {
 
         //~ gui_methods
 //        guiGraphics.blit();
@@ -80,7 +96,7 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
         if (ItemInteractionsConfig.debugDraws) {
 //            guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF0000FF);
-//            guiGraphics.text(font, String.format("""
+//            guiGraphics.drawString(font, String.format("""
 //                x: %d
 //                y: %d
 //                width: %d
@@ -90,7 +106,6 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 
 
         }
-
 
         int containerRows = 3;
 //        int imageHeight = 114 + containerRows * 18;
@@ -135,10 +150,17 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
                 7, (7),
                 256, 256);
 
+        if (!canRenderItems) {
+            for (Slot slot : container.getSlots()) {
+                guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, DISABLED_SLOT_LOCATION_SPRITE, slot.x, slot.y, 18, 18);
+            }
+
+            return;
+        }
 
         guiGraphics.pose().pushMatrix();
 //        guiGraphics.pose().translate(0, 0, -20);
-        container.render(guiGraphics, mouseX, mouseY);
+        container.render(guiGraphics, ConfigInventoryPreview.mouseX, ConfigInventoryPreview.mouseY);
         guiGraphics.pose().popMatrix();
 
         GlobalDirt.updateMousePositions();
@@ -152,11 +174,11 @@ public class ConfigInventoryPreview extends AbstractContainerWidget {
 //            float tickScale = GlobalDirt.tickScale;
 //            long frameTime = GlobalDirt.frameTime;
 //            float tickDelta = GlobalDirt.tickDelta;
-//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100, 0xFFFFFFFF);
-//            guiGraphics.text(Minecraft.getInstance().font, "tickRate: " + tickRate, 100, 100 + 10, 0xFFFFFFFF);
-//            guiGraphics.text(Minecraft.getInstance().font, "tickScale: " + tickScale, 100, 100 + 20, 0xFFFFFFFF);
-//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 30, 0xFFFFFFFF);
-//            guiGraphics.text(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 40, 0xFFFFFFFF);
+//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100, 0xFFFFFFFF);
+//            guiGraphics.drawString(Minecraft.getInstance().font, "tickRate: " + tickRate, 100, 100 + 10, 0xFFFFFFFF);
+//            guiGraphics.drawString(Minecraft.getInstance().font, "tickScale: " + tickScale, 100, 100 + 20, 0xFFFFFFFF);
+//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 30, 0xFFFFFFFF);
+//            guiGraphics.drawString(Minecraft.getInstance().font, "currentMilis: " + currentMilis, 100, 100 + 40, 0xFFFFFFFF);
 //        }
 
     }

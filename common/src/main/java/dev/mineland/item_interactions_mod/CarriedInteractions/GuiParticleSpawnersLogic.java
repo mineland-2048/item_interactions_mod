@@ -3,7 +3,7 @@ package dev.mineland.item_interactions_mod.CarriedInteractions;
 import dev.mineland.item_interactions_mod.*;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.Slot;
@@ -25,12 +25,12 @@ public class GuiParticleSpawnersLogic {
         slots.clear();
     }
 
-    public static boolean checkAndTick(GuiGraphicsExtractor guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
+    public static boolean checkAndTick(GuiGraphics guiGraphics, Slot slot, boolean dead, int leftPos, int topPos, int initialSlotCount) {
 
         if (!GlobalDirt.shouldTickParticles || dontUpdateTimer) return false;
 
 //        For some reason, dragging an item makes the slots shift.
-//        this fixes onPut events being fired when they shouldnt
+//        this fixes onPut events being fired when they shouldn't
         int slotCount = initialSlotCount;
 
         while (slots.size() <= GlobalDirt.slotCount) slots.add(null);
@@ -58,7 +58,7 @@ public class GuiParticleSpawnersLogic {
             List<Identifier> itemSpawnersIdList = SpawnerRegistry.getList(slotItem);
 
             //~ gui_methods
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.outline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(slot.x, slot.y, 16, 16, 0xFFFFFFFF);
 
 //            No previous spawner and no new spawner
             if (itemGuiParticleSpawnerList.isEmpty() && currentSpawnersList.isEmpty()) {
@@ -110,7 +110,7 @@ public class GuiParticleSpawnersLogic {
 
     //    Logic for the carried spawner and particle ticking
 //    Is ran once per frame
-    public static void mainLogic(GuiGraphicsExtractor guiGraphics) {
+    public static void mainLogic(GuiGraphics guiGraphics) {
         List<BaseParticle> shouldDelete = new ArrayList<>();
         if (shouldTickParticles && ItemInteractionsConfig.enableGuiParticles && !dontUpdateTimer) {
 

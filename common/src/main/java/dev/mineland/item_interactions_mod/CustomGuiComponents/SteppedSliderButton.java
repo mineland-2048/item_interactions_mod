@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod.CustomGuiComponents;
 
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -102,8 +102,8 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 
     @Override
     //~ if >= 26.1 'renderWidget' -> 'extractWidgetRenderState'
-    public void extractWidgetRenderState(
-            @NotNull GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a
+    public void renderWidget(
+            @NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float a
     ) {
 //        Minecraft minecraft = Minecraft.getInstance();
 
@@ -117,7 +117,7 @@ public abstract class SteppedSliderButton extends AbstractWidget {
 //        int k = this.active ? 16777215 : 10526880;
 
         //~ render_extract
-        this.extractScrollingStringOverContents(guiGraphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE), this.getMessage(), 2);
+        this.renderScrollingStringOverContents(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
         //~ !render_extract
 
 //        this.renderScrollingStringOverContents(guiGraphics, minecraft.font, 2, k | Mth.ceil(this.alpha * 255.0F) << 24);

@@ -64,14 +64,14 @@ public class GuiFloatingItemRenderer extends PictureInPictureRenderer<GuiFloatin
         var featureRendererDispatcher = new FeatureRenderDispatcher(
                 node,
                 //~ if >= 26.1 '.getBlockRenderer()' -> '.getModelManager()'
-                Minecraft.getInstance().getModelManager(),
+                Minecraft.getInstance().getBlockRenderer(),
                 bufferSource,
                 Minecraft.getInstance().getAtlasManager(),
                 Minecraft.getInstance().renderBuffers().outlineBufferSource(),
                 Minecraft.getInstance().renderBuffers().crumblingBufferSource(),
                 Minecraft.getInstance().font
                 //?if >= 26.1
-                ,Minecraft.getInstance().gameRenderer.getGameRenderState()
+                //,Minecraft.getInstance().gameRenderer.getGameRenderState()
         );
 
         featureRendererDispatcher.renderAllFeatures();

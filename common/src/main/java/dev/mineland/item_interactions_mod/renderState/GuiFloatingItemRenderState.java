@@ -8,7 +8,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 //~ if >= 21.6 'net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState' -> 'net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState'
-import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 
 public record GuiFloatingItemRenderState (
         TrackingItemStackRenderState renderState,

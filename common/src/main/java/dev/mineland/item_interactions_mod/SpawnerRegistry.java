@@ -2,8 +2,11 @@ package dev.mineland.item_interactions_mod;
 
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
+//? >= 26.1 {
+/*import net.minecraft.world.item.ItemStackTemplate;
+*///?}
 
 import java.util.*;
 
@@ -21,7 +24,7 @@ public record SpawnerRegistry() {
 //    );
 
 
-    public static Map<Item, List<Identifier>> MAPPED_ITEMS_LIST = new HashMap<>();
+    public static Map<String, List<Identifier>> MAPPED_ITEMS_LIST = new HashMap<>();
 
     public static Map<Identifier, GuiParticleSpawner> SPAWNER_MAP = new HashMap<>();
 
@@ -41,7 +44,15 @@ public record SpawnerRegistry() {
     }
 
     public static List<GuiParticleSpawner> get(ItemStack item) {
-        List<Identifier> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
+
+        String itemId;
+
+        //? >= 26.1 {
+        /*itemId = item.typeHolder().getRegisteredName();
+        *///?} else
+        itemId = item.getItemHolder().getRegisteredName();
+
+        List<Identifier> spawnerIds = MAPPED_ITEMS_LIST.get(itemId);
         List<GuiParticleSpawner> result = new ArrayList<>();
 
         if (spawnerIds == null) return result;
@@ -55,7 +66,15 @@ public record SpawnerRegistry() {
 
 
     public static List<Identifier> getList(ItemStack item) {
-        List<Identifier> spawnerIds = MAPPED_ITEMS_LIST.get(item.getItem());
+
+        String itemId;
+        //? >= 26.1 {
+        /*itemId = item.typeHolder().getRegisteredName();
+         *///?} else
+        itemId = item.getItemHolder().getRegisteredName();
+
+
+        List<Identifier> spawnerIds = MAPPED_ITEMS_LIST.get(itemId);
         List<Identifier> result = new ArrayList<>();
 
         if (spawnerIds == null) return result;
@@ -68,22 +87,38 @@ public record SpawnerRegistry() {
 
     }
     public static GuiParticleSpawner getSpawnerFromId(Identifier id) {
-//        if (SPAWNER_REGISTRIES.containsKey(id)) return SPAWNER_REGISTRIES.getValueOrThrow(ResourceKey.createid));
+//        if (SPAWNER_REGISTRIES.cocontainsKey(id)) return SPAWNER_REGISTRIES.getValueOrThrow(ResourceKey.createid));
         return SPAWNER_MAP.getOrDefault(id, null);
     }
 
     public static void register(GuiParticleSpawner guiParticleSpawner, Identifier id) {
+        //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate' {
+        // if >= 26.1 '.getItem()' -> '.item().value()' {
+
         List<ItemStack> items = guiParticleSpawner.getAppliedItems();
         SPAWNER_MAP.put(id, guiParticleSpawner);
-        for (ItemStack item : items) {
-            if (!MAPPED_ITEMS_LIST.containsKey(item.getItem())) {
-                MAPPED_ITEMS_LIST.put(item.getItem(), new ArrayList<>());
+        for (ItemStack itemStack : items) {
+
+            String itemId;
+
+            //? >= 26.1 {
+            /*itemId = itemStack.typeHolder().getRegisteredName();
+            *///?} else {
+            itemId = itemStack.getItemHolder().getRegisteredName();
+            //?}
+
+
+            if (!MAPPED_ITEMS_LIST.containsKey(itemId)) {
+                MAPPED_ITEMS_LIST.put(itemId, new ArrayList<>());
+            } else if (MAPPED_ITEMS_LIST.get(itemId).contains(id)) {
+                continue;
             }
 
-            if (MAPPED_ITEMS_LIST.get(item.getItem()).contains(id)) continue;
-            MAPPED_ITEMS_LIST.get(item.getItem()).add(id);
+            MAPPED_ITEMS_LIST.get(itemId).add(id);
 
         }
+        //}
+        //~}
 
     }
 

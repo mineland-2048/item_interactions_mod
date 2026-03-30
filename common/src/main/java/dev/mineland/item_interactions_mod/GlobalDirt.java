@@ -5,10 +5,10 @@ import dev.mineland.item_interactions_mod.CarriedInteractions.GuiParticleSpawner
 import dev.mineland.item_interactions_mod.CarriedInteractions.Particles.BaseParticle;
 import dev.mineland.item_interactions_mod.CarriedInteractions.Spawners.GuiParticleSpawner;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 //~ if >= 26.1 'net.minecraft.client.gui.render.state.GuiRenderState' -> 'net.minecraft.client.renderer.state.gui.GuiRenderState'
-import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -93,11 +93,11 @@ public class GlobalDirt {
         }
 
 
-        public static void tick(int id, float time, GuiGraphicsExtractor guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+        public static void tick(int id, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
             tickSpawners(id, get(id), time, guiGraphics, globalX, globalY, speedX, speedY);
         }
 
-        public static void tickSpawners(int slotId, List<GuiParticleSpawner> guiParticleSpawners, float time, GuiGraphicsExtractor guiGraphics, float globalX, float globalY, float speedX, float speedY) {
+        public static void tickSpawners(int slotId, List<GuiParticleSpawner> guiParticleSpawners, float time, GuiGraphics guiGraphics, float globalX, float globalY, float speedX, float speedY) {
             int childCount = 0;
             for (GuiParticleSpawner guiParticleSpawner : guiParticleSpawners) {
                 guiParticleSpawner.tick(time, guiGraphics, globalX, globalY, speedX, speedY, slotId, childCount);
@@ -143,7 +143,7 @@ public class GlobalDirt {
     public static ItemStack carriedItem;
 
 
-    public static boolean devenv = false;
+    public static boolean devenv = true;
     public static List<BaseParticle> particleList = new ArrayList<>();
 
 
@@ -206,7 +206,7 @@ public class GlobalDirt {
     public static int spawnerErrorCount = 0;
     public static String currentParticleSpawner;
 
-    static GuiGraphicsExtractor globalGuiGraphicsExtractor;
+    static GuiGraphics globalGuiGraphics;
     static GuiRenderState globalGuiRenderState;
     public static int tickCounter;
 
@@ -329,20 +329,20 @@ public class GlobalDirt {
         lastMilis = currentMilis;
     }
 
-    public static void renderHead(GuiGraphicsExtractor guiGraphics) {
-        GlobalDirt.setGlobalGuiGraphicsExtractor(guiGraphics);
+    public static void renderHead(GuiGraphics guiGraphics) {
+        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
         GlobalDirt.updateTimer();
         GlobalDirt.slotCount = 0;
     }
 
-    public static void renderTail(GuiGraphicsExtractor guiGraphics) {
+    public static void renderTail(GuiGraphics guiGraphics) {
         GlobalDirt.tailUpdateTimer();
         GlobalDirt.updateMousePositions();
 
         if ((boolean) ItemInteractionsConfig.getSetting("debug")) {
             //~ if >= 26.1 '.drawString' -> '.text' {
-            guiGraphics.text(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
-            guiGraphics.text(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, "msCounter: " + msCounter, 0, 50, 0xFFFFFFFF);
+            guiGraphics.drawString(Minecraft.getInstance().font, "absSpeed: " + absSpeed, 0, 60, isShaking ? 0xFFFFFF20 : 0xFFFFFFFF);
             //~}
         }
 
@@ -354,26 +354,26 @@ public class GlobalDirt {
     }
 
 
-    public static void setGlobalGuiGraphicsExtractor(GuiGraphicsExtractor gg) {
-        globalGuiGraphicsExtractor = gg;
+    public static void setGlobalGuiGraphics(GuiGraphics gg) {
+        globalGuiGraphics = gg;
     }
 
     public static void setGlobalGuiRenderState(GuiRenderState gr) {
         globalGuiRenderState = gr;
     }
 
-    public static GuiGraphicsExtractor getGlobalGuiGraphicsExtractor() {
-        return globalGuiGraphicsExtractor;
+    public static GuiGraphics getGlobalGuiGraphics() {
+        return globalGuiGraphics;
     }
 
     public static GuiRenderState getGlobalGuiRenderState() {
         return globalGuiRenderState;
     }
 
-    public static GuiGraphicsExtractor createGuiGraphicsExtractor(Minecraft minecraft, GuiRenderState guiRenderState) {
+    public static GuiGraphics createGuiGraphics(Minecraft minecraft, GuiRenderState guiRenderState) {
         int mouseX = (int)minecraft.mouseHandler.getScaledXPos(minecraft.getWindow());
         int mouseY = (int)minecraft.mouseHandler.getScaledYPos(minecraft.getWindow());
-        return new GuiGraphicsExtractor(minecraft, guiRenderState, mouseX, mouseY);
+        return new GuiGraphics(minecraft, guiRenderState, mouseX, mouseY);
 
 
     }

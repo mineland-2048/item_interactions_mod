@@ -7,11 +7,11 @@ import dev.mineland.item_interactions_mod.modcompat.TinyItemAnimationsCompat;
 import dev.mineland.item_interactions_mod.renderState.ColoredPolygonRenderState;
 import dev.mineland.item_interactions_mod.renderState.GuiFloatingItemRenderState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.render.TextureSetup;
 
 //~ if >= 21.6 'net.minecraft.client.gui.render.state.GuiRenderState' -> 'net.minecraft.client.renderer.state.gui.GuiRenderState'
-import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -54,7 +54,7 @@ public class GuiRendererHelper {
         prevItem = itemStack;
 
 
-        GuiGraphicsExtractor guiGraphics = createGuiGraphicsExtractor(minecraft, guiRenderState);
+        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
 
 //        Inverted the speed due to the item renderer flipping everything
         PoseStack newPose = anim.makePose(initialX, initialY ,0, speedX, -speedY, isCurrentItem3d, guiGraphics);
@@ -87,14 +87,14 @@ public class GuiRendererHelper {
 
             if (ItemInteractionsConfig.debugDraws) {
                 //~ if >= 26.1 'renderOutline' -> 'outline'
-                guiGraphics.outline(scX, scY, size, size, 0xFFFFFFFF);
+                guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
             }
 
 
 
 
             //~ if >= 26.1 'submit' -> 'add'
-            guiRenderState.addPicturesInPictureState(
+            guiRenderState.submitPicturesInPictureState(
                     new GuiFloatingItemRenderState(
                             scratchItemStackRenderState,
                             new Vector3f(),
@@ -128,7 +128,7 @@ public class GuiRendererHelper {
         }
         prevItem = itemStack;
 
-        GuiGraphicsExtractor guiGraphics = createGuiGraphicsExtractor(minecraft, guiRenderState);
+        GuiGraphics guiGraphics = createGuiGraphics(minecraft, guiRenderState);
         PoseStack newPose = anim.makePose((int) initialX, (int) initialY ,0, speedX, speedY, isCurrentItem3d, guiGraphics);
         newPose.translate(initialX - x, initialY - y, initialZ - Math.round(initialZ));
         try {
@@ -154,10 +154,10 @@ public class GuiRendererHelper {
 
 
             //~ if >= 26.1 'renderOutline' -> 'outline'
-            if (ItemInteractionsConfig.debugDraws) guiGraphics.outline(scX, scY, size, size, 0xFFFFFFFF);
+            if (ItemInteractionsConfig.debugDraws) guiGraphics.renderOutline(scX, scY, size, size, 0xFFFFFFFF);
 
             //~ if >= 26.1 'submitPicturesInPictureState' -> 'addPicturesInPictureState'
-            guiRenderState.addPicturesInPictureState(
+            guiRenderState.submitPicturesInPictureState(
                     new GuiFloatingItemRenderState(
                             scratchItemStackRenderState,
                             new Vector3f(),
@@ -183,21 +183,21 @@ public class GuiRendererHelper {
     }
 
 
-    public static void setPixel(GuiGraphicsExtractor guiGraphics, int x, int y, int color) {
+    public static void setPixel(GuiGraphics guiGraphics, int x, int y, int color) {
         guiGraphics.fill(x, y, x+1, y+1, color);
     }
 
-    public static void renderLine(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void renderLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
         renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
-    public static void renderLine(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int color) {
+    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color) {
         renderLine(guiGraphics, x0, y0, x1, y1, color, true);
     }
 
 
     //    TODO: fix non pixelated lines
-    public static void renderLine(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
+    public static void renderLine(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int color, boolean pixelated) {
         if (pixelated) {
             if (x0 == x1 || y0 == y1) {
                 int px = 0, py = 0;
@@ -261,7 +261,7 @@ public class GuiRendererHelper {
 //
 
         //~ if >= 26.1 'submit' -> 'add'
-        GlobalDirt.getGlobalGuiRenderState().addGuiElement(
+        GlobalDirt.getGlobalGuiRenderState().submitGuiElement(
                 new ColoredPolygonRenderState(
                         RenderPipelines.GUI,
                         TextureSetup.noTexture(),
@@ -289,7 +289,7 @@ public class GuiRendererHelper {
 //     - render line colors per length
 //     - render line color gradients
 
-    public static void renderLines_RepeatColors(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+    public static void renderLines_RepeatColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
         int pointsLength = points.length;
         int colorsLength = colors.length;
 
@@ -303,7 +303,7 @@ public class GuiRendererHelper {
         renderLines(guiGraphics, points, newColors, pixelated);
     }
 
-    public static void renderLine_ColorPattern(GuiGraphicsExtractor guiGraphics, float x0, float y0, float x1, float y1, int[] colors, int repeats, boolean pixelated) {
+    public static void renderLine_ColorPattern(GuiGraphics guiGraphics, float x0, float y0, float x1, float y1, int[] colors, int repeats, boolean pixelated) {
         if (repeats < 1) repeats = 1;
         if (samePoint(x0,y0,x1,y1)) return;
         if (colors.length == 0) return;
@@ -328,7 +328,7 @@ public class GuiRendererHelper {
     }
 
 //    TODO: maybe render lerped colored lines.
-//    public static void renderLines_LerpColors(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+//    public static void renderLines_LerpColors(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
 //        int[] newColors = new int[points.length];
 //
 //        for (int i = 0; i < newColors.length; i++) {
@@ -337,7 +337,7 @@ public class GuiRendererHelper {
 //
 //    }
 
-    private static void renderLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors, boolean pixelated) {
+    private static void renderLines(GuiGraphics guiGraphics, float[][] points, int[] colors, boolean pixelated) {
         if (points.length == 0) return;
 
 //        renderPixelatedLines(guiGraphics, points, colors);
@@ -346,7 +346,7 @@ public class GuiRendererHelper {
         else renderSmoothLines(guiGraphics, points, colors);
     }
 
-    private static void renderPixelatedLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors) {
+    private static void renderPixelatedLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
 
         if (points.length == 1) setPixel(guiGraphics, (int) points[0][0], (int) points[0][1], colors[0]);
 
@@ -367,7 +367,7 @@ public class GuiRendererHelper {
 
     }
 
-    private static void renderSmoothLines(GuiGraphicsExtractor guiGraphics, float[][] points, int[] colors) {
+    private static void renderSmoothLines(GuiGraphics guiGraphics, float[][] points, int[] colors) {
 //        VertexConsumer vertexConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.lines());
 
         try {
@@ -406,7 +406,7 @@ public class GuiRendererHelper {
 
 
                 //~ if >= 26.1 'submit' -> 'add'
-                GlobalDirt.getGlobalGuiRenderState().addGuiElement(
+                GlobalDirt.getGlobalGuiRenderState().submitGuiElement(
                         new ColoredPolygonRenderState(
                                 RenderPipelines.GUI,
                                 TextureSetup.noTexture(),
@@ -444,7 +444,7 @@ public class GuiRendererHelper {
 
 
 class LineAlgs {
-    public static void plotLineLow(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLineLow(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
         int dx = x1 - x0;
         int dy = y1 - y0;
         int yi = 1;
@@ -485,7 +485,7 @@ class LineAlgs {
 
     }
 
-    public static void plotLineHigh(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLineHigh(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
         int dx = x1 - x0;
         int dy = y1 - y0;
         int xi = 1;
@@ -518,7 +518,7 @@ class LineAlgs {
     }
 
 
-    public static void plotLine(GuiGraphicsExtractor guiGraphics, int x0, int y0, int x1, int y1, int color) {
+    public static void plotLine(GuiGraphics guiGraphics, int x0, int y0, int x1, int y1, int color) {
         if (Math.abs(y1 - y0) < Math.abs(x1-x0)) {
             if (x0 > x1) plotLineLow(guiGraphics, x1,y1,x0,y0, color);
             else plotLineLow(guiGraphics, x0, y0, x1, y1, color);

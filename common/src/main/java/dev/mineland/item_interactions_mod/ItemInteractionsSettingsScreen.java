@@ -7,7 +7,7 @@ import dev.mineland.item_interactions_mod.itemcarriedalgs.AnimTemplate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -17,7 +17,10 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+//? >= 26.1
+//import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import org.joml.Vector3f;
 
@@ -151,6 +154,10 @@ public class ItemInteractionsSettingsScreen extends Screen {
         guiParticlesButton.setTooltip(Tooltip.create(Component.literal("Enable or disable particles in the inventory from resource packs.")));
         smoothParticlesButton.setTooltip(Tooltip.create(Component.literal("Toggles weather the particles are locked to the texture grid or not.")));
 
+        if (!inventoryPreview.shouldRenderItems()) {
+            inventoryPreview.setTooltip(Tooltip.create(Component.literal("Open a world first to see items here!")));
+            return;
+        }
 
         boolean hadItems = false;
         if (Minecraft.getInstance().level != null  && Minecraft.getInstance().player != null) {
@@ -164,14 +171,28 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         if (!hadItems) {
 
-//            var itemStack = Items.CRAFTING_TABLE.getDefaultInstance();
-//            inventoryPreview.setItem(0,  itemStack);
-//            inventoryPreview.setItem(1,  Items.OAK_LEAVES.getDefaultInstance());
-//            inventoryPreview.setItem(2,  Items.DIAMOND_PICKAXE.getDefaultInstance());
-//            inventoryPreview.setItem(4,  Items.REDSTONE_LAMP.getDefaultInstance());
-//            inventoryPreview.setItem(6,  Items.FLINT_AND_STEEL.getDefaultInstance());
-//            inventoryPreview.setItem(7,  Items.ZOMBIE_HEAD.getDefaultInstance());
-//            inventoryPreview.setItem(8,  Items.EGG.getDefaultInstance());
+            Item[] defaultItems = {
+                    Items.OAK_LEAVES, Items.DIAMOND, Items.REDSTONE_LAMP,
+                    null, Items.DIAMOND_PICKAXE, null,
+                    Items.FLINT_AND_STEEL, Items.ZOMBIE_HEAD, Items.EGG
+            };
+
+
+            int i = 0;
+            try {
+                for (i = 0; i < defaultItems.length; i++) {
+                    Item item = defaultItems[i];
+                    if (item == null) continue;
+
+                    //? >= 26.1 {
+                    /*var stack = new ItemStackTemplate((item)).create();
+                    inventoryPreview.setItem(i, stack);
+                    *///?} else
+                    inventoryPreview.setItem(i, new ItemStack(item));
+                }
+            } catch (Exception e) {
+                MiscUtils.displayErrorInUi("Died (%d)! %s".formatted(i, e.toString()));
+            }
         }
 
 
@@ -184,8 +205,21 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
     }
 
+    void updateWarnings() {
+        if (enableVersionWarning && versionWarningButton != null) {
+            versionWarningButton.visible = true;
 
+            String verString = SharedConstants.getCurrentVersion().id();
+            String animation_value = animationCycleButton.getValue();
 
+            if (verString.contains("26.1")) {
+                versionWarningButton.active = animation_value.equals("scale");
+            } else {
+                versionWarningButton.active = !animation_value.equals("none");
+            }
+        }
+
+    }
 
     void updateVisible() {
         scaleAnimLayout.visitWidgets(widget -> widget.visible = false);
@@ -194,16 +228,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         animationCycleButton.setTooltip(Tooltip.create(Component.literal(animTooltipString)));
 
-
-        String value = animationCycleButton.getValue();
-
-        if (enableVersionWarning && versionWarningButton != null) {
-            versionWarningButton.visible = true;
-            versionWarningButton.active = !value.equals("none");
-
-        }
-
-        switch (value) {
+        switch (animationCycleButton.getValue()) {
             case "scale" -> {
                 scaleAnimLayout.visitWidgets(widget -> widget.visible = true);
             }
@@ -221,6 +246,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
                 speedAnimLayout.visitWidgets(widget -> widget.visible = false);
             }
         }
+
+        updateWarnings();
     }
 
     void createLayout() {
@@ -248,8 +275,6 @@ public class ItemInteractionsSettingsScreen extends Screen {
                                     ItemInteractionsConfig.setAnimationSetting(string);
                                     ItemInteractionsConfig.getAnimationSetting().reset((int) GlobalDirt.lastMouseX, (int) GlobalDirt.lastMouseY, 0);
                                     updateVisible();
-
-
                                 }
                         )
 
@@ -275,53 +300,28 @@ public class ItemInteractionsSettingsScreen extends Screen {
         rightColumnLayout.addChild(Button.builder(Component.literal("Restore defaults"), (self) -> resetToDefaults()).width(100).build(), LayoutSettings::alignHorizontallyCenter);
 
 
-        Component guiButtonInitialText
-                = Component.literal("Inventory particles: ")
-                .append(Component.literal(""+ItemInteractionsConfig.getSetting("gui_particles"))
-                        .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
-                );
 
-        Component guiSmoothInitialText
-                = Component.literal("Smooth particles: ")
-                .append(Component.literal(""+ItemInteractionsConfig.getSetting("gui_smooth_particles"))
-                        .withStyle((boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles") ? ChatFormatting.GREEN : ChatFormatting.RED)
-                );
+
+
+        Component particlesEnabledText = booleanButtonText("Inventory particles", (Boolean) ItemInteractionsConfig.getSetting("gui_particles"));
+        Component smoothParticlesText = booleanButtonText("Smooth particles", (Boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles"));
 
         guiParticlesButton = rightColumnLayout.addChild(
-                Button.builder(guiButtonInitialText, (self) -> {
+                Button.builder(particlesEnabledText, (self) -> {
                     ItemInteractionsConfig.enableGuiParticles = !ItemInteractionsConfig.enableGuiParticles;
                     ItemInteractionsConfig.setSetting("gui_particles", ItemInteractionsConfig.enableGuiParticles);
 
-                    ChatFormatting color = (boolean) ItemInteractionsConfig.enableGuiParticles ?
-                            ChatFormatting.GREEN : ChatFormatting.RED;
-
-
-                    self.setMessage(
-                            Component.literal("Inventory particles: ")
-                                    .append(Component.literal(""+ItemInteractionsConfig.enableGuiParticles)
-                                            .withStyle(color)
-                                    )
-                    );
+                    self.setMessage(booleanButtonText("Inventory particles", (Boolean) ItemInteractionsConfig.getSetting("gui_particles")));
 
                     smoothParticlesButton.active = ItemInteractionsConfig.enableGuiParticles;
                 }).build(), LayoutSettings::alignHorizontallyCenter
         );
 
         smoothParticlesButton = rightColumnLayout.addChild(
-                Button.builder(guiSmoothInitialText, (self) -> {
+                Button.builder(smoothParticlesText, (self) -> {
                     ItemInteractionsConfig.smoothGuiParticles = !ItemInteractionsConfig.smoothGuiParticles;
                     ItemInteractionsConfig.setSetting("gui_smooth_particles", ItemInteractionsConfig.smoothGuiParticles);
-
-                    ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles") ?
-                            ChatFormatting.GREEN : ChatFormatting.RED;
-
-
-                    self.setMessage(
-                            Component.literal("Smooth particles: ")
-                                    .append(Component.literal(""+ItemInteractionsConfig.smoothGuiParticles)
-                                            .withStyle(color)
-                                    )
-                    );
+                    self.setMessage(booleanButtonText("Smooth particles", (Boolean) ItemInteractionsConfig.getSetting("gui_smooth_particles")));
                 }).build(), LayoutSettings::alignHorizontallyCenter
         );
 
@@ -337,28 +337,18 @@ public class ItemInteractionsSettingsScreen extends Screen {
 
         updateVisible();
 
-        Component debugButtonInitialText = Component.literal("debug: ")
-                .append(Component.literal(""+ItemInteractionsConfig.debugDraws)
-                        .withStyle(ItemInteractionsConfig.debugDraws ? ChatFormatting.GREEN : ChatFormatting.RED)
-                );
+
 
 
         if (ItemInteractionsConfig.debugDraws || GlobalDirt.devenv) {
+            Component debugButtonInitialText = booleanButtonText("Debug", (Boolean) ItemInteractionsConfig.getSetting("debug"));
+
             debugButton = Button.builder(debugButtonInitialText, (self) -> {
                 boolean d = ItemInteractionsConfig.debugDraws;
-                ItemInteractionsConfig.setSetting("debug", ! d);
+                ItemInteractionsConfig.setSetting("debug", !d);
                 ItemInteractionsConfig.debugDraws = !d;
 
-                ChatFormatting color = (boolean) ItemInteractionsConfig.getSetting("debug") ?
-                        ChatFormatting.GREEN : ChatFormatting.RED;
-
-
-                self.setMessage(
-                        Component.literal("debug: ")
-                                .append(Component.literal(""+ItemInteractionsConfig.getSetting("debug"))
-                                        .withStyle(color)
-                                )
-                );
+                self.setMessage(booleanButtonText("Debug", (Boolean) ItemInteractionsConfig.getSetting("debug")));
             }).build();
             debugButton.setPosition(8, 8);
             debugButton.setSize(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT);
@@ -370,7 +360,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
     private void addVersionWarning() {
         String verString = SharedConstants.getCurrentVersion().id();
 
-        var snapshot = verString.contains("w");
+        var snapshot = verString.contains("w") || verString.contains("snapshot");
 
         StringBuilder versionWarnMessage = new StringBuilder();
         String countString;
@@ -382,17 +372,28 @@ public class ItemInteractionsSettingsScreen extends Screen {
         }
 
         if (ItemInteractionsMod.isNeo()) {
-            versionWarnMessages.add("> Due to NeoForge weirdness, items appear with no light");
+            String neoWhy = "> Due to NeoForge weirdness, items appear with no light when using";
+
+            if (verString.contains("26.1")) {
+                neoWhy += " the 'scale' animation setitng.";
+            } else {
+                neoWhy += " any animation setitng. Sorry about that.";
+            }
+            versionWarnMessages.add(neoWhy);
+
+
+
         }
 
         if (!versionWarnMessages.isEmpty()) {
-            countString = (versionWarnMessages.size() > 1 ? "These" : "This") + " will be fixed eventually, but you can disable animations in the meantime to get around this";
+//            countString = (versionWarnMessages.size() > 1 ? "These" : "This") + " will be fixed eventually.";
 
             for (String msg : versionWarnMessages) {
                 versionWarnMessage.append(msg).append('\n');
             }
 
-            versionWarnMessage.append(countString);
+
+//            versionWarnMessage.append(countString);
 
             var widgetSprites = new WidgetSprites(Identifier.withDefaultNamespace("dialog/warning_button"), Identifier.withDefaultNamespace("dialog/warning_button_disabled"), Identifier.withDefaultNamespace("dialog/warning_button_highlighted"));
 
@@ -405,7 +406,7 @@ public class ItemInteractionsSettingsScreen extends Screen {
                     button -> {}
             );
 
-            versionWarningButton.setTooltip(Tooltip.create(Component.literal(versionWarnMessage.toString())));
+            versionWarningButton.setTooltip(Tooltip.create(Component.literal(versionWarnMessage.toString().trim())));
 
             warnStringWidget = new StringWidget(
                     Component.literal("WARNING: THERE ARE VERSION ISSUES")
@@ -501,10 +502,11 @@ public class ItemInteractionsSettingsScreen extends Screen {
             }
         });
 
-        ropePixelated = ropeAnimLayout.addChild(Button.builder(Component.literal("Pixel consistent: ").append(Component.literal( ""+ pixelated).withStyle(pixelated ? ChatFormatting.GREEN : ChatFormatting.RED)), (self) -> {
+        Component ropePixelText = booleanButtonText("Pixel consistent", (Boolean) ItemInteractionsConfig.getSetting("rope_pixelated"));
+        ropePixelated = ropeAnimLayout.addChild(Button.builder(ropePixelText, (self) -> {
                     final boolean rope = !(boolean) ItemInteractionsConfig.getSetting("rope_pixelated");
                     ItemInteractionsConfig.setSetting("rope_pixelated", rope);
-                    self.setMessage(Component.literal ("Pixel consistent: ").append(Component.literal(""+ rope).withStyle(rope ? ChatFormatting.GREEN : ChatFormatting.RED)) );
+                    self.setMessage(booleanButtonText("Pixel consistent", (Boolean) ItemInteractionsConfig.getSetting("rope_pixelated")));
                 }).build());
 
 //        ropePixelated.active = false;
@@ -603,9 +605,9 @@ public class ItemInteractionsSettingsScreen extends Screen {
     int timer = 10;
     @Override
     //~ if >= 26.1 'render' -> 'extractRenderState' {
-    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
-        super.extractRenderState(guiGraphics, mouseX, mouseY, a);
-        GlobalDirt.setGlobalGuiGraphicsExtractor(guiGraphics);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float a) {
+        super.render(guiGraphics, mouseX, mouseY, a);
+        GlobalDirt.setGlobalGuiGraphics(guiGraphics);
         AnimTemplate currentAnimation = ItemInteractionsConfig.getAnimationSetting();
         if (currentAnimation != null) currentAnimation.refreshSettings();
     }
@@ -640,8 +642,8 @@ public class ItemInteractionsSettingsScreen extends Screen {
         if (!ItemInteractionsConfig.debugDraws) {
 //            rotationRawGraph.visible = false;
             mouseXPosGraph.visible = false;
+            mouseYPosGraph.visible = false;
         }
-        mouseYPosGraph.visible = false;
 
 
         if (enableVersionWarning) {
@@ -675,6 +677,12 @@ public class ItemInteractionsSettingsScreen extends Screen {
         this.minecraft.setScreen(parent);
     }
 
+
+    private Component booleanButtonText(String text, Boolean value) {
+            return Component.literal("%s: ".formatted(text))
+                    .append(Component.literal(value.toString()).withStyle(value ? ChatFormatting.GREEN : ChatFormatting.RED));
+    }
+
     public void resetToDefaults() {
         animationCycleButton.setValue((String) ItemInteractionsConfig.getDefaultSetting("animation"));
         scaleSpeed.setValue((double) ItemInteractionsConfig.getDefaultSetting("scale_speed"));
@@ -682,25 +690,16 @@ public class ItemInteractionsSettingsScreen extends Screen {
         mouseSpeedMult.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_speed_multiplier"));
         mouseDeceleration.setValue((double) ItemInteractionsConfig.getDefaultSetting("mouse_deceleration"));
 
-        ropePixelated.setMessage(Component.literal("Pixel consistent: ").append(
-                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("rope_pixelated")).withStyle(ChatFormatting.GREEN)
-        ));
+        ropePixelated.setMessage(booleanButtonText("Pixel consistent", (Boolean) ItemInteractionsConfig.getDefaultSetting("rope_pixelated")));
 
         ropeElasticity.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_elasticity"));
         ropeLength.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_length"));
         ropeGravity.setValue(((Vector3f) ItemInteractionsConfig.getDefaultSetting("rope_gravity")).y());
         ropeInertia.setValue((double) ItemInteractionsConfig.getDefaultSetting("rope_inertia"));
 
+        guiParticlesButton.setMessage(booleanButtonText("Inventory particles", (Boolean) ItemInteractionsConfig.getDefaultSetting("gui_particles")));
 
-        guiParticlesButton.setMessage(
-                Component.literal("Inventory particles: ").append(
-                Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_particles")).withStyle(ChatFormatting.GREEN)
-        ));
-
-        smoothParticlesButton.setMessage(
-                Component.literal("Smooth particles: ").append(
-                        Component.literal("" + ItemInteractionsConfig.getDefaultSetting("gui_smooth_particles")).withStyle(ChatFormatting.RED)
-                ));
+        smoothParticlesButton.setMessage(booleanButtonText("Smooth particles", (Boolean) ItemInteractionsConfig.getDefaultSetting("gui_smooth_particles")));
 
         ItemInteractionsConfig.init();
 

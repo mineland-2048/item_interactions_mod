@@ -26,6 +26,7 @@ public final class ItemInteractionsMod {
         logger.info("Initializing item interactions mod!");
         LOADER = LOADER_ENUM.UNKNOWN;
 
+
         registerAnimations();
         ItemInteractionsConfig.init();
         ItemInteractionsConfig.refreshConfig();
@@ -78,4 +79,6 @@ public final class ItemInteractionsMod {
     public static boolean isNeo() {
         return LOADER == LOADER_ENUM.NEOFORGE;
     }
+
+    public static boolean isDebug() { return ItemInteractionsConfig.debugDraws || GlobalDirt.devenv; }
 }

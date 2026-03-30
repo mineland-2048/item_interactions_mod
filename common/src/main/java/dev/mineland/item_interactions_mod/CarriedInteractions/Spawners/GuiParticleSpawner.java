@@ -12,12 +12,13 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsMod;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.item.ItemStack;
+//~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
 import net.minecraft.world.item.ItemStack;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class GuiParticleSpawner {
     private Optional<ParticleInstance> attributes = Optional.empty();
     private Optional<ParticleInstance> attributes_variance = Optional.empty();
     private Optional<Map<String, Either<ParticleEvent, String>>> events = Optional.empty();
+    //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
     private Optional<List<ItemStack>> appliedItems = Optional.empty();
 
     private String state = null;
@@ -62,6 +64,7 @@ public class GuiParticleSpawner {
 
                     eventsCodec.optionalFieldOf("events").forGetter((spawner -> spawner.events)),
 
+                    //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
                     ItemStack.CODEC.listOf().optionalFieldOf("applies").forGetter(s -> s.appliedItems)
 
             ).apply(spawnerInstance, GuiParticleSpawner::new)
@@ -86,7 +89,7 @@ public class GuiParticleSpawner {
             GlobalDirt.spawnerErrorList.get(id).add(id + " doesn't exist");
             ItemInteractionsMod.warnMessage("Spawner '" + id + "' is empty!");
             return null;
-        };
+        }
 
         try (InputStream stream = resourceManager.getResource(id).get().open()) {
             JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
@@ -99,6 +102,7 @@ public class GuiParticleSpawner {
             String warnMessage = String.format("Errors found in '%s': ", id);
             Identifier finalId = id;
             result = dataResult.resultOrPartial((s) -> {
+                ItemInteractionsMod.debugInfoMessage("got partial for " + finalId);
                 if (!GlobalDirt.spawnerErrorList.containsKey(finalId)) GlobalDirt.spawnerErrorList.put(finalId, new ArrayList<>());
                 GlobalDirt.spawnerErrorList.get(finalId).add(warnMessage + s);
                 ItemInteractionsMod.warnMessage(warnMessage + s);
@@ -133,6 +137,7 @@ public class GuiParticleSpawner {
             Optional<ParticleInstance> attributes,
             Optional<ParticleInstance> attributes_variance,
             Optional<Map<String, Either<ParticleEvent, String>>> eventMap,
+            //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
             Optional<List<ItemStack>> appliedItems) {
 
         GuiParticleSpawner parentSpawner;
@@ -141,8 +146,6 @@ public class GuiParticleSpawner {
             Identifier Identifier = parent.get();
             parentSpawner = parseSpawner(Identifier);
             this.copyFromParent(parentSpawner);
-
-
         }
         attributes.ifPresent(this::setAttributes);
         attributes_variance.ifPresent(this::setAttributes_variance);
@@ -190,7 +193,7 @@ public class GuiParticleSpawner {
 
     public Codec<GuiParticleSpawner> getCODEC() { return GuiParticleSpawner.CODEC; }
 
-    public void fireEvent(int id, int childCount, String eventName, float timeDuration, GuiGraphicsExtractor guiGraphics, float x, float y, float speedX, float speedY) {
+    public void fireEvent(int id, int childCount, String eventName, float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY) {
         if (this.events.isEmpty()) {
             System.out.println("No events registered in " + this.getName());
 //            this.timer += timeDuration;
@@ -222,7 +225,7 @@ public class GuiParticleSpawner {
 
 
 
-    public void tick(float timeDuration, GuiGraphicsExtractor guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
+    public void tick(float timeDuration, GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, int slotId, int childCount) {
 
         for (GuiParticleSpawner child : childGuiParticleSpawners) child.tick(timeDuration, guiGraphics, x, y, speedX, speedY, slotId, childCount + 1);
         Either<ParticleEvent, String> event = this.getEvents().get(this.state);
@@ -239,11 +242,28 @@ public class GuiParticleSpawner {
 
 
     public boolean matches(ItemStack itemStack) {
+
         DataComponentMap input = itemStack.getComponents();
 
-        for (ItemStack conditionItem : this.appliedItems.orElse(new ArrayList<>())) {
-            if (itemStack.getItem() != conditionItem.getItem()) continue;
+        String itemId;
+        //? >= 26.1 {
+        /*var template = ItemStackTemplate.fromNonEmptyStack(itemStack);
+        itemId = itemStack.typeHolder().getRegisteredName();
+        *///?} else
+        itemId = itemStack.getItemHolder().getRegisteredName();
 
+        //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
+        for (ItemStack conditionItem : this.appliedItems.orElse(new ArrayList<>())) {
+
+
+            //~ if >= 26.1 '.getItemHolder()' -> '.typeHolder()'
+            String conditionItemId = conditionItem.getItemHolder().getRegisteredName();
+
+            if (!itemId.equals(conditionItemId)) {
+                continue;
+            }
+
+            //~ if >= 26.1 '.getComponents()' -> '.create().getComponents()'
             DataComponentMap conditionMap = conditionItem.getComponents();
             if (conditionMap.isEmpty()) return true;
 
@@ -253,6 +273,13 @@ public class GuiParticleSpawner {
         }
         return false;
     }
+
+
+    //? >= 26.1 {
+    /*public boolean matches(ItemStackTemplate stackTemplate) {
+        return matches(stackTemplate.create());
+    }
+    *///?}
 
     private boolean areDeepSubset(DataComponentMap source, DataComponentMap target) {
         for (DataComponentType<?> type : source.keySet()) {
@@ -322,6 +349,7 @@ public class GuiParticleSpawner {
         return source.equals(target);
     }
 
+    //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
     public List<ItemStack> getAppliedItems() {
 
         return this.appliedItems.orElseGet(ArrayList::new);
@@ -329,6 +357,7 @@ public class GuiParticleSpawner {
 
     }
 
+    //~ if >= 26.1 'ItemStack' -> 'ItemStackTemplate'
     public void setAppliedItems(List<ItemStack> appliedItems) {
         this.appliedItems = Optional.of(appliedItems);
     }

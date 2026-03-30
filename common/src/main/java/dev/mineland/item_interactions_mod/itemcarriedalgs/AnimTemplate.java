@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod.itemcarriedalgs;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
@@ -19,11 +19,11 @@ public class AnimTemplate {
     public Vector3f itemPos = new Vector3f();
     public Vector3f itemSpeed = new Vector3f();
 
-    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphicsExtractor guiGraphics) {
+    public PoseStack makePose(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
         return new PoseStack();
     }
 
-    public PoseStack makePoseNoUpdate(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphicsExtractor guiGraphics) {
+    public PoseStack makePoseNoUpdate(int x, int y, int z, double doubleSpeedX, double doubleSpeedY, boolean is3d, GuiGraphics guiGraphics) {
         return makePose(x,y,z,doubleSpeedX,doubleSpeedY,is3d,guiGraphics);
     }
 

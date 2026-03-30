@@ -2,7 +2,7 @@ package dev.mineland.item_interactions_mod;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -12,8 +12,8 @@ import java.util.List;
 
 public class MiscUtils {
 
-    public static void setGuiGraphicsExtractor(GuiGraphicsExtractor gg) {
-        GlobalDirt.globalGuiGraphicsExtractor = gg;
+    public static void setGuiGraphics(GuiGraphics gg) {
+        GlobalDirt.globalGuiGraphics = gg;
     }
     //    I dont know if java has any counting function for strings, so i made this. Aeugh
     public static int count(String s, String match) {
@@ -324,7 +324,7 @@ public class MiscUtils {
             int prendering = 4;
             int currentHeight = 0;
             Font font = Minecraft.getInstance().font;
-            GuiGraphicsExtractor g = GlobalDirt.getGlobalGuiGraphicsExtractor();
+            GuiGraphics g = GlobalDirt.getGlobalGuiGraphics();
 
             g.pose().pushMatrix();
 //            g.pose().translate(0, 0, 100);
@@ -337,7 +337,7 @@ public class MiscUtils {
                     maxLength = Math.max(maxLength, font.width(line));
 
                     //~ gui_methods
-                    g.text(
+                    g.drawString(
                             font,
                             line,
                             prendering, currentHeight + prendering,

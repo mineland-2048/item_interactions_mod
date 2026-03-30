@@ -47,6 +47,6 @@ public class ReloadListenerHelperImpl {
 
 
         //~ if >= 26.1 'registerReloader' -> 'registerReloadListener'
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles"), idListener);
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(Identifier.fromNamespaceAndPath(ItemInteractionsMod.MOD_ID, "gui_particles"), idListener);
     }
 }

@@ -4,10 +4,10 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.GuiRendererHelper;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 //~ if >= 26.1 'net.minecraft.client.gui.render.state.GuiRenderState' -> 'net.minecraft.client.renderer.state.gui.GuiRenderState'
-import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.gui.render.state.GuiRenderState;
 
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = GuiGraphicsExtractor.class)
+@Mixin(value = GuiGraphics.class)
 // using underscores because stonecutter replaces this string
 public abstract class Gui_Graphics_Mixin{//
     @Shadow @Final private Minecraft minecraft;
@@ -36,12 +36,12 @@ public abstract class Gui_Graphics_Mixin{//
     @Inject(
             at = @At("HEAD"),
             //~ if >= 26.1 'renderItem(' -> 'item('
-            method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V"
+            method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V"
     )
     private void renderItemHead(LivingEntity livingEntity, Level level, ItemStack itemStack, int x, int y, int seed, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
 
-//            GuiGraphicsExtractor self = (GuiGraphicsExtractor) (Object) this;
+//            GuiGraphics self = (GuiGraphics) (Object) this;
             ItemStackRenderState scratchItemStackRenderState = new ItemStackRenderState();
             this.minecraft.getItemModelResolver().updateForTopItem(scratchItemStackRenderState, itemStack, ItemDisplayContext.GUI, level, livingEntity, seed);
 
@@ -62,7 +62,7 @@ public abstract class Gui_Graphics_Mixin{//
 
 
     //~ if >= 26.1 'renderItem(' -> 'item('
-    @Inject(at = @At("TAIL"), method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
+    @Inject(at = @At("TAIL"), method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V")
     private void renderItemTail(LivingEntity livingEntity, Level level, ItemStack itemStack, int i, int j, int k, CallbackInfo ci) {
         if (!itemStack.isEmpty() && GlobalDirt.carriedItem == itemStack) {
             if (item_interactions_mod$canAnimate() && !ItemInteractionsConfig.getAnimationSetting().getId().equals("none")) {
@@ -75,11 +75,11 @@ public abstract class Gui_Graphics_Mixin{//
     @Inject(
             at = @At("TAIL"),
             //~ if >= 26.1 '/gui/render/state/' -> '/renderer/state/gui/'
-            method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/renderer/state/gui/GuiRenderState;II)V"
+            method = "<init>(Lnet/minecraft/client/Minecraft;Lorg/joml/Matrix3x2fStack;Lnet/minecraft/client/gui/render/state/GuiRenderState;II)V"
     )
-    private void setGlobalGuiGraphicsExtractor(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, int x, int y, CallbackInfo ci) {
-        var self = (GuiGraphicsExtractor) (Object) this;
-        GlobalDirt.setGlobalGuiGraphicsExtractor(self);
+    private void setGlobalGuiGraphics(Minecraft minecraft, Matrix3x2fStack matrix3x2fStack, GuiRenderState guiRenderState, int x, int y, CallbackInfo ci) {
+        var self = (GuiGraphics) (Object) this;
+        GlobalDirt.setGlobalGuiGraphics(self);
         GlobalDirt.setGlobalGuiRenderState(guiRenderState);
     }
 

@@ -106,7 +106,7 @@ public class ItemInteractionsConfig {
         putDefault("gui_particles", true);
         putDefault("debug", false);
         putDefault("animation", "speed");
-        putDefault("gui_smooth_particles", false);
+        putDefault("gui_smooth_particles", true);
 
         currentAnimationSelected = animations.get("speed");
 
@@ -118,72 +118,82 @@ public class ItemInteractionsConfig {
 
 
     public static void refreshConfig() {
+        File configFile = configPath.toFile();
+
+        if (!configFile.exists()) {
+            ItemInteractionsMod.infoMessage("Creating default config file");
+            init();
+        } else {
+            try {
+                Scanner lector = new Scanner(configFile);
+
+                int lineCount = 0;
+                while (lector.hasNext() && lineCount < 20) {
+                    String line = lector.nextLine();
+                    int equalCount = MiscUtils.count(line, "=");
+                    if (equalCount != 1) {
+                        ItemInteractionsMod.infoMessage("Skipping line " + (lineCount+1) + ": `" + line + "`. Contains " + equalCount + " `=``");
+                        continue;
+                    }
+                    line = line.trim();
+
+                    int equalIndex = line.indexOf("=");
+
+                    String arg = line.substring(0, equalIndex).trim();
+                    String value = line.substring(equalIndex+1).trim();
+
+
+                    if (settingsMap.containsKey(arg)) {
+                        var og = settingsMap.get(arg);
+                        Object parsedValue;
+
+                        if (arg.equals("animation")) {
+                            if (animations.containsKey(value)) parsedValue = value;
+                            else parsedValue = null;
+                        }
+                        else {
+    //                        System.out.print(arg + ": ");
+                            parsedValue = parseConfigValue(value, og);
+                        }
+
+                        if (parsedValue == null) {
+                            ItemInteractionsMod.warnMessage("Defaulting invalid setting: %s = %s", arg, value);
+                            parsedValue = getDefaultSetting(arg);
+                        }
+
+                        settingsMap.put(arg, parsedValue);
+
+
+                    } else {
+                        ItemInteractionsMod.warnMessage("Found unknown setting: %s = %s", arg, value);
+                    }
+
+                    lineCount++;
+                }
+
+                if (!settingsMap.containsKey("animation") || settingsMap.get("animation") == null || settingsMap.get("animation").equals("null") || !animations.containsKey((String) settingsMap.get("animation"))) {
+                    settingsMap.put("animation", defaultAnimations.get("speed"));
+                }
+
+    //            ItemInteractionsMod.infoMessage("Setting config to: \n" + settingsMap.toString());
+
+            } catch (Exception e) {
+                ItemInteractionsMod.errorMessage("Failed to refresh the config: \n"
+                        + e.getMessage()
+                        + "\nUsing the defaults"
+                );
+            }
+        }
+
         try {
-            File configFile = configPath.toFile();
-            if (!configFile.exists()) {
-                configFile.createNewFile();
-            }
-
-            Scanner lector = new Scanner(configFile);
-
-            int lineCount = 0;
-            while (lector.hasNext() && lineCount < 20) {
-                String line = lector.nextLine();
-                int equalCount = MiscUtils.count(line, "=");
-                if (equalCount != 1) {
-                    ItemInteractionsMod.infoMessage("Skipping line " + (lineCount+1) + ": `" + line + "`. Contains " + equalCount + " `=``");
-                    continue;
-                }
-                line = line.trim();
-
-                int equalIndex = line.indexOf("=");
-
-                String arg = line.substring(0, equalIndex).trim();
-                String value = line.substring(equalIndex+1).trim();
-
-
-                if (settingsMap.containsKey(arg)) {
-                    var og = settingsMap.get(arg);
-                    Object parsedValue;
-
-                    if (arg.equals("animation")) {
-                        if (animations.containsKey(value)) parsedValue = value;
-                        else parsedValue = null;
-                    }
-                    else {
-//                        System.out.print(arg + ": ");
-                        parsedValue = parseConfigValue(value, og);
-                    }
-
-                    if (parsedValue == null) {
-                        ItemInteractionsMod.warnMessage("Defaulting invalid setting: %s = %s", arg, value);
-                        parsedValue = getDefaultSetting(arg);
-                    };
-                    settingsMap.put(arg, parsedValue);
-
-
-                } else {
-                    ItemInteractionsMod.warnMessage("Found unknown setting: %s = %s", arg, value);
-                }
-
-                lineCount++;
-            }
-
-            if (!settingsMap.containsKey("animation") || settingsMap.get("animation") == null || settingsMap.get("animation").equals("null") || !animations.containsKey((String) settingsMap.get("animation"))) {
-                settingsMap.put("animation", defaultAnimations.get("speed"));
-            }
-
-//            ItemInteractionsMod.infoMessage("Setting config to: \n" + settingsMap.toString());
-
             writeConfig(configFile);
-        } catch (Exception e) {
-            ItemInteractionsMod.warnMessage("Failed to refresh the config! \n"
+        } catch (IOException e) {
+            ItemInteractionsMod.errorMessage("Failed to save the config: \n"
                     + e.getMessage()
-                    + "Using the defaults"
             );
 
-            init();
         }
+
 
         setValuesAfterRefresh();
         getAnimationSetting().refreshSettings();
@@ -262,11 +272,12 @@ public class ItemInteractionsConfig {
         smoothGuiParticles = (boolean) getSetting("gui_smooth_particles");
         debugDraws = (boolean) getSetting("debug");
         currentAnimationSelected = animations.getOrDefault((String) getSetting("animation"), animations.get("speed"));
-
     }
     private static void writeConfig(File configFile) throws IOException {
 
+        configFile.getParentFile().mkdirs();
         FileWriter obj = new FileWriter(configFile);
+
 
         final StringBuilder configFileString = new StringBuilder();
 
@@ -282,24 +293,6 @@ public class ItemInteractionsConfig {
         for(String s : stringList) {
             configFileString.append(s);
         }
-
-//        String configFileString = String.format("""
-//                animation = %s
-//                scale_speed = %f
-//                scale_amount = %f
-//                deceleration = %f
-//                mouse_speed_multiplier = %f
-//                gui_particles = %s
-//                debug = %s
-//                """,
-//                animationConfig,
-//                scaleSpeed,
-//                scaleAmount,
-//                mouseDeceleration,
-//                mouseSpeedMult,
-//                enableGuiParticles ? "true": "false",
-//                debugDraws ? "true" : "false"
-//                );
 
         obj.write(configFileString.toString());
         obj.flush();

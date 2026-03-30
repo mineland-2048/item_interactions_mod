@@ -7,7 +7,7 @@ import dev.mineland.item_interactions_mod.GlobalDirt;
 import dev.mineland.item_interactions_mod.ItemInteractionsConfig;
 import dev.mineland.item_interactions_mod.MiscUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -47,11 +47,11 @@ public class TexturedParticle extends BaseParticle {
         }
     }
 
-    public TexturedParticle(GuiGraphicsExtractor guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, int tintStart, int tintEnd) {
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, int tintStart, int tintEnd) {
         this(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, lifeTime, particleLocation, TextureType.LIFETIME, tintStart, tintEnd);
     }
 
-    public TexturedParticle(GuiGraphicsExtractor guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, TextureType textureType,  int tintStart, int tintEnd) {
+    public TexturedParticle(GuiGraphics guiGraphics, double x, double y, double speedX, double speedY, double accelerationX, double accelerationY, double frictionX, double frictionY, double lifeTime, Identifier particleLocation, TextureType textureType,  int tintStart, int tintEnd) {
         super(guiGraphics, x, y, speedX, speedY, accelerationX, accelerationY, frictionX, frictionY, tintStart, tintEnd, lifeTime);
 
         this.particleLocation = particleLocation;

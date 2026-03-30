@@ -58,14 +58,10 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
     private void loadSpawners(ResourceManager resourceManager) {
         for (Map.Entry<Identifier, Resource> entry : resourceManager.listResources("gui_particle_spawners", Identifier -> Identifier.getPath().endsWith(".json")).entrySet()) {
             {
-
-
-
-
                 Identifier id = entry.getKey();
                 Resource resource = entry.getValue();
 
-                if (ItemInteractionsConfig.debugDraws) {
+                if (ItemInteractionsMod.isDebug()) {
                     ItemInteractionsMod.infoMessage("Loading " + id + ":" + resource);
                 }
 
@@ -73,12 +69,12 @@ public class GuiParticlesReloadListener implements ResourceManagerReloadListener
                     JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
 
 
-//                    ItemInteractionsMod.infoMessage("Parsing spawner: " + id);
+                    ItemInteractionsMod.debugInfoMessage("Parsing spawner: " + id);
                     GuiParticleSpawner a = parseSpawner(json, id);
 
+                    ItemInteractionsMod.debugInfoMessage("Parsed");
                     SpawnerRegistry.register(a, id);
 
-//                    ItemInteractionsMod.infoMessage("Parsed");
 
                 } catch (Exception e) {
                     ItemInteractionsMod.errorMessage("Couldn't parse '" + id + "': \n" + e.getCause());

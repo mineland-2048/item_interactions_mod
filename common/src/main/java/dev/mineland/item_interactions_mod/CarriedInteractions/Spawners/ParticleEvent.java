@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.mineland.item_interactions_mod.MiscUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.*;
 
@@ -91,7 +91,7 @@ public class ParticleEvent {
         return result;
     }
 
-    void fire(GuiGraphicsExtractor guiGraphics, float x, float y, float speedX, float speedY, Optional<ParticleInstance> spawnerAttributes, Optional<ParticleInstance> spawnerAttributesVariance) {
+    void fire(GuiGraphics guiGraphics, float x, float y, float speedX, float speedY, Optional<ParticleInstance> spawnerAttributes, Optional<ParticleInstance> spawnerAttributesVariance) {
         ParticleInstance empty = new ParticleInstance();
 
         ParticleInstance combined = combineAttributes(spawnerAttributes, this.attributes);
