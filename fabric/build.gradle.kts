@@ -48,7 +48,7 @@ dependencies {
     modCompileOnly("maven.modrinth:flow:${commonMod.dep("flow")}")
 
     // Required dependencies
-    modImplementation("com.terraformersmc:modmenu:${commonMod.dep("modmenu")}")
+    modCompileOnly("com.terraformersmc:modmenu:${commonMod.dep("modmenu")}")
 
 }
 

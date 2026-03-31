@@ -143,7 +143,7 @@ public class GlobalDirt {
     public static ItemStack carriedItem;
 
 
-    public static boolean devenv = true;
+    public static boolean devenv = false;
     public static List<BaseParticle> particleList = new ArrayList<>();
 
 
